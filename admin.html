@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-title-template="Area do Cliente - %brand%">Area do Cliente - Palatarius</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script src="assets/js/settings.js" defer></script>
+</head>
+<body data-page="admin">
+  <header>
+    <div class="logo js-brand-name">Palatarius</div>
+    <nav>
+      <div class="nav-links">
+        <a href="index.html">Inicio</a>
+        <a href="cardapio.html">Cardapio</a>
+        <a href="curiosidades.html">Curiosidades</a>
+        <a href="contact.html">Contato</a>
+        <a href="admin.html" class="active">Area do Cliente</a>
+        <a href="login.html">Entrar</a>
+        <a href="register.html">Cadastrar</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="about">
+      <h2>Area administrativa (versao estatica)</h2>
+      <p>Esta versao hospedada no GitHub Pages funciona apenas com arquivos estaticos (HTML, CSS e JavaScript). Por isso, recursos que dependiam de PHP ou banco de dados foram adaptados para uso manual.</p>
+
+      <h3>Como atualizar informacoes do site</h3>
+      <ol style="margin-left:1.5rem; line-height:1.7;">
+        <li>Edite o arquivo <code>settings.json</code> diretamente no GitHub ou no seu editor local. Ele controla nome da marca, telefone, enderecos e links sociais.</li>
+        <li>Faça commit das alteracoes e publique na branch usada pelo GitHub Pages.</li>
+      </ol>
+
+      <h3>Como editar o cardapio</h3>
+      <ol style="margin-left:1.5rem; line-height:1.7;">
+        <li>Acesse o <a href="cardapio.html?editor=1">cardapio digital</a> e clique em "Editar cardapio".</li>
+        <li>Faça as mudanças desejadas (itens, precos, ingredientes). As alteracoes ficam salvas no navegador e voce pode exportar o HTML.</li>
+        <li>Para publicar novidades, substitua o arquivo <code>cardapio.html</code> no repositório e adicione as novas imagens na pasta <code>uploads/</code> ou <code>assets/images/</code>.</li>
+      </ol>
+
+      <p style="margin-top:1.5rem;">Precisa de funcionalidades com login ou upload direto? Considere manter uma versao PHP do projeto em um servidor com suporte a scripts (Hostinger, InfinityFree etc.).</p>
+    </section>
+  </main>
+</body>
+</html>

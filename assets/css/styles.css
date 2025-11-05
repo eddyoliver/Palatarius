@@ -1,0 +1,367 @@
+﻿/*
+ * Estilos principais para o site Palatarius.
+ * O objetivo desta folha Ã© fornecer uma base elegante e responsiva
+ * inspirada por temas geeks, animes e jogos, mantendo a simplicidade
+ * de manutenÃ§Ã£o. A paleta utiliza tons escuros com destaques em
+ * vermelho e amarelo, remetendo ao universo retrÃ´ dos fliperamas.
+ */
+
+:root {
+  --bg: #0B0B0F;
+  --primary-red: #E53935;
+  --primary-yellow: #FFD60A;
+  --primary-white: #FFFFFF;
+  --gray-dark: #151515;
+  --gray-medium: #232323;
+  --gray-light: #BDBDBD;
+  --radius-card: 16px;
+  --radius-input: 8px;
+  --shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  background: var(--bg);
+  color: var(--primary-white);
+  line-height: 1.6;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+header {
+  background: var(--gray-dark);
+  padding: 1rem 1.5rem;
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+header .logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary-yellow);
+}
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}
+
+nav .nav-links {
+  display: flex;
+  gap: 1rem;
+}
+
+nav .nav-links a {
+  color: var(--primary-white);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+nav .nav-links a:hover {
+  color: var(--primary-yellow);
+}
+
+main {
+  padding: 1rem 1.5rem;
+}
+
+.hero {
+  background: linear-gradient(135deg, #1f1f2e, #0b0b0f);
+  border-radius: var(--radius-card);
+  padding: 3rem 1.5rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary-yellow);
+}
+
+.hero p {
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0.5rem auto 1.5rem;
+}
+
+.hero .btn-primary {
+  background: var(--primary-red);
+  color: var(--primary-white);
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: var(--radius-input);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.hero .btn-primary:hover {
+  background: #c62828;
+}
+
+section {
+  margin-bottom: 2.5rem;
+}
+
+section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--primary-yellow);
+  text-align: center;
+}
+
+.about, .features, .curiosidades, .contact {
+  background: var(--gray-dark);
+  border-radius: var(--radius-card);
+  padding: 2rem 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.about p {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: var(--gray-light);
+}
+
+.features-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.feature-item {
+  flex: 1 1 260px;
+  background: var(--gray-medium);
+  padding: 1.5rem;
+  border-radius: var(--radius-card);
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.feature-item h3 {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary-yellow);
+}
+
+.feature-item p {
+  font-size: 0.95rem;
+  color: var(--gray-light);
+}
+
+/* CardÃ¡pio preview */
+.menu-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.menu-card {
+  flex: 1 1 200px;
+  background: var(--gray-medium);
+  padding: 1rem;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.menu-card .emoji {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.menu-card h3 {
+  font-size: 1.2rem;
+  color: var(--primary-yellow);
+  margin-bottom: 0.3rem;
+}
+
+.menu-card p {
+  font-size: 0.9rem;
+  color: var(--gray-light);
+  flex: 1;
+}
+
+.menu-card a {
+  margin-top: 0.8rem;
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: var(--primary-red);
+  color: var(--primary-white);
+  border-radius: var(--radius-input);
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.menu-card a:hover {
+  background: #c62828;
+}
+
+/* Curiosidades */
+.curios-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.curios-list li {
+  margin-bottom: 0.8rem;
+}
+
+.curios-list a {
+  color: var(--primary-yellow);
+  text-decoration: none;
+}
+
+.curios-list a:hover {
+  text-decoration: underline;
+}
+
+/* Carrossel simples para a pÃ¡gina inicial */
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow);
+  margin-bottom: 2rem;
+}
+
+.carousel-slide {\n  opacity: 0;\n  transition: opacity 1s ease-in-out;\n  height: 420px;\n  background-size: cover;\n  background-position: center top;\n}\n\n@media (max-width: 768px) {\n  .carousel-slide {\n    height: 260px;\n  }\n}
+
+.carousel-slide.active {
+  opacity: 1;
+}
+
+/* FormulÃ¡rios */
+.form-container {
+  max-width: 500px;
+  margin: 0 auto;
+  background: var(--gray-dark);
+  padding: 2rem;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow);
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: var(--radius-input);
+  border: none;
+  background: var(--gray-medium);
+  color: var(--primary-white);
+  font-size: 1rem;
+  box-shadow: inset 0 0 0 1px var(--gray-light);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: 2px solid var(--primary-red);
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.7rem 1.4rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: var(--radius-input);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-primary {
+  background: var(--primary-red);
+  color: var(--primary-white);
+}
+
+.btn-primary:hover {
+  background: #c62828;
+}
+
+.btn-secondary {
+  background: var(--primary-yellow);
+  color: var(--bg);
+}
+
+.btn-secondary:hover {
+  background: #e6c50a;
+}
+
+/* Mensagens */
+.message {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: var(--radius-input);
+  background: var(--gray-medium);
+  color: var(--primary-white);
+}
+.message.error {
+  background: #b71c1c;
+}
+.message.success {
+  background: #388e3c;
+}
+
+/* Tabelas para o administrador */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+th, td {
+  padding: 0.6rem;
+  border-bottom: 1px solid var(--gray-medium);
+}
+
+th {
+  text-align: left;
+  color: var(--primary-yellow);
+}
+
+tr:nth-child(even) {
+  background: var(--gray-medium);
+}
+/* Responsivo */
+@media (max-width: 768px) {
+  .features-grid, .menu-preview {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

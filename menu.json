@@ -1,0 +1,182 @@
+[
+  {
+    "key": "batatas",
+    "name": "Batatas do Dragão",
+    "emoji": "🍟",
+    "items": [
+      {
+        "id": "1-up",
+        "name": "Batata Comum (P) \"1-UP\"",
+        "description": "Batata comum pequena",
+        "price": 4.0
+      },
+      {
+        "id": "smash-bros",
+        "name": "Batata (P) \"Smash Bros\"",
+        "description": "Batata pequena especial",
+        "price": 6.0
+      },
+      {
+        "id": "scorpion",
+        "name": "Batata 25cm \"Scorpion\"",
+        "description": "Batata 25 cm",
+        "price": 25.0
+      },
+      {
+        "id": "final-boss",
+        "name": "Batata 35cm \"Final Boss\"",
+        "description": "Batata 35 cm",
+        "price": 35.0
+      },
+      {
+        "id": "fatality-batata",
+        "name": "Batata 25cm \"Fatality\"",
+        "description": "Batata 25 cm (2 molhos)",
+        "price": 45.0
+      },
+      {
+        "id": "brutality",
+        "name": "Batata 35cm \"Brutality\"",
+        "description": "Batata 35 cm (3 molhos)",
+        "price": 55.0
+      }
+    ]
+  },
+  {
+    "key": "hamburgers",
+    "name": "Hambúrgueres",
+    "emoji": "🥟",
+    "items": [
+      {
+        "id": "shuriken",
+        "name": "Shuriken — 15 cm",
+        "description": "Montagem: 1 proteína + até 18 ingredientes",
+        "price": 0.0
+      },
+      {
+        "id": "grand-line",
+        "name": "Grand Line — 25 cm",
+        "description": "Montagem: 2 proteínas + até 18 ingredientes",
+        "price": 0.0
+      }
+    ]
+  },
+  {
+    "key": "tapiocas-salgadas",
+    "name": "Tapiocas Salgadas",
+    "emoji": "🥙",
+    "items": [
+      {
+        "id": "kanto",
+        "name": "Kanto — Pequena",
+        "description": "Montagem: 1 proteína + até 18 ingredientes",
+        "price": 10.0
+      },
+      {
+        "id": "johto",
+        "name": "Johto — Média",
+        "description": "Montagem: 2 proteínas + até 18 ingredientes",
+        "price": 15.0
+      }
+    ]
+  },
+  {
+    "key": "tapiocas-doces",
+    "name": "Tapiocas Doces",
+    "emoji": "🥙",
+    "items": [
+      {
+        "id": "alola-p",
+        "name": "Alola P",
+        "description": "",
+        "price": 10.0
+      },
+      {
+        "id": "alola-g",
+        "name": "Alola G",
+        "description": "",
+        "price": 15.0
+      },
+      {
+        "id": "cerulean-p",
+        "name": "Cerulean P",
+        "description": "",
+        "price": 10.0
+      },
+      {
+        "id": "cerulean-g",
+        "name": "Cerulean G",
+        "description": "",
+        "price": 15.0
+      }
+    ]
+  },
+  {
+    "key": "bebidas",
+    "name": "Bebidas",
+    "emoji": "🥤",
+    "items": [
+      {
+        "id": "guaracamp-copo",
+        "name": "Guaracamp Copo",
+        "description": "",
+        "price": 2.0
+      },
+      {
+        "id": "mini-200",
+        "name": "Refrigerante Mini 200ml",
+        "description": "",
+        "price": 3.0
+      },
+      {
+        "id": "agua-gas",
+        "name": "Água com gás",
+        "description": "",
+        "price": 3.5
+      },
+      {
+        "id": "agua-comum",
+        "name": "Água",
+        "description": "",
+        "price": 3.5
+      },
+      {
+        "id": "lata",
+        "name": "Refrigerante Lata",
+        "description": "",
+        "price": 5.5
+      },
+      {
+        "id": "conveniencia",
+        "name": "Conveniência 2L",
+        "description": "",
+        "price": 7.5
+      },
+      {
+        "id": "sabores-2l",
+        "name": "Refrigerantes Sabores 2L",
+        "description": "",
+        "price": 12.0
+      },
+      {
+        "id": "coca-2l",
+        "name": "Coca-Cola 2L",
+        "description": "",
+        "price": 14.0
+      }
+    ]
+  },
+  {
+    "key": "acai",
+    "name": "Açaí / Sorvete",
+    "emoji": "🥤",
+    "items": [
+      {
+        "id": "caldo-500",
+        "name": "Caldo de Cana 500 ml",
+        "description": "",
+        "price": 6.0
+      }
+    ]
+  }
+]
