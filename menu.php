@@ -42,7 +42,9 @@ if ($logged_in) {
 }
 
 $config = [
-    'assetBaseUrl' => 'uploads/',
+    'assetBaseUrl' => 'assets/images/',
+    'imageManifest' => 'assets/images/manifest.json',
+    'defaultAssets' => 'assets/default-assets.json',
 ];
 if ($logged_in) {
     $config['uploadEndpoint'] = 'upload_image.php';
