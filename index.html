@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Palatarius – Cardápio Digital</title>
+  <style>
+    /* Paleta de cores do tema */
+    :root {
+      --bg-base: #0B0B0F;
+      --primary-red: #E53935;
+      --primary-yellow: #FFD60A;
+      --primary-white: #FFFFFF;
+      --gray-dark: #151515;
+      --gray-medium: #232323;
+      --gray-light: #BDBDBD;
+      --radius-card: 16px;
+      --radius-input: 8px;
+      --shadow: 0 4px 8px rgba(0,0,0,0.3);
+      --font-size-base: 1rem;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      color: var(--primary-white);
+      background: var(--bg-base);
+      overflow-x: hidden;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    h1, h2, h3 {
+      margin: 0;
+      font-weight: 600;
+    }
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.5rem; }
+    h3 { font-size: 1.2rem; }
+    p { margin: 0.2rem 0; }
+
+    /* Cabeçalho */
+    header {
+      padding: 1rem;
+      text-align: center;
+      background-color: var(--gray-dark);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: var(--shadow);
+    }
+    header h1 {
+      color: var(--primary-yellow);
+      font-size: 1.8rem;
+    }
+
+    /* Conteúdo principal dividido em telas */
+    section {
+      display: none;
+      padding: 1rem;
+    }
+    section.active {
+      display: block;
+    }
+
+    /* Formulário de dados do cliente */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.3rem;
+      color: var(--primary-white);
+      font-weight: 500;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.6rem;
+      border-radius: var(--radius-input);
+      border: none;
+      /* Para os campos de edição ficarem visíveis sobre o fundo escuro,
+         use um tom médio de cinza que contraste com o fundo mais escuro */
+      background-color: var(--gray-medium);
+      color: var(--primary-white);
+      font-size: 1rem;
+      /* contorno suave para melhor distinção */
+      box-shadow: inset 0 0 0 1px var(--gray-light);
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid var(--primary-red);
+    }
+    .row {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .row .form-group {
+      flex: 1;
+    }
+
+    /* Botões */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0.6rem 1rem;
+      border: none;
+      border-radius: var(--radius-input);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .btn-primary {
+      background-color: var(--primary-red);
+      color: var(--primary-white);
+    }
+    .btn-primary:hover {
+      background-color: #c62828;
+    }
+    .btn-secondary {
+      background-color: var(--primary-yellow);
+      color: var(--bg-base);
+    }
+    .btn-secondary:hover {
+      background-color: #e6c50a;
+    }
+    .btn-small {
+      font-size: 0.9rem;
+      padding: 0.4rem 0.6rem;
+      min-height: 36px;
+    }
+
+    /* Navegação de categorias */
+    .category-nav {
+      display: flex;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+      gap: 0.5rem;
+    }
+    .category-nav button {
+      flex: 1 0 auto;
+      white-space: nowrap;
+      padding: 0.6rem 1rem;
+      border-radius: var(--radius-input);
+      border: none;
+      background-color: var(--gray-dark);
+      color: var(--primary-white);
+      font-weight: 600;
+      cursor: pointer;
+      min-height: 44px;
+    }
+    .category-nav button.active {
+      background-color: var(--primary-red);
+      color: var(--primary-white);
+    }
+
+    /* Cards de produtos */
+    .product-card {
+      background-color: var(--gray-dark);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow);
+      margin-bottom: 1rem;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .product-image {
+      position: relative;
+      width: 100%;
+      /* mantenha a proporção 4/3 */
+      aspect-ratio: 4 / 3;
+      background-color: var(--gray-medium);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray-light);
+      font-size: 2rem;
+    }
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-top-left-radius: var(--radius-card);
+      border-top-right-radius: var(--radius-card);
+    }
+    .product-content {
+      padding: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .product-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary-yellow);
+    }
+    .product-desc {
+      font-size: 0.9rem;
+      color: var(--gray-light);
+    }
+    .product-price {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary-yellow);
+    }
+    .product-actions {
+      margin-top: auto;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .product-actions button {
+      margin-left: auto;
+    }
+
+    /* Badge do carrinho flutuante */
+    .cart-badge {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background-color: var(--primary-red);
+      color: var(--primary-white);
+      padding: 0.6rem 1rem;
+      border-radius: 50px;
+      box-shadow: var(--shadow);
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 1000;
+    }
+    .cart-badge span {
+      margin-left: 0.4rem;
+      font-weight: 700;
+    }
+
+    /* Tela de carrinho */
+    .cart-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+      background-color: var(--gray-dark);
+      border-radius: var(--radius-card);
+      padding: 0.6rem;
+      box-shadow: var(--shadow);
+    }
+    .cart-item img {
+      width: 64px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .cart-item-details {
+      flex: 1;
+    }
+    .cart-item-title {
+      font-weight: 600;
+      color: var(--primary-yellow);
+    }
+    .cart-item-options {
+      font-size: 0.85rem;
+      color: var(--gray-light);
+      margin-top: 0.2rem;
+    }
+    .cart-item-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .quantity-control button {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      border: none;
+      background-color: var(--primary-yellow);
+      color: var(--bg-base);
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .cart-totals {
+      margin-top: 1rem;
+      background-color: var(--gray-dark);
+      padding: 1rem;
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow);
+    }
+    .cart-totals div {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.4rem;
+      font-size: 1rem;
+    }
+    .cart-totals div.total {
+      font-weight: 700;
+      color: var(--primary-yellow);
+    }
+
+    /* Modal de montagem */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal {
+      background-color: var(--gray-medium);
+      color: var(--primary-white);
+      border-radius: var(--radius-card);
+      padding: 1rem;
+      width: 90%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow);
+    }
+    .modal h2 {
+      margin-bottom: 0.8rem;
+      color: var(--primary-yellow);
+    }
+    .modal-section {
+      margin-bottom: 1rem;
+    }
+    .modal-section label {
+      font-size: 0.95rem;
+      margin-bottom: 0.2rem;
+    }
+    .modal-section .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .option-item {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.4rem 0.6rem;
+      border-radius: var(--radius-input);
+      background-color: var(--gray-dark);
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .option-item input {
+      margin-right: 0.3rem;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+    .modal-actions button {
+      flex: 1;
+    }
+
+    .error {
+      color: var(--primary-red);
+      font-size: 0.85rem;
+      margin-top: 0.3rem;
+    }
+
+    @media (min-width: 768px) {
+      .product-card {
+        flex-direction: row;
+      }
+      .product-image {
+        width: 40%;
+        height: auto;
+      }
+      .product-content {
+        width: 60%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Palatarius</h1>
+  </header>
+
+  <!-- Cliente -->
+  <section id="customer-screen" class="active">
+    <h2>Dados do Cliente</h2>
+    <form id="customer-form">
+      <div class="form-group">
+        <label>Nome completo *</label>
+        <input type="text" id="customer-name" required>
+        <div class="error" id="error-name"></div>div>
+      </div>
+      <div class="form-group">
+        <label>Telefone *</label>
+        <input type="tel" id="customer-phone" required placeholder="(21) 99999-9999">
+        <div class="error" id="error-phone"></div>
+      </div>
+      <div class="form-group">
+        <label>Tipo de pedido *</label>
+        <select id="order-type">
+          <option value="Entrega">Entrega</option>
+          <option value="Retirada">Retirada</option>
+        </select>
+      </div>
+      <div id="delivery-fields" style="display:none;">
+        <div class="form-group">
+          <label>Logradouro *</label>
+          <input type="text" id="address-logradouro">
+          <div class="error" id="error-logradouro"></div>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <label>Número *</label>
+            <input type="text" id="address-number">
+            <div class="error" id="error-number"></div>
+          </div>
+          <div class="form-group">
+            <label>Complemento</label>
+            <input type="text" id="address-complement">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Bairro *</label>
+          <input type="text" id="address-bairro">
+          <div class="error" id="error-bairro"></div>
+        </div>
+        <div class="form-group">
+          <label>Marco</label>
+          <input type="text" id="address-marco">
+        </div>
+        <div class="form-group">
+          <label>Cidade</label>
+          <input type="text" value="Seropédica-RJ" readonly>
+        </div>
+        <div class="form-group">
+          <label>KM *</label>
+          <select id="address-km">
+            <option value="39">KM 39</option>
+            <option value="40">KM 40</option>
+            <option value="41">KM 41</option>
+            <option value="42">KM 42</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+        <div class="form-group" id="uber-freight-group" style="display:none;">
+          <label>Frete (R$) *</label>
+          <input type="number" id="uber-freight" step="0.01" min="0">
+          <div class="error" id="error-freight"></div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Continuar → Cardápio</button>
+      <p style="margin-top:1rem; font-size:0.9rem;">
+        <a href="#" id="customer-editor-link" style="color:var(--yellow); text-decoration:underline;">Área do Editor</a>
+      </p>
+    </form>
+  </section>
+
+  <!-- Cardápio -->
+  <section id="menu-screen">
+    <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+      <input type="text" id="search-input" placeholder="Buscar..." style="flex:1; margin-right:0.5rem;">
+      <button id="menu-exit" class="btn btn-secondary btn-small">Editar Dados</button>
+    </div>
+    <div class="category-nav" id="category-nav"></div>
+    <div id="products-container"></div>
+    <div id="cart-badge" class="cart-badge">
+      Carrinho <span id="cart-count">0</span>
+    </div>
+  </section>
+
+  <!-- Carrinho -->
+  <section id="cart-screen">
+    <h2>Seu Pedido</h2>
+    <div id="cart-items"></div>
+    <div class="form-group">
+      <label>Observações</label>
+      <textarea id="cart-observations" rows="3"></textarea>
+    </div>
+    <div class="cart-totals">
+      <div><span>Subtotal</span> <span id="subtotal">R$ 0,00</span></div>
+      <div id="freight-row" style="display:none;"><span>Frete</span> <span id="freight">R$ 0,00</span></div>
+      <div class="total"><span>Total</span> <span id="total">R$ 0,00</span></div>
+    </div>
+    <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+      <button id="back-to-menu" class="btn btn-secondary">Continuar Comprando</button>
+      <button id="checkout-whatsapp" class="btn btn-primary">Enviar no WhatsApp</button>
+    </div>
+  </section>
+
+  <!-- Modal de Montagem -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <h2 id="modal-title">Monte seu prato</h2>
+      <div id="modal-content"></div>
+      <div class="modal-actions" style="display:flex; gap:0.5rem; margin-top:1rem;">
+        <button id="modal-cancel" class="btn btn-secondary">Cancelar</button>
+        <button id="modal-save" class="btn btn-primary">Adicionar ao Carrinho</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Editor -->
+  <section id="editor-screen">
+    <h2>Editor do Cardápio</h2>
+
+    <!-- Grupos de Ingredientes -->
+    <div class="editor-group">
+      <h3 style="color:var(--yellow); margin-bottom:0.5rem;">Grupos de Ingredientes</h3>
+      <div id="ingredient-groups"></div>
+      <button class="btn btn-primary" style="width:100%; margin-top:0.5rem;" onclick="addIngredientGroup()">+ Novo Grupo</button>
+    </div>
+
+    <!-- Categorias e Produtos -->
+    <div class="editor-group">
+      <h3 style="color:var(--yellow); margin-bottom:0.5rem;">Categorias e Itens</h3>
+      <button id="editor-add-category" class="btn btn-primary" style="width:100%; margin-bottom:1rem;">+ Nova Categoria</button>
+      <div id="editor-categories"></div>
+    </div>
+
+    <div style="display:flex; gap:0.5rem; margin-top:2rem;">
+      <button id="editor-cancel" class="btn btn-secondary">Cancelar</button>
+      <button id="editor-save" class="btn btn-primary">Salvar Tudo</button>
+    </div>
+  </section>
+
+  <script>
+    // === DADOS GLOBAIS ===
+    let categories = JSON.parse(localStorage.getItem('categories') || '[]');
+    let ingredientGroups = JSON.parse(localStorage.getItem('ingredientGroups') || '[]');
+    let customer = JSON.parse(localStorage.getItem('customer') || '{}');
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    let observations = localStorage.getItem('observations') || '';
+    let activeCategory = '';
+    let modalProduct = null;
+    let backup = null;
+
+    function save() {
+      localStorage.setItem('categories', JSON.stringify(categories));
+      localStorage.setItem('ingredientGroups', JSON.stringify(ingredientGroups));
+      localStorage.setItem('customer', JSON.stringify(customer));
+      localStorage.setItem('cart', JSON.stringify(cart));
+      localStorage.setItem('observations', observations);
+    }
+
+    function show(id) {
+      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      if (id === 'menu-screen') { renderCategories(); renderProducts(); updateBadge(); }
+      if (id === 'cart-screen') renderCart();
+    }
+
+    // === CLIENTE ===
+    function validateCustomer() {
+      let ok = true;
+      const name = document.getElementById('customer-name').value.trim();
+      const phone = document.getElementById('customer-phone').value.replace(/\D/g, '');
+      const type = document.getElementById('order-type').value;
+
+      document.querySelectorAll('.error').forEach(e => e.textContent = '');
+
+      if (!name) { document.getElementById('error-name').textContent = 'Nome obrigatório'; ok = false; }
+      if (!/^\d{10,11}$/.test(phone)) { document.getElementById('error-phone').textContent = 'Telefone inválido'; ok = false; }
+
+      if (type === 'Entrega') {
+        const log = document.getElementById('address-logradouro').value.trim();
+        const num = document.getElementById('address-number').value.trim();
+        const bairro = document.getElementById('address-bairro').value.trim();
+        const km = document.getElementById('address-km').value;
+        const freight = document.getElementById('uber-freight').value;
+
+        if (!log) { document.getElementById('error-logradouro').textContent = 'Preencha'; ok = false; }
+        if (!num) { document.getElementById('error-number').textContent = 'Preencha'; ok = false; }
+        if (!bairro) { document.getElementById('error-bairro').textContent = 'Preencha'; ok = false; }
+        if (km === 'Outro' && (!freight || parseFloat(freight) <= 0)) {
+          document.getElementById('error-freight').textContent = 'Frete obrigatório'; ok = false; }
+      }
+
+      if (ok) {
+        customer = {
+          name, phone, type,
+          address: type === 'Entrega' ? {
+            logradouro: document.getElementById('address-logradouro').value.trim(),
+            number: document.getElementById('address-number').value.trim(),
+            complement: document.getElementById('address-complement').value.trim(),
+            bairro: document.getElementById('address-bairro').value.trim(),
+            marco: document.getElementById('address-marco').value.trim(),
+            km: document.getElementById('address-km').value,
+            freight: document.getElementById('uber-freight').value || '0'
+          } : {}
+        };
+        save();
+      }
+      return ok;
+    }
+
+    // === RENDER ===
+    function renderCategories() {
+      const nav = document.getElementById('category-nav');
+      nav.innerHTML = '';
+      categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.textContent = cat.name;
+        btn.onclick = () => { activeCategory = cat.key; renderCategories(); renderProducts(); };
+        if (cat.key === activeCategory) btn.classList.add('active');
+        nav.appendChild(btn);
+      });
+      if (!activeCategory && categories[0]) activeCategory = categories[0].key;
+    }
+
+    function renderProducts() {
+      const container = document.getElementById('products-container');
+      container.innerHTML = '';
+      const search = document.getElementById('search-input').value.toLowerCase();
+      const cat = categories.find(c => c.key === activeCategory);
+      if (!cat) return;
+
+      cat.products
+        .filter(p => p.name.toLowerCase().includes(search) || (p.description && p.description.toLowerCase().includes(search)))
+        .forEach(p => {
+          const card = document.createElement('div');
+          card.className = 'product-card';
+          card.innerHTML = `
+            <div class="product-image">
+              ${p.image ? `<img src="assets/images/${p.image}" alt="${p.name}" onerror="this.style.display='none'">` : 'Foto em breve'}
+            </div>
+            <div class="product-content">
+              <div class="product-title">${p.name}</div>
+              ${p.description ? `<div class="product-desc">${p.description}</div>` : ''}
+              <div class="product-price">R$ ${parseFloat(p.price).toFixed(2).replace('.', ',')}</div>
+              <div class="product-actions">
+                <button class="btn btn-primary btn-small" onclick='openCustomization(${JSON.stringify(p)})'>Montar</button>
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+    }
+
+    function updateBadge() {
+      const count = cart.reduce((s, i) => s + i.quantity, 0);
+      const badge = document.getElementById('cart-badge');
+      document.getElementById('cart-count').textContent = count;
+      badge.style.display = count > 0 ? 'flex' : 'none';
+    }
+
+    // === MODAL DE MONTAGEM ===
+    function openCustomization(product) {
+      modalProduct = { ...product, quantity: 1, extras: {} };
+      const title = document.getElementById('modal-title');
+      title.textContent = `Monte seu ${product.name}`;
+
+      const content = document.getElementById('modal-content');
+      content.innerHTML = '';
+
+      if (product.allowedGroups && product.allowedGroups.length > 0) {
+        product.allowedGroups.forEach(gKey => {
+          const group = ingredientGroups.find(g => g.key === gKey);
+          if (!group) return;
+          const limit = product.limits?.[gKey] || 999;
+
+          const section = document.createElement('div');
+          section.className = 'modal-section';
+          section.innerHTML = `
+            <label>${group.name} (máx ${limit})</label>
+            <div class="limit-info">Escolha até ${limit} opção${limit > 1 ? 's' : ''}</div>
+          `;
+
+          const optionsDiv = document.createElement('div');
+          group.items.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'option-item';
+            div.innerHTML = `
+              <input type="checkbox" id="opt-${item.key}" data-group="${gKey}" data-price="${item.price}">
+              <label for="opt-${item.key}">${item.name} ${item.price > 0 ? `+ R$ ${parseFloat(item.price).toFixed(2)}` : ''}</label>
+            `;
+            optionsDiv.appendChild(div);
+          });
+          section.appendChild(optionsDiv);
+          content.appendChild(section);
+        });
+      } else {
+        content.innerHTML = '<p>Nenhuma personalização disponível.</p>';
+      }
+
+      document.getElementById('modal-overlay').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('active');
+      modalProduct = null;
+    }
+
+    function saveCustomization() {
+      if (!modalProduct) return;
+
+      const checkboxes = document.querySelectorAll('#modal-content input[type="checkbox"]:checked');
+      const extras = {};
+      let extraPrice = 0;
+
+      checkboxes.forEach(cb => {
+        const group = cb.dataset.group;
+        const price = parseFloat(cb.dataset.price) || 0;
+        if (!extras[group]) extras[group] = [];
+        extras[group].push({
+          name: cb.nextElementSibling.textContent.trim().split(' + ')[0],
+          price
+        });
+        extraPrice += price;
+      });
+
+      // Validar limites
+      let valid = true;
+      modalProduct.allowedGroups?.forEach(gKey => {
+        const selected = extras[gKey]?.length || 0;
+        const limit = modalProduct.limits?.[gKey] || 999;
+        if (selected > limit) {
+          alert(`Limite excedido: ${gKey} (máx ${limit})`);
+          valid = false;
+        }
+      });
+
+      if (!valid) return;
+
+      modalProduct.extras = extras;
+      modalProduct.finalPrice = parseFloat(modalProduct.price) + extraPrice;
+
+      const existing = cart.find(i => i.id === modalProduct.id && JSON.stringify(i.extras) === JSON.stringify(extras));
+      if (existing) {
+        existing.quantity++;
+      } else {
+        cart.push({ ...modalProduct });
+      }
+
+      save();
+      updateBadge();
+      renderCart();
+      closeModal();
+    }
+
+    // === CARRINHO ===
+    function renderCart() {
+      const container = document.getElementById('cart-items');
+      container.innerHTML = '';
+      let subtotal = 0;
+
+      cart.forEach((item, i) => {
+        const basePrice = parseFloat(item.price);
+        const extraPrice = Object.values(item.extras || {}).flat().reduce((s, e) => s + e.price, 0);
+        const totalPrice = (basePrice + extraPrice) * item.quantity;
+        subtotal += totalPrice;
+
+        let extrasText = '';
+        Object.entries(item.extras || {}).forEach(([group, items]) => {
+          const names = items.map(e => e.name).join(', ');
+          extrasText += `<div style="font-size:0.8rem; color:var(--light);">${group}: ${names}</div>`;
+        });
+
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <img src="${item.image ? 'assets/images/' + item.image : ''}" onerror="this.style.display='none'">
+          <div style="flex:1;">
+            <div class="product-title">${item.name}</div>
+            ${extrasText}
+            <div style="font-size:0.9rem; color:var(--light);">R$ ${(basePrice + extraPrice).toFixed(2)} × ${item.quantity}</div>
+          </div>
+          <div class="quantity-control">
+            <button onclick="updateQty(${i}, -1)">-</button>
+            <span>${item.quantity}</span>
+            <button onclick="updateQty(${i}, 1)">+</button>
+          </div>
+          <button class="btn btn-small" style="background:#E53935; margin-left:0.5rem;" onclick="removeFromCart(${i})">×</button>
+        `;
+        container.appendChild(div);
+      });
+
+      const freight = customer.type === 'Entrega' ? parseFloat(customer.address?.freight || 0) : 0;
+      document.getElementById('subtotal').textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+      document.getElementById('freight').textContent = `R$ ${freight.toFixed(2).replace('.', ',')}`;
+      document.getElementById('freight-row').style.display = freight > 0 ? 'flex' : 'none';
+      document.getElementById('total').textContent = `R$ ${(subtotal + freight).toFixed(2).replace('.', ',')}`;
+    }
+
+    function updateQty(i, delta) {
+      cart[i].quantity = Math.max(1, cart[i].quantity + delta);
+      save(); renderCart(); updateBadge();
+    }
+
+    function removeFromCart(i) {
+      cart.splice(i, 1);
+      save(); renderCart(); updateBadge();
+    }
+
+    // === WHATSAPP ===
+    function buildMessage() {
+      let msg = `*PEDIDO - PALATARIUS*%0A%0A`;
+      msg += `*Cliente:* ${customer.name}%0A`;
+      msg += `*Tel:* ${customer.phone}%0A`;
+      msg += `*Tipo:* ${customer.type}%0A`;
+      if (customer.type === 'Entrega') {
+        msg += `*End:* ${customer.address.logradouro}, ${customer.address.number}`;
+        if (customer.address.complement) msg += ` - ${customer.address.complement}`;
+        msg += `, ${customer.address.bairro} (KM ${customer.address.km})%0A`;
+        if (customer.address.freight > 0) msg += `*Frete:* R$ ${parseFloat(customer.address.freight).toFixed(2)}%0A`;
+      }
+      msg += `%0A*Itens:*%0A`;
+      let total = 0;
+      cart.forEach(item => {
+        const base = parseFloat(item.price);
+        const extra = Object.values(item.extras || {}).flat().reduce((s, e) => s + e.price, 0);
+        const price = (base + extra) * item.quantity;
+        total += price;
+        let extraText = '';
+        Object.entries(item.extras || {}).forEach(([g, items]) => {
+          extraText += ` (${g}: ${items.map(e => e.name).join(', ')})`;
+        });
+        msg += `- ${item.quantity}x ${item.name}${extraText} - R$ ${price.toFixed(2)}%0A`;
+      });
+      if (customer.type === 'Entrega' && customer.address.freight > 0) {
+        total += parseFloat(customer.address.freight);
+        msg += `- Frete: R$ ${parseFloat(customer.address.freight).toFixed(2)}%0A`;
+      }
+      if (observations) msg += `%0A*Obs:* ${observations}%0A`;
+      msg += `%0A*Total: R$ ${total.toFixed(2)}*`;
+      return msg;
+    }
+
+    // === EDITOR ===
+    function renderIngredientGroups() {
+      const container = document.getElementById('ingredient-groups');
+      container.innerHTML = '';
+      ingredientGroups.forEach((group, i) => {
+        const div = document.createElement('div');
+        div.style = 'background:var(--medium); padding:0.8rem; border-radius:8px; margin-bottom:0.5rem;';
+        div.innerHTML = `
+          <input value="${group.name}" style="margin-bottom:0.5rem;" onchange="ingredientGroups[${i}].name=this.value">
+          <div id="items-${i}"></div>
+          <button class="btn btn-small btn-primary" style="margin-top:0.5rem; width:100%;" onclick="addIngredient(${i})">+ Item</button>
+          <button class="btn btn-small" style="background:#E53935; margin-top:0.5rem; width:100%;" onclick="if(confirm('Excluir grupo?')){ingredientGroups.splice(${i},1);renderIngredientGroups();renderEditor()}">Excluir Grupo</button>
+        `;
+        const itemsDiv = div.querySelector(`#items-${i}`);
+        group.items.forEach((item, j) => {
+          const itemDiv = document.createElement('div');
+          itemDiv.style = 'display:flex; gap:0.5rem; margin-top:0.5rem; align-items:center;';
+          itemDiv.innerHTML = `
+            <input value="${item.name}" style="flex:1;" onchange="ingredientGroups[${i}].items[${j}].name=this.value">
+            <input type="number" step="0.01" value="${item.price}" style="width:80px;" onchange="ingredientGroups[${i}].items[${j}].price=this.value">
+            <button class="btn btn-small" style="background:#E53935;" onclick="ingredientGroups[${i}].items.splice(${j},1);renderIngredientGroups()">×</button>
+          `;
+          itemsDiv.appendChild(itemDiv);
+        });
+        container.appendChild(div);
+      });
+    }
+
+    function addIngredientGroup() {
+      const name = prompt('Nome do grupo (ex: Carnes, Toppings):');
+      if (!name) return;
+      ingredientGroups.push({
+        key: Date.now() + '',
+        name,
+        items: []
+      });
+      renderIngredientGroups();
+    }
+
+    function addIngredient(groupIdx) {
+      ingredientGroups[groupIdx].items.push({
+        key: Date.now() + '',
+        name: 'Novo Item',
+        price: '0.00'
+      });
+      renderIngredientGroups();
+    }
+
+    function renderEditor() {
+      renderIngredientGroups();
+      const container = document.getElementById('editor-categories');
+      container.innerHTML = '';
+      categories.forEach((cat, i) => {
+        const div = document.createElement('div');
+        div.style = 'background:var(--dark); padding:1rem; border-radius:8px; margin-bottom:1rem;';
+        div.innerHTML = `
+          <input value="${cat.name}" style="width:100%; margin-bottom:0.5rem;" onchange="categories[${i}].name=this.value">
+          <button class="btn btn-small" style="background:#E53935; width:100%;" onclick="if(confirm('Excluir?')){categories.splice(${i},1);renderEditor()}">Excluir Categoria</button>
+          <button class="btn btn-primary" style="width:100%; margin-top:0.5rem;" onclick="addProduct(${i})">+ Item</button>
+          <div style="margin-top:1rem;"></div>
+        `;
+        const prodDiv = div.querySelector('div:last-child');
+        cat.products.forEach((p, j) => {
+          const item = document.createElement('div');
+          item.style = 'background:var(--medium); padding:0.8rem; border-radius:8px; margin-top:0.5rem;';
+          item.innerHTML = `
+            <input value="${p.name}" placeholder="Nome" onchange="categories[${i}].products[${j}].name=this.value">
+            <input value="${p.description||''}" placeholder="Desc" onchange="categories[${i}].products[${j}].description=this.value">
+            <div style="display:flex; gap:0.5rem; margin-top:0.5rem; align-items:center;">
+              <input type="text" value="${p.image||''}" placeholder="nome.jpg" id="img-${i}-${j}" style="flex:1;">
+              <label class="upload-btn" for="upload-${i}-${j}">Escolher</label>
+              <input type="file" id="upload-${i}-${j}" accept="image/*" style="display:none;" onchange="handleUpload(event,${i},${j})">
+            </div>
+            <input type="number" step="0.01" value="${p.price}" placeholder="Preço base" onchange="categories[${i}].products[${j}].price=this.value">
+            <div style="margin-top:0.5rem;">
+              <label><input type="checkbox" onchange="toggleGroups(${i},${j},this.checked)"> Permitir personalização</label>
+            </div>
+            <div id="groups-${i}-${j}" style="display:none; margin-top:0.5rem;"></div>
+            <button class="btn btn-small" style="background:#E53935; margin-top:0.5rem; width:100%;" onclick="categories[${i}].products.splice(${j},1);renderEditor()">Remover Item</button>
+          `;
+
+          const groupsDiv = item.querySelector(`#groups-${i}-${j}`);
+          if (p.customizable) {
+            item.querySelector('input[type="checkbox"]').checked = true;
+            groupsDiv.style.display = 'block';
+            renderProductGroups(i, j, groupsDiv);
+          }
+
+          prodDiv.appendChild(item);
+        });
+        container.appendChild(div);
+      });
+    }
+
+    function toggleGroups(catIdx, prodIdx, enabled) {
+      categories[catIdx].products[prodIdx].customizable = enabled;
+      categories[catIdx].products[prodIdx].allowedGroups = enabled ? [] : undefined;
+      categories[catIdx].products[prodIdx].limits = enabled ? {} : undefined;
+      renderEditor();
+    }
+
+    function renderProductGroups(catIdx, prodIdx, container) {
+      container.innerHTML = '';
+      ingredientGroups.forEach(group => {
+        const checked = categories[catIdx].products[prodIdx].allowedGroups?.includes(group.key);
+        const limit = categories[catIdx].products[prodIdx].limits?.[group.key] || 1;
+
+        const div = document.createElement('div');
+        div.style = 'display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;';
+        div.innerHTML = `
+          <input type="checkbox" id="grp-${catIdx}-${prodIdx}-${group.key}" ${checked ? 'checked' : ''} onchange="updateGroup(${catIdx},${prodIdx},'${group.key}',this.checked)">
+          <label for="grp-${catIdx}-${prodIdx}-${group.key}">${group.name}</label>
+          <input type="number" min="1" value="${limit}" style="width:60px;" onchange="updateLimit(${catIdx},${prodIdx},'${group.key}',this.value)">
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function updateGroup(catIdx, prodIdx, groupKey, enabled) {
+      const product = categories[catIdx].products[prodIdx];
+      if (!product.allowedGroups) product.allowedGroups = [];
+      if (enabled) {
+        if (!product.allowedGroups.includes(groupKey)) product.allowedGroups.push(groupKey);
+        if (!product.limits) product.limits = {};
+        if (!product.limits[groupKey]) product.limits[groupKey] = 1;
+      } else {
+        product.allowedGroups = product.allowedGroups.filter(k => k !== groupKey);
+        delete product.limits?.[groupKey];
+      }
+    }
+
+    function updateLimit(catIdx, prodIdx, groupKey, limit) {
+      const product = categories[catIdx].products[prodIdx];
+      if (!product.limits) product.limits = {};
+      product.limits[groupKey] = parseInt(limit) || 1;
+    }
+
+    function addProduct(catIdx) {
+      categories[catIdx].products.push({
+        id: Date.now(),
+        name: 'Novo Item',
+        description: '',
+        image: '',
+        price: '0.00',
+        customizable: false
+      });
+      renderEditor();
+    }
+
+    function handleUpload(e, catIdx, prodIdx) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const filename = file.name;
+        categories[catIdx].products[prodIdx].image = filename;
+        document.getElementById(`img-${catIdx}-${prodIdx}`).value = filename;
+        alert(`Imagem "${filename}" salva! Coloque em assets/images/`);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // === EVENTOS ===
+    document.addEventListener('DOMContentLoaded', () => {
+      if (customer.name) show('menu-screen');
+      else show('customer-screen');
+
+      document.getElementById('customer-form').onsubmit = e => {
+        e.preventDefault();
+        if (validateCustomer()) show('menu-screen');
+      };
+
+      document.getElementById('order-type').onchange = () => {
+        const isDelivery = document.getElementById('order-type').value === 'Entrega';
+        document.getElementById('delivery-fields').style.display = isDelivery ? 'block' : 'none';
+      };
+
+      document.getElementById('address-km').onchange = () => {
+        const isOther = document.getElementById('address-km').value === 'Outro';
+        document.getElementById('uber-freight-group').style.display = isOther ? 'block' : 'none';
+      };
+
+      document.getElementById('customer-editor-link').onclick = e => {
+        e.preventDefault();
+        const pwd = prompt('Senha do editor:');
+        if (pwd === 'EdLeoMarc&2025') {
+          backup = { categories: JSON.parse(JSON.stringify(categories)), groups: JSON.parse(JSON.stringify(ingredientGroups)) };
+          renderEditor();
+          show('editor-screen');
+        } else if (pwd !== null) alert('Senha incorreta');
+      };
+
+      document.getElementById('editor-add-category').onclick = () => {
+        const name = prompt('Nome da categoria:');
+        if (name) {
+          categories.push({ key: Date.now() + '', name, products: [] });
+          renderEditor();
+        }
+      };
+
+      document.getElementById('editor-cancel').onclick = () => {
+        categories = backup.categories;
+        ingredientGroups = backup.groups;
+        show('menu-screen');
+      };
+
+      document.getElementById('editor-save').onclick = () => {
+        save();
+        alert('Cardápio e ingredientes salvos!');
+        show('menu-screen');
+      };
+
+      document.getElementById('cart-badge').onclick = () => show('cart-screen');
+      document.getElementById('back-to-menu').onclick = () => show('menu-screen');
+      document.getElementById('menu-exit').onclick = () => show('customer-screen');
+      document.getElementById('modal-cancel').onclick = closeModal;
+      document.getElementById('modal-save').onclick = saveCustomization;
+      document.getElementById('cart-observations').oninput = e => { observations = e.target.value; save(); };
+      document.getElementById('checkout-whatsapp').onclick = () => {
+        if (!customer.name) return alert('Preencha os dados');
+        if (cart.length === 0) return alert('Carrinho vazio');
+        window.open(`https://wa.me/5521997599132?text=${buildMessage()}`, '_blank');
+      };
+      document.getElementById('search-input').oninput = renderProducts;
+    });
+  </script>
+</body>
+</html>
