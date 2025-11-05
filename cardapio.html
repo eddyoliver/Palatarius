@@ -825,7 +825,8 @@ let assets = {};
       validateImageFile(file);
 
       if (!UPLOAD_ENDPOINT) {
-        return readFileAsDataUrl(file);
+        const basePathMessage = ASSET_BASE_URL.endsWith('/') ? ASSET_BASE_URL : `${ASSET_BASE_URL}/`;
+        throw new Error(`Envie a imagem para ${basePathMessage} e selecione pelo campo de caminho.`);
       }
 
       const formData = new FormData();
