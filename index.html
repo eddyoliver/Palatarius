@@ -240,6 +240,7 @@
       if (!name) { document.getElementById('error-name').textContent = 'Nome obrigatório'; ok = false; }
       if (!/^\d{10,11}$/.test(phone)) { document.getElementById('error-phone').textContent = 'Telefone inválido'; ok = false; }
 
+      let address = {};
       if (type === 'Entrega') {
         const log = document.getElementById('address-logradouro').value.trim();
         const num = document.getElementById('address-number').value.trim();
@@ -251,22 +252,24 @@
         if (!num) { document.getElementById('error-number').textContent = 'Preencha'; ok = false; }
         if (!bairro) { document.getElementById('error-bairro').textContent = 'Preencha'; ok = false; }
         if (km === 'Outro' && (!freight || parseFloat(freight) <= 0)) {
-          document.getElementById('error-freight').textContent = 'Frete obrigatório'; ok = false; }
+          document.getElementById('error-freight').textContent = 'Frete obrigatório'; ok = false;
         }
 
-        customer.address = {
-          logradouro: log, number: num, complement: document.getElementById('address-complement').value.trim(),
-          bairro, marco: document.getElementById('address-marco').value.trim(), km, freight: freight || '0'
+        address = {
+          logradouro: log,
+          number: num,
+          complement: document.getElementById('address-complement').value.trim(),
+          bairro, marco: document.getElementById('address-marco').value.trim(),
+          km, freight: freight || '0'
         };
       }
 
       if (ok) {
-        customer.name = name;
-        customer.phone = phone;
-        customer.type = type;
+        customer = { name, phone, type, address };
         saveToStorage();
       }
-      return ok; // <<< ESTÁ DENTRO DA FUNÇÃO!
+
+      return ok;
     }
 
     // === RENDERIZAÇÃO ===
@@ -466,15 +469,17 @@
       });
 
       // Editor com senha
+      // === ACESSO AO EDITOR ===
       document.getElementById('customer-editor-link').addEventListener('click', e => {
         e.preventDefault();
-        const pwd = prompt('Digite a senha do editor:');
+        const pwd = prompt('🔒 Digite a senha do editor:');
         if (pwd === EDITOR_PASSWORD) {
+          alert('✅ Acesso liberado!');
           backupCategories = JSON.parse(JSON.stringify(categories));
           renderEditor();
           showScreen('editor-screen');
         } else if (pwd !== null) {
-          alert('Senha incorreta.');
+          alert('❌ Senha incorreta. Acesso negado.');
         }
       });
 
