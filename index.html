@@ -405,7 +405,7 @@
       <div class="form-group">
         <label>Nome completo *</label>
         <input type="text" id="customer-name" required>
-        <div class="error" id="error-name"></div>div>
+        <div class="error" id="error-name"></div>
       </div>
       <div class="form-group">
         <label>Telefone *</label>
@@ -673,12 +673,12 @@
         product.allowedGroups.forEach(gKey => {
           const group = ingredientGroups.find(g => g.key === gKey);
           if (!group) return;
-          const limit = product.limits?.[gKey] || 999;
+          const limit = product.limits?.[gKey] || 1;
 
           const section = document.createElement('div');
           section.className = 'modal-section';
           section.innerHTML = `
-            <label>${group.name} (máx ${limit})</label>
+            <label>${group.name}</label>
             <div class="limit-info">Escolha até ${limit} opção${limit > 1 ? 's' : ''}</div>
           `;
 
@@ -687,7 +687,7 @@
             const div = document.createElement('div');
             div.className = 'option-item';
             div.innerHTML = `
-              <input type="checkbox" id="opt-${item.key}" data-group="${gKey}" data-price="${item.price}">
+              <input type="checkbox" id="opt-${item.key}" data-group="${gKey}" data-price="${item.price}" data-name="${item.name}">
               <label for="opt-${item.key}">${item.name} ${item.price > 0 ? `+ R$ ${parseFloat(item.price).toFixed(2)}` : ''}</label>
             `;
             optionsDiv.appendChild(div);
@@ -717,11 +717,9 @@
       checkboxes.forEach(cb => {
         const group = cb.dataset.group;
         const price = parseFloat(cb.dataset.price) || 0;
+        const name = cb.dataset.name;
         if (!extras[group]) extras[group] = [];
-        extras[group].push({
-          name: cb.nextElementSibling.textContent.trim().split(' + ')[0],
-          price
-        });
+        extras[group].push({ name, price });
         extraPrice += price;
       });
 
@@ -729,9 +727,9 @@
       let valid = true;
       modalProduct.allowedGroups?.forEach(gKey => {
         const selected = extras[gKey]?.length || 0;
-        const limit = modalProduct.limits?.[gKey] || 999;
+        const limit = modalProduct.limits?.[gKey] || 1;
         if (selected > limit) {
-          alert(`Limite excedido: ${gKey} (máx ${limit})`);
+          alert(`Você pode escolher no máximo ${limit} ${ingredientGroups.find(g => g.key === gKey)?.name.toLowerCase() || 'opção'}.`);
           valid = false;
         }
       });
@@ -741,7 +739,11 @@
       modalProduct.extras = extras;
       modalProduct.finalPrice = parseFloat(modalProduct.price) + extraPrice;
 
-      const existing = cart.find(i => i.id === modalProduct.id && JSON.stringify(i.extras) === JSON.stringify(extras));
+      const existing = cart.find(i => 
+        i.id === modalProduct.id && 
+        JSON.stringify(i.extras) === JSON.stringify(extras)
+      );
+
       if (existing) {
         existing.quantity++;
       } else {
@@ -767,9 +769,10 @@
         subtotal += totalPrice;
 
         let extrasText = '';
-        Object.entries(item.extras || {}).forEach(([group, items]) => {
+        Object.entries(item.extras || {}).forEach(([groupKey, items]) => {
+          const groupName = ingredientGroups.find(g => g.key === groupKey)?.name || groupKey;
           const names = items.map(e => e.name).join(', ');
-          extrasText += `<div style="font-size:0.8rem; color:var(--light);">${group}: ${names}</div>`;
+          extrasText += `<div style="font-size:0.8rem; color:var(--light);">${groupName}: ${names}</div>`;
         });
 
         const div = document.createElement('div');
@@ -828,8 +831,9 @@
         const price = (base + extra) * item.quantity;
         total += price;
         let extraText = '';
-        Object.entries(item.extras || {}).forEach(([g, items]) => {
-          extraText += ` (${g}: ${items.map(e => e.name).join(', ')})`;
+        Object.entries(item.extras || {}).forEach(([gKey, items]) => {
+          const groupName = ingredientGroups.find(g => g.key === gKey)?.name || gKey;
+          extraText += ` (${groupName}: ${items.map(e => e.name).join(', ')})`;
         });
         msg += `- ${item.quantity}x ${item.name}${extraText} - R$ ${price.toFixed(2)}%0A`;
       });
@@ -917,16 +921,14 @@
             </div>
             <input type="number" step="0.01" value="${p.price}" placeholder="Preço base" onchange="categories[${i}].products[${j}].price=this.value">
             <div style="margin-top:0.5rem;">
-              <label><input type="checkbox" onchange="toggleGroups(${i},${j},this.checked)"> Permitir personalização</label>
+              <label><input type="checkbox" ${p.customizable ? 'checked' : ''} onchange="toggleCustomizable(${i},${j},this.checked)"> Personalização</label>
             </div>
-            <div id="groups-${i}-${j}" style="display:none; margin-top:0.5rem;"></div>
+            <div id="groups-${i}-${j}" style="${p.customizable ? 'display:block' : 'display:none'}; margin-top:0.5rem;"></div>
             <button class="btn btn-small" style="background:#E53935; margin-top:0.5rem; width:100%;" onclick="categories[${i}].products.splice(${j},1);renderEditor()">Remover Item</button>
           `;
 
           const groupsDiv = item.querySelector(`#groups-${i}-${j}`);
           if (p.customizable) {
-            item.querySelector('input[type="checkbox"]').checked = true;
-            groupsDiv.style.display = 'block';
             renderProductGroups(i, j, groupsDiv);
           }
 
@@ -936,10 +938,15 @@
       });
     }
 
-    function toggleGroups(catIdx, prodIdx, enabled) {
+    function toggleCustomizable(catIdx, prodIdx, enabled) {
       categories[catIdx].products[prodIdx].customizable = enabled;
-      categories[catIdx].products[prodIdx].allowedGroups = enabled ? [] : undefined;
-      categories[catIdx].products[prodIdx].limits = enabled ? {} : undefined;
+      if (!enabled) {
+        delete categories[catIdx].products[prodIdx].allowedGroups;
+        delete categories[catIdx].products[prodIdx].limits;
+      } else {
+        categories[catIdx].products[prodIdx].allowedGroups = [];
+        categories[catIdx].products[prodIdx].limits = {};
+      }
       renderEditor();
     }
 
@@ -963,19 +970,21 @@
     function updateGroup(catIdx, prodIdx, groupKey, enabled) {
       const product = categories[catIdx].products[prodIdx];
       if (!product.allowedGroups) product.allowedGroups = [];
+      if (!product.limits) product.limits = {};
+
       if (enabled) {
-        if (!product.allowedGroups.includes(groupKey)) product.allowedGroups.push(groupKey);
-        if (!product.limits) product.limits = {};
-        if (!product.limits[groupKey]) product.limits[groupKey] = 1;
+        if (!product.allowedGroups.includes(groupKey)) {
+          product.allowedGroups.push(groupKey);
+          product.limits[groupKey] = 1;
+        }
       } else {
         product.allowedGroups = product.allowedGroups.filter(k => k !== groupKey);
-        delete product.limits?.[groupKey];
+        delete product.limits[groupKey];
       }
     }
 
     function updateLimit(catIdx, prodIdx, groupKey, limit) {
       const product = categories[catIdx].products[prodIdx];
-      if (!product.limits) product.limits = {};
       product.limits[groupKey] = parseInt(limit) || 1;
     }
 
@@ -994,14 +1003,10 @@
     function handleUpload(e, catIdx, prodIdx) {
       const file = e.target.files[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        const filename = file.name;
-        categories[catIdx].products[prodIdx].image = filename;
-        document.getElementById(`img-${catIdx}-${prodIdx}`).value = filename;
-        alert(`Imagem "${filename}" salva! Coloque em assets/images/`);
-      };
-      reader.readAsDataURL(file);
+      const filename = file.name;
+      categories[catIdx].products[prodIdx].image = filename;
+      document.getElementById(`img-${catIdx}-${prodIdx}`).value = filename;
+      alert(`Imagem "${filename}" salva! Coloque em assets/images/`);
     }
 
     // === EVENTOS ===
