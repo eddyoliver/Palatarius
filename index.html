@@ -394,9 +394,7 @@
 </head>
 <body>
 
-  <header>
-    <h1>Palatarius</h1>
-  </header>
+  <header><h1>Palatarius</h1></header>
 
   <!-- Cliente -->
   <section id="customer-screen" class="active">
@@ -420,35 +418,14 @@
         </select>
       </div>
       <div id="delivery-fields" style="display:none;">
-        <div class="form-group">
-          <label>Logradouro *</label>
-          <input type="text" id="address-logradouro">
-          <div class="error" id="error-logradouro"></div>
-        </div>
+        <div class="form-group"><label>Logradouro *</label><input type="text" id="address-logradouro"><div class="error" id="error-logradouro"></div></div>
         <div class="row">
-          <div class="form-group">
-            <label>Número *</label>
-            <input type="text" id="address-number">
-            <div class="error" id="error-number"></div>
-          </div>
-          <div class="form-group">
-            <label>Complemento</label>
-            <input type="text" id="address-complement">
-          </div>
+          <div class="form-group"><label>Número *</label><input type="text" id="address-number"><div class="error" id="error-number"></div></div>
+          <div class="form-group"><label>Complemento</label><input type="text" id="address-complement"></div>
         </div>
-        <div class="form-group">
-          <label>Bairro *</label>
-          <input type="text" id="address-bairro">
-          <div class="error" id="error-bairro"></div>
-        </div>
-        <div class="form-group">
-          <label>Marco</label>
-          <input type="text" id="address-marco">
-        </div>
-        <div class="form-group">
-          <label>Cidade</label>
-          <input type="text" value="Seropédica-RJ" readonly>
-        </div>
+        <div class="form-group"><label>Bairro *</label><input type="text" id="address-bairro"><div class="error" id="error-bairro"></div></div>
+        <div class="form-group"><label>Marco</label><input type="text" id="address-marco"></div>
+        <div class="form-group"><label>Cidade</label><input type="text" value="Seropédica-RJ" readonly></div>
         <div class="form-group">
           <label>KM *</label>
           <select id="address-km">
@@ -467,9 +444,7 @@
       </div>
       <button type="submit" class="btn btn-primary">Continuar → Cardápio</button>
       <p style="margin-top:1rem; font-size:0.9rem;">
-        <a href="#" id="customer-editor-link" style="color: var(--primary-yellow); text-decoration: underline; cursor: pointer;">
-          Área do Editor
-        </a>
+        <a href="#" id="customer-editor-link" style="color: var(--primary-yellow); text-decoration: underline; cursor: pointer;">Área do Editor</a>
       </p>
     </form>
   </section>
@@ -504,10 +479,9 @@
       <button id="back-to-menu" class="btn btn-secondary">Continuar Comprando</button>
       <button id="checkout-whatsapp" class="btn btn-primary">Enviar no WhatsApp</button>
     </div>
-    <button id="print-coupon" class="btn btn-small" style="margin-top:0.5rem; width:100%;">Gerar Cupom</button>
   </section>
 
-  <!-- Modal de Montagem -->
+  <!-- Modal -->
   <div class="modal-overlay" id="modal-overlay">
     <div class="modal">
       <h2 id="modal-title">Monte seu prato</h2>
@@ -519,7 +493,7 @@
     </div>
   </div>
 
-  <!-- Tela do Editor -->
+  <!-- Editor -->
   <section id="editor-screen">
     <h2>Editor do Cardápio</h2>
     <button id="editor-add-category" class="btn btn-primary" style="margin-bottom:1rem;">+ Nova Categoria</button>
@@ -533,86 +507,34 @@
 
   <script>
     // === DADOS GLOBAIS ===
-    let categories = [];
+    let categories = JSON.parse(localStorage.getItem('palatarius_categories') || '[]');
     let activeCategory = '';
-    let customer = { address: {} };
-    let cart = [];
-    let cartObservations = '';
+    let customer = JSON.parse(localStorage.getItem('palatarius_customer') || '{}');
+    let cart = JSON.parse(localStorage.getItem('palatarius_cart') || '[]');
+    let cartObservations = localStorage.getItem('palatarius_observations') || '';
     let modalProduct = null;
-    let proteins = [];
-    let ingredients = [];
-    let sauces = [];
-    let extras = [];
-    let acaiFlavors = [];
-    let iceCreamFlavors = [];
-    let toppings = [];
-    let syrups = [];
-    let assets = {};
-    let users = {};
+    let backupCategories = null;
 
     // Senha do editor
-    function getEditorPassword() {
-      return 'EdLeoMarc&2025';
-    }
+    const EDITOR_PASSWORD = 'EdLeoMarc&2025';
 
     // === LOCALSTORAGE ===
     function saveToStorage() {
       localStorage.setItem('palatarius_categories', JSON.stringify(categories));
-      localStorage.setItem('palatarius_proteins', JSON.stringify(proteins));
-      localStorage.setItem('palatarius_ingredients', JSON.stringify(ingredients));
-      localStorage.setItem('palatarius_sauces', JSON.stringify(sauces));
-      localStorage.setItem('palatarius_extras', JSON.stringify(extras));
-      localStorage.setItem('palatarius_acaiFlavors', JSON.stringify(acaiFlavors));
-      localStorage.setItem('palatarius_iceCreamFlavors', JSON.stringify(iceCreamFlavors));
-      localStorage.setItem('palatarius_toppings', JSON.stringify(toppings));
-      localStorage.setItem('palatarius_syrups', JSON.stringify(syrups));
       localStorage.setItem('palatarius_customer', JSON.stringify(customer));
       localStorage.setItem('palatarius_cart', JSON.stringify(cart));
       localStorage.setItem('palatarius_observations', cartObservations);
     }
 
-    function loadFromStorage() {
-      const cat = localStorage.getItem('palatarius_categories');
-      if (cat) categories = JSON.parse(cat);
-      const prot = localStorage.getItem('palatarius_proteins');
-      if (prot) proteins = JSON.parse(prot);
-      const ing = localStorage.getItem('palatarius_ingredients');
-      if (ing) ingredients = JSON.parse(ing);
-      const sau = localStorage.getItem('palatarius_sauces');
-      if (sau) sauces = JSON.parse(sau);
-      const ext = localStorage.getItem('palatarius_extras');
-      if (ext) extras = JSON.parse(ext);
-      const acai = localStorage.getItem('palatarius_acaiFlavors');
-      if (acai) acaiFlavors = JSON.parse(acai);
-      const ice = localStorage.getItem('palatarius_iceCreamFlavors');
-      if (ice) iceCreamFlavors = JSON.parse(ice);
-      const top = localStorage.getItem('palatarius_toppings');
-      if (top) toppings = JSON.parse(top);
-      const syr = localStorage.getItem('palatarius_syrups');
-      if (syr) syrups = JSON.parse(syr);
-      const cust = localStorage.getItem('palatarius_customer');
-      if (cust) customer = JSON.parse(cust);
-      const c = localStorage.getItem('palatarius_cart');
-      if (c) cart = JSON.parse(c);
-      cartObservations = localStorage.getItem('palatarius_observations') || '';
-    }
-
-    function saveUsers(u) {
-      localStorage.setItem('palatarius_users', JSON.stringify(u));
-    }
-
-    function loadUsers() {
-      return JSON.parse(localStorage.getItem('palatarius_users')) || {};
-    }
-
-    // === NAVEGAÇÃO ENTRE TELAS ===
-    function showScreen(screenId) {
+    // === NAVEGAÇÃO ===
+    function showScreen(id) {
       document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-      document.getElementById(screenId).classList.add('active');
-      if (screenId === 'menu-screen') updateCartBadge();
+      document.getElementById(id).classList.add('active');
+      if (id === 'menu-screen') { renderCategories(); renderProducts(); updateCartBadge(); }
+      if (id === 'cart-screen') renderCart();
     }
 
-    // === VALIDAÇÃO DO CLIENTE ===
+    // === VALIDAÇÃO CLIENTE (CORRIGIDA) ===
     function validateCustomerForm() {
       let ok = true;
       const name = document.getElementById('customer-name').value.trim();
@@ -621,8 +543,8 @@
 
       document.querySelectorAll('.error').forEach(e => e.textContent = '');
 
-      if (!name) { document.getElementById('error-name').textContent = 'Preencha o nome.'; ok = false; }
-      if (!/^\d{10,11}$/.test(phone)) { document.getElementById('error-phone').textContent = 'Telefone inválido.'; ok = false; }
+      if (!name) { document.getElementById('error-name').textContent = 'Nome obrigatório'; ok = false; }
+      if (!/^\d{10,11}$/.test(phone)) { document.getElementById('error-phone').textContent = 'Telefone inválido'; ok = false; }
 
       if (type === 'Entrega') {
         const log = document.getElementById('address-logradouro').value.trim();
@@ -631,22 +553,14 @@
         const km = document.getElementById('address-km').value;
         const freight = document.getElementById('uber-freight').value;
 
-        if (!log) { document.getElementById('error-logradouro').textContent = 'Preencha o logradouro.'; ok = false; }
-        if (!num) { document.getElementById('error-number').textContent = 'Preencha o número.'; ok = false; }
-        if (!bairro) { document.getElementById('error-bairro').textContent = 'Preencha o bairro.'; ok = false; }
+        if (!log) { document.getElementById('error-logradouro').textContent = 'Preencha'; ok = false; }
+        if (!num) { document.getElementById('error-number').textContent = 'Preencha'; ok = false; }
+        if (!bairro) { document.getElementById('error-bairro').textContent = 'Preencha'; ok = false; }
         if (km === 'Outro' && (!freight || parseFloat(freight) <= 0)) {
-          document.getElementById('error-freight').textContent = 'Informe o frete.'; ok = false; }
+          document.getElementById('error-freight').textContent = 'Frete obrigatório'; ok = false; }
         }
-        customer.address = {
-          logradouro: log,
-          number: num,
-          complement: document.getElementById('address-complement').value.trim(),
-          bairro: bairro,
-          marco: document.getElementById('address-marco').value.trim(),
-          cidade: document.getElementById('address-cidade').value,
-          km: km,
-          freight: freight || '0'
-        };
+
+        customer.address = { logradouro: log, number: num, complement: document.getElementById('address-complement').value.trim(), bairro, marco: document.getElementById('address-marco').value.trim(), km, freight: freight || '0' };
       }
 
       if (ok) {
@@ -662,15 +576,10 @@
     function renderCategories() {
       const nav = document.getElementById('category-nav');
       nav.innerHTML = '';
-      if (categories.length === 0) return;
       categories.forEach(cat => {
         const btn = document.createElement('button');
         btn.textContent = cat.name;
-        btn.onclick = () => {
-          activeCategory = cat.key;
-          renderCategories();
-          renderProducts();
-        };
+        btn.onclick = () => { activeCategory = cat.key; renderCategories(); renderProducts(); };
         if (cat.key === activeCategory) btn.classList.add('active');
         nav.appendChild(btn);
       });
@@ -684,78 +593,42 @@
       const cat = categories.find(c => c.key === activeCategory);
       if (!cat) return;
 
-      const filtered = cat.products.filter(p =>
-        p.name.toLowerCase().includes(search) ||
-        (p.description && p.description.toLowerCase().includes(search))
-      );
-
-      filtered.forEach(product => {
-        const card = document.createElement('div');
-        card.className = 'product-card';
-
-        const imgDiv = document.createElement('div');
-        imgDiv.className = 'product-image';
-        if (product.imageUrl) {
-          const img = document.createElement('img');
-          img.src = product.imageUrl;
-          img.alt = product.name;
-          img.onerror = () => { imgDiv.innerHTML = '<div style="text-align:center;">Foto em breve</div>'; };
-          imgDiv.appendChild(img);
-        } else if (product.image) {
-          const img = document.createElement('img');
-          img.src = `assets/images/${product.image}`;
-          img.alt = product.name;
-          img.onerror = () => { imgDiv.innerHTML = '<div style="text-align:center;">Foto em breve</div>'; };
-          imgDiv.appendChild(img);
-        } else {
-          imgDiv.innerHTML = '<div style="text-align:center;">Foto em breve</div>';
-        }
-
-        const content = document.createElement('div');
-        content.className = 'product-content';
-        content.innerHTML = `
-          <div class="product-title">${product.name}</div>
-          ${product.description ? `<div class="product-desc">${product.description}</div>` : ''}
-          <div class="product-price">R$ ${parseFloat(product.price).toFixed(2).replace('.', ',')}</div>
-          <div class="product-actions">
-            <button class="btn btn-primary btn-small" onclick='openModal(${JSON.stringify(product).split('"').join('&quot;')})'>Adicionar</button>
-          </div>
-        `;
-        card.appendChild(imgDiv);
-        card.appendChild(content);
-        container.appendChild(card);
-      });
+      cat.products
+        .filter(p => p.name.toLowerCase().includes(search) || (p.description && p.description.toLowerCase().includes(search)))
+        .forEach(p => {
+          const card = document.createElement('div');
+          card.className = 'product-card';
+          card.innerHTML = `
+            <div class="product-image">
+              ${p.imageUrl ? `<img src="${p.imageUrl}" alt="${p.name}" onerror="this.style.display='none'">` : 
+                p.image ? `<img src="assets/images/${p.image}" alt="${p.name}" onerror="this.style.display='none'">` : 
+                '<div>Foto em breve</div>'}
+            </div>
+            <div class="product-content">
+              <div class="product-title">${p.name}</div>
+              ${p.description ? `<div class="product-desc">${p.description}</div>` : ''}
+              <div class="product-price">R$ ${parseFloat(p.price).toFixed(2).replace('.', ',')}</div>
+              <div class="product-actions">
+                <button class="btn btn-primary btn-small" onclick='openModal(${JSON.stringify(p)})'>Adicionar</button>
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
     }
 
     function updateCartBadge() {
-      const badge = document.getElementById('cart-badge');
       const count = cart.reduce((s, i) => s + i.quantity, 0);
-      const span = document.getElementById('cart-count');
-      if (count > 0) {
-        span.textContent = count;
-        badge.style.display = 'flex';
-      } else {
-        badge.style.display = 'none';
-      }
+      const badge = document.getElementById('cart-badge');
+      document.getElementById('cart-count').textContent = count;
+      badge.style.display = count > 0 ? 'flex' : 'none';
     }
 
     // === MODAL ===
     function openModal(product) {
-      modalProduct = { ...product, quantity: 1, options: {} };
-      const title = document.getElementById('modal-title');
-      title.textContent = product.name;
-
-      const content = document.getElementById('modal-content');
-      content.innerHTML = '';
-
-      if (product.customizable) {
-        // Adicionar opções de customização aqui
-        const section = document.createElement('div');
-        section.className = 'modal-section';
-        section.innerHTML = `<label>Escolha uma opção:</label><div class="options"></div>`;
-        content.appendChild(section);
-      }
-
+      modalProduct = { ...product, quantity: 1 };
+      document.getElementById('modal-title').textContent = product.name;
+      document.getElementById('modal-content').innerHTML = '<p>Sem personalização.</p>';
       document.getElementById('modal-overlay').classList.add('active');
     }
 
@@ -767,11 +640,8 @@
     function saveModal() {
       if (!modalProduct) return;
       const existing = cart.find(i => i.id === modalProduct.id);
-      if (existing) {
-        existing.quantity += modalProduct.quantity;
-      } else {
-        cart.push({ ...modalProduct });
-      }
+      if (existing) existing.quantity++;
+      else cart.push({ ...modalProduct });
       saveToStorage();
       updateCartBadge();
       renderCart();
@@ -783,330 +653,159 @@
       const container = document.getElementById('cart-items');
       container.innerHTML = '';
       let subtotal = 0;
-      cart.forEach((item, index) => {
+      cart.forEach((item, i) => {
         const price = parseFloat(item.price) * item.quantity;
         subtotal += price;
         const div = document.createElement('div');
         div.className = 'cart-item';
         div.innerHTML = `
           <img src="${item.image ? 'assets/images/' + item.image : ''}" onerror="this.style.display='none'">
-          <div class="cart-item-details">
-            <div class="cart-item-title">${item.name}</div>
-            <div class="cart-item-options">R$ ${parseFloat(item.price).toFixed(2)} x ${item.quantity}</div>
+          <div style="flex:1;">
+            <div class="product-title">${item.name}</div>
+            <div style="font-size:0.9rem;">R$ ${parseFloat(item.price).toFixed(2)} × ${item.quantity}</div>
           </div>
-          <div class="cart-item-actions">
-            <div class="quantity-control">
-              <button onclick="updateQuantity(${index}, -1)">-</button>
-              <span>${item.quantity}</span>
-              <button onclick="updateQuantity(${index}, 1)">+</button>
-            </div>
-            <button class="btn btn-small" style="margin-top:0.5rem; background:#E53935;" onclick="removeFromCart(${index})">Remover</button>
+          <div class="quantity-control">
+            <button onclick="updateQty(${i}, -1)">-</button>
+            <span>${item.quantity}</span>
+            <button onclick="updateQty(${i}, 1)">+</button>
           </div>
+          <button class="btn btn-small" style="background:#E53935; margin-left:0.5rem;" onclick="removeFromCart(${i})">×</button>
         `;
         container.appendChild(div);
       });
 
-      const freight = customer.type === 'Entrega' && customer.address.freight ? parseFloat(customer.address.freight) : 0;
+      const freight = customer.type === 'Entrega' ? parseFloat(customer.address?.freight || 0) : 0;
       document.getElementById('subtotal').textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
       document.getElementById('freight').textContent = `R$ ${freight.toFixed(2).replace('.', ',')}`;
       document.getElementById('freight-row').style.display = freight > 0 ? 'flex' : 'none';
       document.getElementById('total').textContent = `R$ ${(subtotal + freight).toFixed(2).replace('.', ',')}`;
     }
 
-    function updateQuantity(index, delta) {
-      cart[index].quantity = Math.max(1, cart[index].quantity + delta);
-      saveToStorage();
-      renderCart();
-      updateCartBadge();
+    function updateQty(i, delta) {
+      cart[i].quantity = Math.max(1, cart[i].quantity + delta);
+      saveToStorage(); renderCart(); updateCartBadge();
     }
 
-    function removeFromCart(index) {
-      cart.splice(index, 1);
-      saveToStorage();
-      renderCart();
-      updateCartBadge();
+    function removeFromCart(i) {
+      cart.splice(i, 1);
+      saveToStorage(); renderCart(); updateCartBadge();
     }
 
-    // === WHATSAPP ===
-    function buildWhatsAppMessage() {
-      let msg = `*PEDIDO - PALATARIUS*%0A%0A`;
-      msg += `*Cliente:* ${customer.name}%0A`;
-      msg += `*Telefone:* ${customer.phone}%0A`;
-      msg += `*Tipo:* ${customer.type}%0A`;
-      if (customer.type === 'Entrega') {
-        msg += `*Endereço:* ${customer.address.logradouro}, ${customer.address.number}`;
-        if (customer.address.complement) msg += ` - ${customer.address.complement}`;
-        msg += `, ${customer.address.bairro}, ${customer.address.cidade} (KM ${customer.address.km})%0A`;
-        if (customer.address.marco) msg += `*Marco:* ${customer.address.marco}%0A`;
-        if (customer.address.freight > 0) msg += `*Frete:* R$ ${parseFloat(customer.address.freight).toFixed(2)}%0A`;
+    // === EDITOR (CORRIGIDO) ===
+    function addCategory() {
+      const name = prompt('Nome da categoria:');
+      if (name) {
+        categories.push({ key: Date.now() + '', name, products: [] });
+        renderEditor();
       }
-      msg += `%0A*Itens:*%0A`;
-      let total = 0;
-      cart.forEach(item => {
-        const price = parseFloat(item.price) * item.quantity;
-        total += price;
-        msg += `- ${item.quantity}x ${item.name} - R$ ${price.toFixed(2)}%0A`;
+    }
+
+    function deleteCategory(i) {
+      if (confirm('Excluir categoria?')) {
+        categories.splice(i, 1);
+        renderEditor();
+      }
+    }
+
+    function addProduct(catIdx) {
+      categories[catIdx].products.push({
+        id: Date.now(), name: 'Novo Item', price: '0.00', image: '', imageUrl: ''
       });
-      if (customer.type === 'Entrega' && customer.address.freight > 0) {
-        total += parseFloat(customer.address.freight);
-        msg += `- Frete: R$ ${parseFloat(customer.address.freight).toFixed(2)}%0A`;
-      }
-      if (cartObservations) msg += `%0A*Obs:* ${cartObservations}%0A`;
-      msg += `%0A*Total: R$ ${total.toFixed(2)}*`;
-      return msg;
+      renderEditor();
     }
-
-    // === EDITOR ===
-    let backupCategories;
-    let backupOptions;
 
     function renderEditor() {
       const container = document.getElementById('editor-categories');
       container.innerHTML = '';
-      categories.forEach((cat, catIndex) => {
+      categories.forEach((cat, i) => {
         const div = document.createElement('div');
-        div.style = 'background:var(--gray-dark); padding:1rem; border-radius:var(--radius-card); margin-bottom:1rem;';
+        div.style = 'background:var(--gray-dark); padding:1rem; border-radius:8px; margin-bottom:1rem;';
         div.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <input type="text" value="${cat.name}" style="flex:1; margin-right:0.5rem;" onchange="categories[${catIndex}].name=this.value; renderEditor();">
-            <button class="btn btn-small" style="background:#E53935;" onclick="deleteCategory(${catIndex})">Excluir</button>
-          </div>
-          <button class="btn btn-primary" style="margin-top:0.5rem; width:100%;" onclick="addProduct(${catIndex})">+ Adicionar Item</button>
-          <div style="margin-top:1rem;"></div>
+          <input value="${cat.name}" style="width:100%; margin-bottom:0.5rem;" onchange="categories[${i}].name=this.value">
+          <button class="btn btn-small" style="background:#E53935; width:100%; margin-bottom:0.5rem;" onclick="deleteCategory(${i})">Excluir Categoria</button>
+          <button class="btn btn-primary" style="width:100%; margin-bottom:0.5rem;" onclick="addProduct(${i})">+ Item</button>
+          <div id="prod-${i}"></div>
         `;
-        const prodContainer = div.querySelector('div:last-child');
-        cat.products.forEach((prod, prodIndex) => {
-          const pdiv = document.createElement('div');
-          pdiv.style = 'background:var(--gray-medium); padding:0.8rem; border-radius:8px; margin-top:0.5rem;';
-          pdiv.innerHTML = `
-            <input type="text" value="${prod.name}" placeholder="Nome" onchange="categories[${catIndex}].products[${prodIndex}].name=this.value">
-            <input type="text" value="${prod.description || ''}" placeholder="Descrição" onchange="categories[${catIndex}].products[${prodIndex}].description=this.value">
-            <div style="display:flex; gap:0.5rem; margin-top:0.5rem; align-items:flex-start; flex-direction:column;">
-              <small style="color:var(--light);">Imagem (GitHub ou local):</small>
-              <input 
-                type="text" 
-                placeholder="https://raw.githubusercontent.com/..." 
-                value="${prod.imageUrl || ''}" 
-                onchange="categories[${catIndex}].products[${prodIndex}].imageUrl=this.value; categories[${catIndex}].products[${prodIndex}].image=''" 
-                style="flex:1; font-size:0.85rem; padding:0.4rem;">
-              <div style="display:flex; gap:0.3rem; width:100%;">
-                <input 
-                  type="text" 
-                  value="${prod.image||''}" 
-                  placeholder="ou nome-local.jpg" 
-                  id="img-${catIndex}-${prodIndex}" 
-                  style="flex:1; font-size:0.85rem; padding:0.4rem;">
-                <label class="upload-btn" for="upload-${catIndex}-${prodIndex}">Escolher</label>
-                <input type="file" id="upload-${catIndex}-${prodIndex}" accept="image/*" style="display:none;" onchange="handleUpload(event,${catIndex},${prodIndex})">
-              </div>
-            </div>
-            <input type="number" step="0.01" value="${prod.price}" placeholder="Preço base" onchange="categories[${catIndex}].products[${prodIndex}].price=this.value">
-            <div style="margin-top:0.5rem;">
-              <label><input type="checkbox" ${prod.customizable ? 'checked' : ''} onchange="toggleCustomizable(${catIndex},${prodIndex},this.checked)"> Personalização</label>
-            </div>
-            <div id="groups-${catIndex}-${prodIndex}" style="${prod.customizable ? 'display:block' : 'display:none'}; margin-top:0.5rem;"></div>
-            <button class="btn btn-small" style="background:#E53935; margin-top:0.5rem; width:100%;" onclick="categories[${catIndex}].products.splice(${prodIndex},1);renderEditor()">Remover Item</button>
+        const prodDiv = div.querySelector(`#prod-${i}`);
+        cat.products.forEach((p, j) => {
+          const item = document.createElement('div');
+          item.style = 'background:var(--gray-medium); padding:0.8rem; border-radius:8px; margin-top:0.5rem;';
+          item.innerHTML = `
+            <input value="${p.name}" placeholder="Nome" onchange="categories[${i}].products[${j}].name=this.value">
+            <input value="${p.imageUrl||''}" placeholder="URL GitHub" onchange="categories[${i}].products[${j}].imageUrl=this.value">
+            <input type="number" step="0.01" value="${p.price}" placeholder="Preço" onchange="categories[${i}].products[${j}].price=this.value">
+            <button class="btn btn-small" style="background:#E53935; margin-top:0.5rem; width:100%;" onclick="categories[${i}].products.splice(${j},1);renderEditor()">Remover</button>
           `;
-
-          const groupsDiv = pdiv.querySelector(`#groups-${catIndex}-${prodIndex}`);
-          if (prod.customizable) {
-            renderProductGroups(catIndex, prodIndex, groupsDiv);
-          }
-
-          prodContainer.appendChild(pdiv);
+          prodDiv.appendChild(item);
         });
         container.appendChild(div);
       });
     }
 
-    function toggleCustomizable(catIdx, prodIdx, enabled) {
-      categories[catIdx].products[prodIdx].customizable = enabled;
-      if (!enabled) {
-        delete categories[catIdx].products[prodIdx].allowedGroups;
-        delete categories[catIdx].products[prodIdx].limits;
-      } else {
-        categories[catIdx].products[prodIdx].allowedGroups = [];
-        categories[catIdx].products[prodIdx].limits = {};
-      }
-      renderEditor();
+    function saveCatalog() {
+      saveToStorage();
+      alert('Cardápio salvo!');
     }
 
-    function renderProductGroups(catIdx, prodIdx, container) {
-      container.innerHTML = '';
-      ingredientGroups.forEach(group => {
-        const checked = categories[catIdx].products[prodIdx].allowedGroups?.includes(group.key);
-        const limit = categories[catIdx].products[prodIdx].limits?.[group.key] || 1;
-
-        const div = document.createElement('div');
-        div.style = 'display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;';
-        div.innerHTML = `
-          <input type="checkbox" id="grp-${catIdx}-${prodIdx}-${group.key}" ${checked ? 'checked' : ''} onchange="updateGroup(${catIdx},${prodIdx},'${group.key}',this.checked)">
-          <label for="grp-${catIdx}-${prodIdx}-${group.key}">${group.name}</label>
-          <input type="number" min="1" value="${limit}" style="width:60px;" onchange="updateLimit(${catIdx},${prodIdx},'${group.key}',this.value)">
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    function updateGroup(catIdx, prodIdx, groupKey, enabled) {
-      const product = categories[catIdx].products[prodIdx];
-      if (!product.allowedGroups) product.allowedGroups = [];
-      if (!product.limits) product.limits = {};
-
-      if (enabled) {
-        if (!product.allowedGroups.includes(groupKey)) {
-          product.allowedGroups.push(groupKey);
-          product.limits[groupKey] = 1;
-        }
-      } else {
-        product.allowedGroups = product.allowedGroups.filter(k => k !== groupKey);
-        delete product.limits[groupKey];
-      }
-    }
-
-    function updateLimit(catIdx, prodIdx, groupKey, limit) {
-      const product = categories[catIdx].products[prodIdx];
-      product.limits[groupKey] = parseInt(limit) || 1;
-    }
-
-    function addProduct(catIdx) {
-      categories[catIdx].products.push({
-        id: Date.now(),
-        name: 'Novo Item',
-        description: '',
-        image: '',
-        imageUrl: '',
-        price: '0.00',
-        customizable: false
-      });
-      renderEditor();
-    }
-
-    function handleUpload(e, catIdx, prodIdx) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const filename = file.name;
-      categories[catIdx].products[prodIdx].image = filename;
-      categories[catIdx].products[prodIdx].imageUrl = ''; // Limpa o link do GitHub
-      document.getElementById(`img-${catIdx}-${prodIdx}`).value = filename;
-      alert(`Imagem local "${filename}" salva! Coloque em assets/images/`);
+    function exportHTML() {
+      const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'cardapio-palatarius.html'; a.click();
     }
 
     // === EVENTOS ===
     document.addEventListener('DOMContentLoaded', () => {
-      loadFromStorage();
-      renderCategories();
-      renderProducts();
+      if (customer.name) showScreen('menu-screen');
+      else showScreen('customer-screen');
 
-      if (customer && customer.name) {
-        showScreen('menu-screen');
-        updateCartBadge();
-      } else {
-        showScreen('customer-screen');
-      }
-
-      // Formulário cliente
       document.getElementById('customer-form').addEventListener('submit', e => {
         e.preventDefault();
-        if (validateCustomerForm()) {
-          showScreen('menu-screen');
-          renderCategories();
-          renderProducts();
-          updateCartBadge();
-        }
+        if (validateCustomerForm()) showScreen('menu-screen');
       });
 
-      // Tipo de pedido
       document.getElementById('order-type').addEventListener('change', e => {
         document.getElementById('delivery-fields').style.display = e.target.value === 'Entrega' ? 'block' : 'none';
       });
 
-      // KM Outro
       document.getElementById('address-km').addEventListener('change', e => {
         document.getElementById('uber-freight-group').style.display = e.target.value === 'Outro' ? 'block' : 'none';
       });
 
-      // Pesquisa
       document.getElementById('search-input').addEventListener('input', renderProducts);
-
-      // Botões
-      document.getElementById('menu-exit').addEventListener('click', () => {
-        populateCustomerForm();
-        showScreen('customer-screen');
-      });
-
-      document.getElementById('cart-badge').addEventListener('click', () => {
-        renderCart();
-        showScreen('cart-screen');
-      });
-
+      document.getElementById('menu-exit').addEventListener('click', () => showScreen('customer-screen'));
+      document.getElementById('cart-badge').addEventListener('click', () => { renderCart(); showScreen('cart-screen'); });
       document.getElementById('back-to-menu').addEventListener('click', () => showScreen('menu-screen'));
-
       document.getElementById('modal-cancel').addEventListener('click', closeModal);
       document.getElementById('modal-save').addEventListener('click', saveModal);
-
-      document.getElementById('cart-observations').addEventListener('input', e => {
-        cartObservations = e.target.value;
-        saveToStorage();
-      });
-
+      document.getElementById('cart-observations').addEventListener('input', e => { cartObservations = e.target.value; saveToStorage(); });
       document.getElementById('checkout-whatsapp').addEventListener('click', () => {
-        if (!validateCustomerForm()) return alert('Preencha os dados do cliente.');
-        if (cart.length === 0) return alert('Carrinho vazio.');
-        const url = `https://wa.me/5521997599132?text=${buildWhatsAppMessage()}`;
-        window.open(url, '_blank');
+        if (cart.length === 0) return alert('Carrinho vazio');
+        const msg = `*PEDIDO*\n*Cliente:* ${customer.name}\n*Tel:* ${customer.phone}\n*Total:* R$ ${document.getElementById('total').textContent}`;
+        window.open(`https://wa.me/5521997599132?text=${encodeURIComponent(msg)}`);
       });
 
-      // Editor
+      // Editor com senha
       document.getElementById('customer-editor-link').addEventListener('click', e => {
         e.preventDefault();
-        const pwd = prompt('Digite a senha do editor:');
-        if (pwd === getEditorPassword()) {
+        const pwd = prompt('Senha do editor:');
+        if (pwd === EDITOR_PASSWORD) {
           backupCategories = JSON.parse(JSON.stringify(categories));
           renderEditor();
           showScreen('editor-screen');
         } else if (pwd !== null) {
-          alert('Senha incorreta.');
+          alert('Senha incorreta');
         }
       });
 
       document.getElementById('editor-add-category').addEventListener('click', addCategory);
-
       document.getElementById('editor-cancel').addEventListener('click', () => {
-        if (backupCategories) categories = backupCategories;
+        categories = backupCategories || categories;
         showScreen('menu-screen');
-        renderCategories();
-        renderProducts();
       });
-
-      document.getElementById('editor-save').addEventListener('click', () => {
-        if (categories.length === 0) return alert('Adicione pelo menos uma categoria.');
-        saveCatalog();
-        showScreen('menu-screen');
-        renderCategories();
-        renderProducts();
-      });
-
+      document.getElementById('editor-save').addEventListener('click', saveCatalog);
       document.getElementById('editor-export').addEventListener('click', exportHTML);
     });
-
-    // Preencher formulário ao editar
-    function populateCustomerForm() {
-      document.getElementById('customer-name').value = customer.name || '';
-      document.getElementById('customer-phone').value = customer.phone || '';
-      document.getElementById('order-type').value = customer.type || 'Retirada';
-      const addr = customer.address || {};
-      document.getElementById('address-logradouro').value = addr.logradouro || '';
-      document.getElementById('address-number').value = addr.number || '';
-      document.getElementById('address-complement').value = addr.complement || '';
-      document.getElementById('address-bairro').value = addr.bairro || '';
-      document.getElementById('address-marco').value = addr.marco || '';
-      document.getElementById('address-km').value = addr.km || '39';
-      document.getElementById('uber-freight').value = addr.freight || '';
-      document.getElementById('order-type').dispatchEvent(new Event('change'));
-      document.getElementById('address-km').dispatchEvent(new Event('change'));
-    }
   </script>
-
 </body>
 </html>
