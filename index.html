@@ -204,6 +204,7 @@
   <script>
     // === DADOS GLOBAIS ===
     let categories = JSON.parse(localStorage.getItem('palatarius_categories') || '[]');
+    let ingredientGroups = JSON.parse(localStorage.getItem('palatarius_ingredientGroups') || '[]');
     let activeCategory = '';
     let customer = JSON.parse(localStorage.getItem('palatarius_customer') || '{}');
     let cart = JSON.parse(localStorage.getItem('palatarius_cart') || '[]');
@@ -212,9 +213,89 @@
     let backupCategories = null;
     const EDITOR_PASSWORD = 'EdLeoMarc&2025';
 
+    // === GRUPOS DE INGREDIENTES PRÉ-CADASTRADOS ===
+    if (ingredientGroups.length === 0) {
+      ingredientGroups = [
+        { id: 'g1', name: 'BLENDS', required: true, max: 3, type: 'radio', items: [
+          { name: 'BLEND ACEM BOVINO + BACON', price: 0 },
+          { name: 'BLEND ACEM BOVINO + COSTELA BOVINA', price: 0 }
+        ]},
+        { id: 'g2', name: 'MOLHOS', required: false, max: 8, type: 'checkbox', items: [
+          { name: 'BILLY JACK', price: 0 }, { name: 'KETCHUP DE GOIABADA', price: 0 },
+          { name: 'KETCHUP DE GOIABADA PICANTE', price: 0 }, { name: 'ALHO E ERVAS FINAS', price: 0 },
+          { name: 'TÁRTARO', price: 0 }, { name: 'TASTY', price: 0 },
+          { name: 'MOLHO DE BACON', price: 0 }, { name: 'MOLHO VERDE', price: 0 }
+        ]},
+        { id: 'g3', name: 'CROCANTES EXTRAS', required: false, max: 2, type: 'checkbox', items: [
+          { name: 'ALHO TORRADO', price: 0 }, { name: 'CEBOLA CRISPY', price: 0 }
+        ]},
+        { id: 'g4', name: 'PROTEÍNAS', required: true, max: 2, type: 'radio', items: [
+          { name: 'CARNE', price: 0 }, { name: 'FRANGO', price: 0 },
+          { name: 'COSTELA', price: 0 }, { name: 'PERNIL', price: 0 }
+        ]},
+        { id: 'g5', name: 'INGREDIENTES', required: false, max: 18, type: 'checkbox', items: [
+          { name: 'BACON', price: 0 }, { name: 'CALABRESA', price: 0 }, { name: 'OVO', price: 0 },
+          { name: 'PRESUNTO', price: 0 }, { name: 'MILHO VERDE', price: 0 }, { name: 'ERVILHA', price: 0 },
+          { name: 'PASSAS', price: 0 }, { name: 'AZEITONAS', price: 0 }, { name: 'TOMATE CRU', price: 0 },
+          { name: 'CEBOLA', price: 0 }, { name: 'CHAMPIGNON', price: 0 }, { name: 'PALMITO', price: 0 },
+          { name: 'CEBOLA CRISPY', price: 0 }, { name: 'ALHO TORRADO', price: 0 }, { name: 'QUEIJO MINAS', price: 0 },
+          { name: 'QUEIJO MUSSARELA', price: 0 }, { name: 'CATUPIRY', price: 0 }, { name: 'CHEDDAR', price: 0 }
+        ]},
+        { id: 'g6', name: 'TOPPINGS', required: false, max: 12, type: 'checkbox', items: [
+          { name: 'CANUDOS DE BISCOITO', price: 0 }, { name: 'SUCRILHOS', price: 0 }, { name: 'GRANOLA', price: 0 },
+          { name: 'AMENDOIN', price: 0 }, { name: 'PAÇOCA', price: 0 }, { name: 'GRANULADO', price: 0 },
+          { name: 'FLOCOS DE ARROZ', price: 0 }, { name: 'AVEIA', price: 0 }, { name: 'CHOCOBOL', price: 0 },
+          { name: 'JUJUBA', price: 0 }, { name: 'DELICADO', price: 0 }, { name: 'LEITE EM PÓ', price: 0 }
+        ]},
+        { id: 'g7', name: 'CALDAS', required: false, max: 15, type: 'checkbox', items: [
+          { name: 'FINI DENTADURAS', price: 1 }, { name: 'FINI BANANAS', price: 1 }, { name: 'FINI BEIJOS', price: 1 },
+          { name: 'CHOCOLATE', price: 0 }, { name: 'MORANGO', price: 0 }, { name: 'BRIGADEIRO', price: 0 },
+          { name: 'LEITE CONDENSADO', price: 0 }, { name: 'AMENDOIN', price: 0 }, { name: 'FLORESTA NEGRA', price: 0 },
+          { name: 'MAÇÃ VERDE', price: 0 }, { name: 'BANANA CARAMELADA', price: 0 }, { name: 'LIMÃO', price: 0 },
+          { name: 'CHOCOMENTA', price: 0 }, { name: 'MENTA', price: 0 }
+        ]}
+      ];
+    }
+
+    // === CATEGORIAS E PRODUTOS PRÉ-CADASTRADOS ===
+    if (categories.length === 0) {
+      categories = [
+        { key: "hamburgueres", name: "HAMBÚRGUERES", products: [
+          { id: "p1", name: "Hadouken (Street Fighter)", price: 10.50, description: "Pão americano macio com gergelim, carne artesanal 60g (blend bovino + bacon ou calabresa), ovo, alface e tomate frescos, ketchup e maionese especial. Um hambúrguer imbatível — rápido, direto e cheio de poder!", imageUrl: "", groups: ["g1", "g2", "g3"] },
+          { id: "p2", name: "Fatality (Mortal Kombat)", price: 11.00, description: "Explosão de sabor que nocauteia a fome! X-Bacon artesanal com carne 60g, queijo derretido, ovo, salada fresca e bacon crocante. O golpe final do sabor — um verdadeiro campeão das arenas!", imageUrl: "", groups: ["g1", "g2", "g3"] },
+          { id: "p3", name: "Chamas do Dragão (CDZ – Cavaleiros do Zodíaco)", price: 11.00, description: "Blend calabresa artesanal 60g, queijo derretido, ovo, salada fresca e fatias de calabresa na chapa. Finalizado com ketchup e maionese Palatarius.", imageUrl: "", groups: ["g1", "g2", "g3"] },
+          { id: "p4", name: "Kamehameha (Dragon Ball Z)", price: 18.00, description: "Dois blends artesanais 60g, dois ovos, queijo, bacon, calabresa, presunto, milho, ervilha e batata palha. Energia pura que explode em sabor — um lanche lendário!", imageUrl: "", groups: ["g1", "g2", "g3"] },
+          { id: "p5", name: "Modo Bijuu (Naruto)", price: 25.00, description: "Três blends de 60g, três ovos, queijo, bacon, presunto, milho, ervilha e batata palha. Um chakra de sabor para quem quer liberar o monstro da fome interior!", imageUrl: "", groups: ["g1", "g2", "g3"] },
+          { id: "p6", name: "Banquete do Luffy (One Piece)", price: 12.00, description: "Blend artesanal 60g, ovo, salada, bacon, presunto, queijo, milho, ervilha e batata palha. Um banquete digno do Capitão do Chapéu de Palha!", imageUrl: "", groups: ["g1", "g2", "g3"] },
+          { id: "p7", name: "De Volta pro Sabor (X-Cheddar Palatarius)", price: 9.50, description: "O clássico que nunca sai de moda! Pão americano com gergelim, carne artesanal suculenta Palatarius, queijo cheddar derretido e molho especial de alho torrado.", imageUrl: "", groups: ["g1", "g2"] },
+          { id: "p8", name: "Exterminador de Fome (X-Duplo Cheddar Palatarius)", price: 14.00, description: "Duas carnes 60g, duas camadas de cheddar derretido, molho especial Palatarius e pão com gergelim. Uma máquina de sabor — “I’ll be back … pra mais um!”", imageUrl: "", groups: ["g1", "g2"] },
+          { id: "p9", name: "Jurassic Chick (Chicken Cheddar Palatarius)", price: 12.00, description: "Filé de frango empanado dourado, queijo cheddar derretido, alface americana fresca, molho especial de alho torrado e pão com gergelim. Um clássico jurássico!", imageUrl: "", groups: ["g2"] },
+          { id: "p10", name: "Matrix Verde (X-Salada Palatarius)", price: 9.50, description: "Pão americano com gergelim, carne artesanal grelhada, molho especial Palatarius, alface americana e tomate. Escolha o sabor da realidade!", imageUrl: "", groups: ["g1", "g2"] },
+          { id: "p11", name: "Caçadores da Gema Perdida (X-Egg Palatarius)", price: 11.00, description: "Pão americano com gergelim, carne artesanal grelhada Palatarius, queijo mussarela derretido e ovo frito no ponto perfeito.", imageUrl: "", groups: ["g1", "g2"] }
+        ]},
+        { key: "batatas", name: "BATATAS", products: [
+          { id: "b1", name: "Final Boss (Batata 35 cm)", price: 55.00, description: "Batatas 35 cm cobertas com bacon, calabresa, ovos de codorna, azeitonas, queijo ralado e cheddar cremoso. Uma luta de sabores para heróis famintos!", imageUrl: "", groups: ["g4", "g5"] },
+          { id: "b2", name: "Smash Bros (Batata P)", price: 6.00, description: "Porção P de batata crocante com bacon, calabresa e cheddar. Ideal para dividir entre amigos!", imageUrl: "", groups: ["g4", "g5"] },
+          { id: "b3", name: "Fatality Batata (25 cm)", price: 45.00, description: "Batatas crocantes com calabresa, cheddar, bacon e ovos de codorna + frango a passarinho, anéis de cebola e nuggets com molhos especiais.", imageUrl: "", groups: ["g4", "g5"] },
+          { id: "b4", name: "Brutality (Batata 35 cm Premium)", price: 55.00, description: "Batatas crocantes com calabresa, cheddar, bacon e ovos de codorna, acompanhadas de frango a passarinho, anéis de cebola e nuggets com 3 molhos Palatarius.", imageUrl: "", groups: ["g4", "g5"] }
+        ]},
+        { key: "pasteis", name: "PASTÉIS", products: [
+          { id: "pa1", name: "Pastel Shuriken", price: 10.00, description: "Pastel 15 cm — crocante e rápido! Monte o seu com 1 proteína e acompanhamentos (18 + itens).", imageUrl: "", groups: ["g4", "g5"] },
+          { id: "pa2", name: "Pastel Grand Line", price: 15.00, description: "Pastel 25 cm — monte com 2 proteínas e acompanhamentos à sua escolha.", imageUrl: "", groups: ["g4", "g5"] }
+        ]},
+        { key: "hotdogs", name: "CACHORROS-QUENTES", products: [
+          { id: "h1", name: "Hot Dog Noob Raiz", price: 11.50, description: "Pão, 1 salsicha ou linguiça + pimentão, tomate, cebola, beterraba, cenoura, ervilha, milho, passas, azeitona, ketchup, mostarda e maionese Palatarius. Finalizado com batata palha e ovo de codorna.", imageUrl: "", groups: ["g5"] },
+          { id: "h2", name: "Prensado Obby (Clássico Palatarius)", price: 13.00, description: "Cachorro-quente raiz prensado: pão na chapa, salsicha ou linguiça, purê de batatas e tudo selado na chapa quente.", imageUrl: "", groups: ["g5"] },
+          { id: "h3", name: "Prensado Modo Criativo (Custom Palatarius)", price: 18.00, description: "Monte seu lanche do zero! Escolha 1 proteína extra (carne, frango, costela ou pernil) além da linguiça ou salsicha base e combine até 18 ingredientes.", imageUrl: "", groups: ["g4", "g5"] }
+        ]}
+      ];
+      saveToStorage();
+    }
+
     // === LOCALSTORAGE ===
     function saveToStorage() {
       localStorage.setItem('palatarius_categories', JSON.stringify(categories));
+      localStorage.setItem('palatarius_ingredientGroups', JSON.stringify(ingredientGroups));
       localStorage.setItem('palatarius_customer', JSON.stringify(customer));
       localStorage.setItem('palatarius_cart', JSON.stringify(cart));
       localStorage.setItem('palatarius_observations', cartObservations);
@@ -228,63 +309,40 @@
       if (id === 'cart-screen') renderCart();
     }
 
-      // === VALIDAÇÃO CLIENTE (CORRIGIDA) ===
-      function validateCustomerForm() {
-        let ok = true;
+    // === VALIDAÇÃO CLIENTE ===
+    function validateCustomerForm() {
+      let ok = true;
+      const name = document.getElementById('customer-name').value.trim();
+      const phone = document.getElementById('customer-phone').value.replace(/\D/g, '');
+      const type = document.getElementById('order-type').value;
 
-        const name = document.getElementById('customer-name').value.trim();
-        const phone = document.getElementById('customer-phone').value.replace(/\D/g, '');
-        const type = document.getElementById('order-type').value;
+      document.querySelectorAll('.error').forEach(e => e.textContent = '');
 
-        // limpa erros anteriores
-        document.querySelectorAll('.error').forEach(e => e.textContent = '');
+      if (!name) { document.getElementById('error-name').textContent = 'Nome obrigatório'; ok = false; }
+      if (!/^\d{10,11}$/.test(phone)) { document.getElementById('error-phone').textContent = 'Telefone inválido'; ok = false; }
 
-        if (!name) {
-          document.getElementById('error-name').textContent = 'Nome obrigatório';
-          ok = false;
-        }
+      let address = {};
+      if (type === 'Entrega') {
+        const log = document.getElementById('address-logradouro').value.trim();
+        const num = document.getElementById('address-number').value.trim();
+        const bairro = document.getElementById('address-bairro').value.trim();
+        const km = document.getElementById('address-km').value;
+        const freight = document.getElementById('uber-freight').value;
 
-        if (!/^\d{10,11}$/.test(phone)) {
-          document.getElementById('error-phone').textContent = 'Telefone inválido';
-          ok = false;
-        }
-
-        let address = {};
-
-        if (type === 'Entrega') {
-          const log = document.getElementById('address-logradouro').value.trim();
-          const num = document.getElementById('address-number').value.trim();
-          const bairro = document.getElementById('address-bairro').value.trim();
-          const km = document.getElementById('address-km').value;
-          const freight = document.getElementById('uber-freight').value;
-
-          if (!log) { document.getElementById('error-logradouro').textContent = 'Preencha'; ok = false; }
-          if (!num) { document.getElementById('error-number').textContent = 'Preencha'; ok = false; }
-          if (!bairro) { document.getElementById('error-bairro').textContent = 'Preencha'; ok = false; }
-          if (km === 'Outro' && (!freight || parseFloat(freight) <= 0)) {
-            document.getElementById('error-freight').textContent = 'Frete obrigatório';
-            ok = false;
-          }
-
-          address = {
-            logradouro: log,
-            number: num,
-            complement: document.getElementById('address-complement').value.trim(),
-            bairro,
-            marco: document.getElementById('address-marco').value.trim(),
-            km,
-            freight: freight || '0'
-          };
-        }
-
-        if (ok) {
-          customer = { name, phone, type, address };
-          saveToStorage();
-        }
-
-        return ok;
+        if (!log) { document.getElementById('error-logradouro').textContent = 'Preencha'; ok = false; }
+        if (!num) { document.getElementById('error-number').textContent = 'Preencha'; ok = false; }
+        if (!bairro) { document.getElementById('error-bairro').textContent = 'Preencha'; ok = false; }
+        if (km === 'Outro' && (!freight || parseFloat(freight) <= 0)) {
+          document.getElementById('error-freight').textContent = 'Frete obrigatório'; ok = false; }
+        address = { logradouro: log, number: num, complement: document.getElementById('address-complement').value.trim(), bairro, marco: document.getElementById('address-marco').value.trim(), km, freight: freight || '0' };
       }
 
+      if (ok) {
+        customer = { name, phone, type, address };
+        saveToStorage();
+      }
+      return ok;
+    }
 
     // === RENDERIZAÇÃO ===
     function renderCategories() {
@@ -338,11 +396,38 @@
       badge.style.display = count > 0 ? 'flex' : 'none';
     }
 
-    // === MODAL ===
+    // === MODAL DE PERSONALIZAÇÃO ===
     function openModal(product) {
-      modalProduct = { ...product, quantity: 1 };
-      document.getElementById('modal-title').textContent = product.name;
-      document.getElementById('modal-content').innerHTML = '<p>Sem opções de personalização.</p>';
+      modalProduct = { ...product, quantity: 1, selectedIngredients: [] };
+      const content = document.getElementById('modal-content');
+      const title = document.getElementById('modal-title');
+      title.textContent = product.name;
+
+      const selectedGroups = ingredientGroups.filter(g => product.groups?.includes(g.id));
+      if (selectedGroups.length === 0) {
+        content.innerHTML = '<p>Sem opções de personalização disponíveis.</p>';
+      } else {
+        content.innerHTML = '';
+        selectedGroups.forEach(group => {
+          const groupDiv = document.createElement('div');
+          groupDiv.style = 'margin-bottom:1rem; background:#1a1a1a; padding:0.8rem; border-radius:8px;';
+          const h3 = document.createElement('h3');
+          h3.textContent = group.name + (group.required ? ' *' : '');
+          h3.style = 'color:var(--primary-yellow); margin-bottom:0.5rem;';
+          groupDiv.appendChild(h3);
+          group.items.forEach(item => {
+            const id = `${group.id}-${item.name}`;
+            const wrapper = document.createElement('div');
+            wrapper.style = 'display:flex; align-items:center; gap:0.5rem; margin-bottom:0.3rem;';
+            wrapper.innerHTML = `
+              <input type="${group.type === 'radio' ? 'radio' : 'checkbox'}" name="${group.id}" id="${id}" value="${item.name}" data-price="${item.price}" style="transform:scale(1.2);">
+              <label for="${id}" style="flex:1;">${item.name}${item.price > 0 ? ` <span style="color:#FFD60A;">(+R$ ${item.price.toFixed(2).replace('.', ',')})</span>` : ''}</label>
+            `;
+            groupDiv.appendChild(wrapper);
+          });
+          content.appendChild(groupDiv);
+        });
+      }
       document.getElementById('modal-overlay').classList.add('active');
     }
 
@@ -353,9 +438,39 @@
 
     function saveModal() {
       if (!modalProduct) return;
-      const existing = cart.find(i => i.id === modalProduct.id);
-      if (existing) existing.quantity += modalProduct.quantity;
-      else cart.push({ ...modalProduct });
+      const selectedGroups = ingredientGroups.filter(g => modalProduct.groups?.includes(g.id));
+      let allValid = true;
+      let extrasTotal = 0;
+      const selected = [];
+
+      selectedGroups.forEach(group => {
+        const inputs = [...document.querySelectorAll(`[name="${group.id}"]`)];
+        const checked = inputs.filter(i => i.checked);
+
+        if (group.required && checked.length === 0) {
+          alert(`O grupo "${group.name}" é obrigatório.`);
+          allValid = false;
+          return;
+        }
+        if (checked.length > group.max) {
+          alert(`Máximo ${group.max} em "${group.name}".`);
+          allValid = false;
+          return;
+        }
+        checked.forEach(i => {
+          selected.push({ group: group.name, name: i.value, price: parseFloat(i.dataset.price) });
+          extrasTotal += parseFloat(i.dataset.price);
+        });
+      });
+
+      if (!allValid) return;
+
+      const finalPrice = parseFloat(modalProduct.price) + extrasTotal;
+      const item = { ...modalProduct, price: finalPrice, ingredients: selected };
+      const existing = cart.find(i => i.id === item.id && JSON.stringify(i.ingredients) === JSON.stringify(selected));
+      if (existing) existing.quantity++;
+      else cart.push(item);
+
       saveToStorage();
       updateCartBadge();
       renderCart();
@@ -375,7 +490,10 @@
         div.innerHTML = `
           <div style="flex:1;">
             <div class="product-title">${item.name}</div>
-            <div style="font-size:0.9rem; color:#ccc;">R$ ${parseFloat(item.price).toFixed(2)} × ${item.quantity}</div>
+            <div style="font-size:0.9rem; color:#ccc;">
+              R$ ${parseFloat(item.price).toFixed(2)} × ${item.quantity}
+              ${item.ingredients?.length ? '<br><small>' + item.ingredients.map(ing => ing.name + (ing.price > 0 ? ` (+R$${ing.price})` : '')).join(', ') + '</small>' : ''}
+            </div>
           </div>
           <div class="quantity-control">
             <button onclick="cart[${i}].quantity=Math.max(1,cart[${i}].quantity-1);saveToStorage();renderCart();updateCartBadge();">-</button>
@@ -397,16 +515,11 @@
     // === EDITOR ===
     function addCategory() {
       const name = prompt('Nome da categoria:');
-      if (name) {
-        categories.push({ key: Date.now() + '', name, products: [] });
-        renderEditor();
-      }
+      if (name) { categories.push({ key: Date.now() + '', name, products: [] }); renderEditor(); }
     }
 
     function addProduct(catIdx) {
-      categories[catIdx].products.push({
-        id: Date.now(), name: 'Novo Item', price: '0.00', image: '', imageUrl: ''
-      });
+      categories[catIdx].products.push({ id: Date.now(), name: 'Novo Item', price: '0.00', image: '', imageUrl: '', groups: [] });
       renderEditor();
     }
 
@@ -482,18 +595,15 @@
         window.open(`https://wa.me/5521997599132?text=${encodeURIComponent(msg)}`);
       });
 
-      // Editor com senha
-      // === ACESSO AO EDITOR ===
       document.getElementById('customer-editor-link').addEventListener('click', e => {
         e.preventDefault();
-        const pwd = prompt('🔒 Digite a senha do editor:');
+        const pwd = prompt('Digite a senha do editor:');
         if (pwd === EDITOR_PASSWORD) {
-          alert('✅ Acesso liberado!');
           backupCategories = JSON.parse(JSON.stringify(categories));
           renderEditor();
           showScreen('editor-screen');
         } else if (pwd !== null) {
-          alert('❌ Senha incorreta. Acesso negado.');
+          alert('Senha incorreta.');
         }
       });
 
