@@ -310,18 +310,30 @@
     }
 
     // === VALIDAÇÃO CLIENTE ===
+    // === VALIDAÇÃO DO FORMULÁRIO DO CLIENTE ===
     function validateCustomerForm() {
       let ok = true;
+
       const name = document.getElementById('customer-name').value.trim();
       const phone = document.getElementById('customer-phone').value.replace(/\D/g, '');
       const type = document.getElementById('order-type').value;
 
+      // Limpa mensagens de erro antigas
       document.querySelectorAll('.error').forEach(e => e.textContent = '');
 
-      if (!name) { document.getElementById('error-name').textContent = 'Nome obrigatório'; ok = false; }
-      if (!/^\d{10,11}$/.test(phone)) { document.getElementById('error-phone').textContent = 'Telefone inválido'; ok = false; }
+      if (!name) {
+        document.getElementById('error-name').textContent = 'Nome obrigatório';
+        ok = false;
+      }
 
-      let address = {};
+      if (!/^\d{10,11}$/.test(phone)) {
+        document.getElementById('error-phone').textContent = 'Telefone inválido';
+        ok = false;
+      }
+
+      // Endereço
+      let address = null;
+
       if (type === 'Entrega') {
         const log = document.getElementById('address-logradouro').value.trim();
         const num = document.getElementById('address-number').value.trim();
@@ -333,14 +345,28 @@
         if (!num) { document.getElementById('error-number').textContent = 'Preencha'; ok = false; }
         if (!bairro) { document.getElementById('error-bairro').textContent = 'Preencha'; ok = false; }
         if (km === 'Outro' && (!freight || parseFloat(freight) <= 0)) {
-          document.getElementById('error-freight').textContent = 'Frete obrigatório'; ok = false; }
-        address = { logradouro: log, number: num, complement: document.getElementById('address-complement').value.trim(), bairro, marco: document.getElementById('address-marco').value.trim(), km, freight: freight || '0' };
+          document.getElementById('error-freight').textContent = 'Frete obrigatório';
+          ok = false;
+        }
+
+        address = {
+          logradouro: log || '',
+          number: num || '',
+          complement: document.getElementById('address-complement').value.trim(),
+          bairro: bairro || '',
+          marco: document.getElementById('address-marco').value.trim(),
+          km: km || '',
+          freight: freight || '0'
+        };
       }
 
+      // Se tudo estiver certo, grava o cliente
       if (ok) {
         customer = { name, phone, type, address };
         saveToStorage();
       }
+
+      // Retorna o resultado
       return ok;
     }
 
