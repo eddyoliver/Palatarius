@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🍔 Palatarius - Cardápio Digital</title>
+  <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ==============================
+       BLOCO 1 - VISUAL E ESTRUTURA
+    ===============================*/
+
+    :root {
+      --primary: #c62828;
+      --secondary: #0d47a1;
+      --accent: #ffd54f;
+      --bg: #f8f9fa;
+      --text: #333;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    h2, h3, h4 {
+      font-family: 'Russo One', sans-serif;
+      color: var(--secondary);
+    }
+
+    header {
+      background: linear-gradient(90deg, var(--secondary), var(--primary));
+      color: white;
+      text-align: center;
+      padding: 1.2rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    main {
+      padding: 1rem;
+    }
+
+    /* Botões */
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+      padding: 0.6rem 1.2rem;
+      margin-top: 0.5rem;
+      transition: 0.2s ease;
+      font-weight: 600;
+    }
+
+    button.primary {
+      background: var(--secondary);
+      color: white;
+    }
+
+    button.primary:hover {
+      background: #1565c0;
+    }
+
+    button[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Inputs */
+    input, select, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      margin: 0.3rem 0 0.8rem 0;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    /* Cardápio */
+    .section-title {
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      color: var(--primary);
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+      padding-bottom: 0.2rem;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s;
+    }
+
+    .card:hover { transform: translateY(-4px); }
+
+    .card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .card-content {
+      padding: 0.8rem;
+    }
+
+    .card-content h3 {
+      font-size: 1.1rem;
+      color: var(--secondary);
+      margin-bottom: 0.3rem;
+    }
+
+    .card-content p {
+      font-size: 0.9rem;
+      color: #444;
+    }
+
+    .price {
+      color: var(--primary);
+      font-weight: 700;
+      margin-top: 0.4rem;
+    }
+
+    /* Modal de Ingredientes */
+    #ingredientes-modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    #ingredientes-content {
+      background: white;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      padding: 1rem;
+      overflow-y: auto;
+      max-height: 90vh;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .ingrediente-grupo {
+      margin: 1rem 0;
+      background: #f1f1f1;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+    }
+
+    .ingrediente-grupo h4 {
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .ingrediente-grupo label {
+      display: block;
+      font-size: 0.9rem;
+      margin: 0.3rem 0;
+    }
+
+    .ingrediente-grupo input[type="checkbox"]:disabled + span {
+      color: #aaa;
+      text-decoration: line-through;
+    }
+
+    /* Carrinho */
+    #cart {
+      position: fixed;
+      right: -400px;
+      top: 0;
+      width: 350px;
+      height: 100vh;
+      background: white;
+      box-shadow: -2px 0 10px rgba(0,0,0,0.3);
+      transition: right 0.3s ease;
+      padding: 1rem;
+      z-index: 10000;
+      overflow-y: auto;
+    }
+
+    #cart.active { right: 0; }
+
+    #cart h2 { color: var(--primary); }
+
+    .cart-item {
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .cart-total {
+      margin-top: 1rem;
+      font-weight: bold;
+      color: var(--secondary);
+    }
+
+    .btn-whatsapp {
+      background: #25d366;
+      color: white;
+      font-weight: 700;
+      border: none;
+      padding: 0.7rem 1.2rem;
+      border-radius: 8px;
+      margin-top: 0.6rem;
+      width: 100%;
+    }
+
+    /* Editor */
+    #editor-screen {
+      display: none;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    #editor-screen.active {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .editor-form {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+    }
+
+    /* Abas do Editor */
+    .editor-tabs {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 1rem;
+    }
+
+    .editor-tab {
+      background: #ddd;
+      color: #333;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .editor-tab.active {
+      background: var(--secondary);
+      color: white;
+    }
+
+    /* Ingredientes pausados */
+    .paused {
+      opacity: 0.4;
+      text-decoration: line-through;
+      pointer-events: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+      background: linear-gradient(90deg, var(--secondary), var(--primary));
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* Responsividade */
+    @media(max-width:600px){
+      header h1 { font-size: 1.3rem; }
+      .card img { height: 120px; }
+      #cart { width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>🍔 Palatarius - Cardápio Digital</h1>
+  </header>
+
+<main>
+  <!-- =======================
+       BLOCO 2 — TELA DO CLIENTE (v7 - safe)
+  ======================== -->
+  <section id="cliente-screen" class="active">
+    <h2 style="text-align:center; color:var(--secondary); font-family:'Russo One'; margin-bottom:1rem;">
+      Bem-vindo à Palatarius!
+    </h2>
+
+    <label for="cliente-nome">Nome:</label>
+    <input type="text" id="cliente-nome" placeholder="Digite seu nome" required>
+
+    <label for="cliente-telefone">Número de WhatsApp:</label>
+    <input type="tel" id="cliente-telefone" placeholder="(XX) XXXXX-XXXX" required>
+
+    <label for="cliente-tipo">Tipo de Pedido:</label>
+    <select id="cliente-tipo">
+      <option value="Retirada">Retirada</option>
+      <option value="Entrega">Entrega</option>
+    </select>
+
+    <div id="endereco-container">
+      <label for="cliente-endereco">Endereço (caso entrega):</label>
+      <input type="text" id="cliente-endereco" placeholder="Rua, número, bairro">
+    </div>
+
+    <label for="cliente-local">Local de Entrega:</label>
+    <select id="cliente-local">
+      <option value="">Selecione...</option>
+      <option value="KM39">KM 39 - R$4,00</option>
+      <option value="KM40">KM 40 - R$4,00</option>
+      <option value="KM41">KM 41 - R$4,00</option>
+      <option value="KM42">KM 42 - R$4,00</option>
+      <option value="Outro">Outro (a combinar no WhatsApp)</option>
+    </select>
+
+    <button id="continuar-btn" class="primary">Continuar para o Cardápio</button>
+  </section>
+
+  <!-- =======================
+       2️⃣ CARDÁPIO PRINCIPAL
+  ======================== -->
+  <section id="cardapio-screen" style="display:none;">
+    <h2 class="section-title">🍔 Hambúrgueres</h2>
+    <div class="card-grid" id="hamburgueres-grid"></div>
+
+    <h2 class="section-title">🍟 Batatas</h2>
+    <div class="card-grid" id="batatas-grid"></div>
+
+    <h2 class="section-title">🥔 Batatas Recheadas</h2>
+    <div class="card-grid" id="batatas-recheadas-grid"></div>
+
+    <h2 class="section-title">🥟 Pastéis</h2>
+    <div class="card-grid" id="pasteis-grid"></div>
+
+    <h2 class="section-title">🌭 Cachorros-Quentes</h2>
+    <div class="card-grid" id="hotdogs-grid"></div>
+
+    <h2 class="section-title">🍨 Sorvetes & Açaís</h2>
+    <div class="card-grid" id="sorvetes-grid"></div>
+
+    <h2 class="section-title">🧃 Bebidas</h2>
+    <div class="card-grid" id="bebidas-grid"></div>
+  </section>
+
+  <!-- =======================
+       3️⃣ MODAL DE INGREDIENTES
+  ======================== -->
+  <div id="ingredientes-modal">
+    <div id="ingredientes-content">
+      <h3 id="modal-item-nome">Personalize seu pedido</h3>
+      <div id="ingredientes-grupos"></div>
+
+      <div class="ingrediente-grupo">
+        <h4>📝 Observação:</h4>
+        <textarea id="obs" placeholder="Ex: sem alface, ponto da carne, etc..."></textarea>
+      </div>
+
+      <button id="add-to-cart" class="primary">Adicionar ao Carrinho</button>
+      <button id="close-modal">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- =======================
+       4️⃣ CARRINHO DE PEDIDOS
+  ======================== -->
+  <aside id="cart">
+    <h2>🛒 Seu Pedido</h2>
+    <div id="cart-items"></div>
+    <div class="cart-total" id="cart-total">Total: R$ 0,00</div>
+    <button class="btn-whatsapp" id="send-whatsapp">Enviar para WhatsApp</button>
+    <button id="close-cart" class="primary" style="margin-top:0.5rem;">Fechar</button>
+  </aside>
+
+  <!-- =======================
+       5️⃣ EDITOR ADMINISTRATIVO (v7 - +criar grupo sem apagar)
+  ======================== -->
+  <section id="editor-screen">
+    <div class="editor-tabs">
+      <div class="editor-tab active" id="tab-cardapio">🍔 Cardápio</div>
+      <div class="editor-tab" id="tab-ingredientes">🧂 Ingredientes</div>
+    </div>
+
+    <!-- 🔸 Aba Cardápio -->
+    <div id="editor-cardapio" class="editor-section">
+      <h2>Gerenciar Cardápio</h2>
+
+      <div style="margin:1rem 0;">
+        <button id="export-json" class="primary">Exportar JSON</button>
+        <input type="file" id="import-json" accept="application/json" style="display:none;">
+        <label for="import-json" class="primary" style="background:var(--primary);">Importar JSON</label>
+      </div>
+
+      <!-- ✅ NOVO: Criar grupo de produtos sem apagar os existentes -->
+      <div class="editor-form" style="border-bottom:1px solid var(--border); padding-bottom:1rem; margin-bottom:1rem;">
+        <h3>Novo Grupo de Produtos</h3>
+        <label>Nome do Grupo:</label>
+        <input type="text" id="novo-grupo-cardapio-nome" placeholder="Ex: Combos, Promoções, Sobremesas...">
+        <button id="salvar-grupo-cardapio" class="primary" style="margin-top:0.5rem;">Criar Grupo</button>
+        <p style="font-size:.85rem;color:#666;margin-top:.25rem;">
+          Dica: os grupos existentes permanecem. Este botão apenas adiciona um novo grupo ao final.
+        </p>
+      </div>
+
+      <div class="editor-form">
+        <h3>Novo Produto</h3>
+        <label>Nome:</label>
+        <input type="text" id="novo-nome" placeholder="Ex: X-Paladino">
+
+        <label>Categoria:</label>
+        <!-- Será populado dinamicamente pelo BLOCO 4 (refreshCategoriaSelect) -->
+        <select id="novo-categoria"></select>
+
+        <label>Preço (R$):</label>
+        <input type="number" id="novo-preco" step="0.01">
+
+        <label>Imagem (nome do arquivo):</label>
+        <input type="text" id="novo-imagem" placeholder="Ex: hadouken.jpg">
+
+        <label>Descrição:</label>
+        <textarea id="novo-descricao" placeholder="Descrição detalhada do produto"></textarea>
+
+        <h4>Limites de Ingredientes</h4>
+        <div class="grid-limites">
+          <label>Carnes (1 padrão):</label>
+          <input type="number" id="limite-carnes" min="0" value="1">
+
+          <label>Molhos (2 padrão):</label>
+          <input type="number" id="limite-molhos" min="0" value="2">
+
+          <label>Crocantes (1 padrão):</label>
+          <input type="number" id="limite-crocantes" min="0" value="1">
+
+          <label>Proteínas (2 padrão):</label>
+          <input type="number" id="limite-proteinas" min="0" value="2">
+
+          <label>Toppings (3 padrão):</label>
+          <input type="number" id="limite-toppings" min="0" value="3">
+
+          <label>Caldas (3 padrão):</label>
+          <input type="number" id="limite-caldas" min="0" value="3">
+        </div>
+
+        <button id="salvar-produto" class="primary" style="margin-top:1rem;">Salvar Produto</button>
+      </div>
+
+      <div id="lista-produtos" style="margin-top:2rem;">
+        <h3>Produtos Cadastrados:</h3>
+        <div id="produtos-editor"></div>
+      </div>
+
+      <button id="close-editor" class="primary" style="margin-top:1rem;">Fechar Editor</button>
+    </div>
+
+    <!-- 🔸 Aba Ingredientes (mantida) -->
+    <div id="editor-ingredientes" class="editor-section" style="display:none;">
+      <h2>Gerenciar Ingredientes</h2>
+
+      <div class="editor-form" style="border-bottom:1px solid var(--border); padding-bottom:1rem; margin-bottom:1rem;">
+        <h3>Novo Grupo de Ingredientes</h3>
+        <label>Nome do Grupo:</label>
+        <input type="text" id="novo-grupo-nome" placeholder="Ex: Molhos Premium, Carnes Especiais...">
+        <button id="salvar-grupo" class="primary" style="margin-top:0.5rem;">Salvar Grupo</button>
+      </div>
+
+      <div class="editor-form">
+        <h3>Novo Ingrediente</h3>
+        <label>Grupo:</label>
+        <select id="novo-grupo"></select>
+
+        <label>Nome do Ingrediente:</label>
+        <input type="text" id="novo-ingrediente" placeholder="Ex: Cheddar, Alho Torrado...">
+
+        <button id="salvar-ingrediente" class="primary" style="margin-top:0.5rem;">Salvar Ingrediente</button>
+      </div>
+
+      <div id="lista-ingredientes" style="margin-top:2rem;">
+        <h3>Grupos e Ingredientes Cadastrados:</h3>
+        <div id="ingredientes-editor"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================
+       6️⃣ RODAPÉ SECRETO
+  ======================== -->
+  <footer id="palatarius-footer">
+    © 2025 <span>Palatarius</span> - O Sabor Geek da Galáxia
+  </footer>
+</main>
+
+<script>
+/* =========================================================
+   BLOCO 3 — FUNCIONALIDADES DO CLIENTE (v7)
+   Cardápio Dinâmico + Modal + Carrinho + WhatsApp
+========================================================= */
+
+// Estruturas principais
+let cliente = {};
+let categorias = [];
+let ingredientes = [];
+let carrinho = [];
+let itemSelecionado = null;
+
+// ===============================
+// FLUXO DO CLIENTE
+// ===============================
+document.getElementById("continuar-btn").addEventListener("click", () => {
+  const nome = document.getElementById("cliente-nome").value.trim();
+  const telefone = document.getElementById("cliente-telefone").value.trim();
+  const tipo = document.getElementById("cliente-tipo").value;
+  const endereco = document.getElementById("cliente-endereco").value.trim();
+  const local = document.getElementById("cliente-local").value;
+
+  if (!nome || !telefone) {
+    alert("Por favor, preencha nome e número!");
+    return;
+  }
+
+  let entrega = 0;
+  if (tipo === "Entrega") {
+    if (["KM39", "KM40", "KM41", "KM42"].includes(local)) entrega = 4;
+  }
+
+  cliente = { nome, telefone, tipo, endereco, local, entrega };
+  document.getElementById("cliente-screen").style.display = "none";
+  document.getElementById("cardapio-screen").style.display = "block";
+  renderCardapio();
+});
+
+// ===============================
+// RENDERIZAÇÃO DO CARDÁPIO (DINÂMICO v7)
+// ===============================
+function renderCardapio() {
+  const telaCardapio = document.getElementById("cardapio-screen");
+  if (!telaCardapio) return;
+
+  // 🔹 Limpa conteúdo atual do cardápio
+  telaCardapio.innerHTML = "";
+
+  // 🔹 Caso não existam categorias
+  if (!categorias || categorias.length === 0) {
+    telaCardapio.innerHTML = `
+      <p style="text-align:center; color:#777; font-size:1.1rem;">
+        Nenhum produto cadastrado ainda.<br>
+        Use o Editor para adicionar novas categorias e produtos.
+      </p>`;
+    return;
+  }
+
+  // 🔹 Renderiza dinamicamente todas as categorias
+  categorias.forEach(cat => {
+    const secao = document.createElement("section");
+    secao.classList.add("grupo-cardapio");
+
+    // 🔹 Cabeçalho da categoria
+    const titulo = document.createElement("h2");
+    titulo.className = "section-title";
+    titulo.textContent = cat.nome;
+    secao.appendChild(titulo);
+
+    // 🔹 Grid de produtos
+    const grid = document.createElement("div");
+    grid.className = "card-grid";
+
+    // 🔹 Caso não haja itens na categoria
+    if (!cat.itens || cat.itens.length === 0) {
+      grid.innerHTML = `<p style="text-align:center; color:#aaa;">Nenhum produto neste grupo.</p>`;
+    } else {
+      cat.itens.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        // 🔹 Caminho seguro da imagem
+        const caminhoImagem = item.imagem
+          ? `assets/images/${item.imagem}`
+          : "assets/images/placeholder.jpg";
+
+        card.innerHTML = `
+          <img src="${caminhoImagem}" 
+               alt="${item.nome}" 
+               onerror="if(!this.dataset.err){this.dataset.err=1;this.src='assets/images/placeholder.jpg'}">
+          <div class="card-content">
+            <h3>${item.nome}</h3>
+            <p>${item.descricao || ""}</p>
+            <div class="price">R$ ${Number(item.preco || 0).toFixed(2)}</div>
+            <button onclick="abrirModalIngredientes('${cat.nome}','${item.nome}')">
+              Adicionar
+            </button>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    secao.appendChild(grid);
+    telaCardapio.appendChild(secao);
+  });
+
+  // 🔹 Log informativo no console
+  console.log(`🍔 Cardápio renderizado: ${categorias.length} categorias e ${categorias.reduce((t,c)=>t+(c.itens?.length||0),0)} produtos.`);
+}
+
+/// ===============================
+// MODAL DE INGREDIENTES (v7 — corrigido por produto)
+// ===============================
+function abrirModalIngredientes(categoria, nome) {
+  const cat = categorias.find(c => c.nome === categoria);
+  const item = cat?.itens?.find(i => i.nome === nome);
+  if (!item) return alert("Item não encontrado!");
+
+  itemSelecionado = item;
+
+  document.getElementById("modal-item-nome").innerText = nome;
+  document.getElementById("ingredientes-modal").style.display = "flex";
+  gerarIngredientesModal(item);
+}
+
+function gerarIngredientesModal(item) {
+  const container = document.getElementById("ingredientes-grupos");
+  container.innerHTML = "";
+
+  // Garante estrutura limpa
+  item.ingredientesPermitidos = item.ingredientesPermitidos || {};
+  item.limites = item.limites || {};
+
+  if (!ingredientes || ingredientes.length === 0) {
+    container.innerHTML = `<p style="color:#777;">Nenhum grupo de ingredientes cadastrado.</p>`;
+    return;
+  }
+
+  // Se o item não tiver configuração específica, mostra tudo
+  const gruposFiltrados = Object.keys(item.ingredientesPermitidos).length
+    ? ingredientes.filter(gr => Object.keys(item.ingredientesPermitidos).includes(gr.grupo))
+    : ingredientes;
+
+  gruposFiltrados.forEach(grupo => {
+    const div = document.createElement("div");
+    div.className = "ingrediente-grupo";
+
+    // Limite específico ou padrão
+    const limite = item.limites?.[grupo.grupo] || getLimitePadrao(grupo.grupo);
+    let html = `<h4>${grupo.grupo} (máx ${limite})</h4>`;
+
+    // Ingredientes disponíveis e permitidos
+    const permitidos = item.ingredientesPermitidos?.[grupo.grupo] || grupo.opcoes.map(o => o.nome);
+    const opcoes = grupo.opcoes.filter(op => permitidos.includes(op.nome));
+
+    if (opcoes.length === 0) {
+      html += `<p style="color:#999; font-size:0.85rem;">Nenhum ingrediente disponível neste grupo.</p>`;
+    } else {
+      opcoes.forEach(op => {
+        const isPausado = op.pausado === true;
+        html += `
+          <label ${isPausado ? 'class="paused"' : ''}>
+            <input type="checkbox" 
+                   name="${grupo.grupo}" 
+                   value="${op.nome}" 
+                   ${isPausado ? 'disabled' : ''}>
+            <span>${op.nome}</span>
+          </label>`;
+      });
+    }
+
+    div.innerHTML = html;
+    container.appendChild(div);
+
+    // Controle de limite individual
+    div.querySelectorAll('input[type="checkbox"]').forEach(input => {
+      input.addEventListener("change", e => {
+        const checks = div.querySelectorAll('input:checked');
+        if (checks.length > limite) {
+          e.target.checked = false;
+          alert(`Máximo permitido: ${limite} opções em ${grupo.grupo}`);
+        }
+      });
+    });
+  });
+}
+
+function getLimitePadrao(grupo) {
+  const padroes = {
+    "Carnes": 1,
+    "Molhos": 2,
+    "Crocantes Extras": 1,
+    "Proteínas": 2,
+    "Acompanhamentos": 5,
+    "Toppings": 3,
+    "Caldas": 3,
+    "Caldas Fini (+R$1)": 2,
+  };
+  return padroes[grupo] || 1;
+}
+
+document.getElementById("close-modal").addEventListener("click", () => {
+  document.getElementById("ingredientes-modal").style.display = "none";
+  document.getElementById("ingredientes-grupos").innerHTML = "";
+  document.getElementById("obs").value = "";
+  itemSelecionado = null;
+});
+
+document.getElementById("add-to-cart").addEventListener("click", () => {
+  if (!itemSelecionado) return;
+
+  const selecionados = {};
+  document.querySelectorAll("#ingredientes-grupos .ingrediente-grupo").forEach(div => {
+    const grupo = div.querySelector("h4").innerText.split(" (")[0];
+    const checks = [...div.querySelectorAll("input:checked")].map(i => i.value);
+    if (checks.length) selecionados[grupo] = checks;
+  });
+
+  const obs = document.getElementById("obs").value.trim();
+  adicionarAoCarrinho(itemSelecionado, selecionados, obs);
+
+  document.getElementById("ingredientes-modal").style.display = "none";
+  document.getElementById("obs").value = "";
+  document.getElementById("ingredientes-grupos").innerHTML = "";
+  itemSelecionado = null;
+});
+
+// ===============================
+// CARRINHO
+// ===============================
+function adicionarAoCarrinho(item, ingredientesEscolhidos, obs) {
+  carrinho.push({ ...item, ingredientesEscolhidos, obs });
+  atualizarCarrinho();
+}
+
+function atualizarCarrinho() {
+  const container = document.getElementById("cart-items");
+  container.innerHTML = "";
+  let total = 0;
+
+  carrinho.forEach((item, index) => {
+    total += Number(item.preco) || 0;
+    const div = document.createElement("div");
+    div.className = "cart-item";
+
+    let html = `<p><strong>${item.nome}</strong> - R$ ${Number(item.preco).toFixed(2)}</p>`;
+
+    if (item.ingredientesEscolhidos) {
+      Object.entries(item.ingredientesEscolhidos).forEach(([grupo, lista]) => {
+        html += `<p style="font-size:0.85rem; color:#555;">${grupo}: ${lista.join(", ")}</p>`;
+      });
+    }
+    if (item.obs) {
+      html += `<p style="font-size:0.85rem; color:#777;"><em>Obs:</em> ${item.obs}</p>`;
+    }
+    html += `<button style="background:none; border:none; color:red; font-weight:bold; float:right;" onclick="removerItem(${index})">x</button>`;
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+
+  document.getElementById("cart-total").innerText = `Total: R$ ${total.toFixed(2)}`;
+  document.getElementById("cart").classList.add("active");
+}
+
+function removerItem(index) {
+  carrinho.splice(index, 1);
+  atualizarCarrinho();
+}
+
+document.getElementById("close-cart").addEventListener("click", () => {
+  document.getElementById("cart").classList.remove("active");
+});
+
+// ===============================
+// ENVIAR PARA WHATSAPP
+// ===============================
+document.getElementById("send-whatsapp").addEventListener("click", () => {
+  if (carrinho.length === 0) {
+    alert("Carrinho vazio!");
+    return;
+  }
+
+  let mensagem = `🍔 *Pedido Palatarius*%0A`;
+  mensagem += `👤 *Cliente:* ${cliente.nome}%0A`;
+  mensagem += `📞 *Telefone:* ${cliente.telefone}%0A`;
+  mensagem += `📦 *Tipo:* ${cliente.tipo}%0A`;
+
+  if (cliente.tipo === "Entrega") {
+    mensagem += `📍 *Local:* ${cliente.local || "Não informado"}%0A`;
+    mensagem += `🏠 *Endereço:* ${cliente.endereco || "Não informado"}%0A`;
+
+    if (["KM39", "KM40", "KM41", "KM42"].includes(cliente.local)) {
+      mensagem += `🚚 *Taxa de Entrega:* R$ 4,00%0A`;
+    } else {
+      mensagem += `🚚 *Taxa de Entrega:* a combinar%0A`;
+    }
+  }
+
+  mensagem += `%0A=============================%0A`;
+
+  let subtotal = 0;
+  carrinho.forEach(item => {
+    subtotal += Number(item.preco) || 0;
+    mensagem += `🥪 *${item.nome}* - R$ ${Number(item.preco).toFixed(2)}%0A`;
+    if (item.ingredientesEscolhidos) {
+      Object.entries(item.ingredientesEscolhidos).forEach(([grupo, lista]) => {
+        mensagem += `• ${grupo}: ${lista.join(", ")}%0A`;
+      });
+    }
+    if (item.obs) mensagem += `📝 Obs: ${item.obs}%0A`;
+    mensagem += `-----------------------------%0A`;
+  });
+
+  const taxa = cliente.entrega || 0;
+  const total = subtotal + taxa;
+  mensagem += `💰 *Subtotal:* R$ ${subtotal.toFixed(2)}%0A`;
+  if (taxa > 0) mensagem += `🚚 *Taxa:* R$ ${taxa.toFixed(2)}%0A`;
+  mensagem += `💵 *Total Geral:* R$ ${total.toFixed(2)}%0A`;
+  mensagem += `%0A=============================%0A`;
+  mensagem += `✅ *Pedido gerado via Cardápio Digital Palatarius*`;
+
+  const numero = "5521997599132";
+  window.open(`https://wa.me/${numero}?text=${mensagem}`, "_blank");
+});
+</script>
+
+<script>
+/* =========================================================
+   BLOCO 4 — EDITOR ADMINISTRATIVO AVANÇADO (v7 - safe)
+   (Adiciona grupos de produtos SEM apagar os existentes)
+========================================================= */
+
+// ===============================
+// ACESSO SECRETO AO EDITOR
+// ===============================
+let clickCount = 0;
+const footer = document.getElementById("palatarius-footer");
+footer.addEventListener("click", () => {
+  clickCount++;
+  if (clickCount === 3) {
+    const senha = prompt("🔐 Digite a senha de acesso:");
+    if (senha === "EdLeoMarc&2025") {
+      document.getElementById("editor-screen").classList.add("active");
+      alert("✅ Acesso concedido ao editor Palatarius!");
+      // garante selects atualizados ao abrir
+      refreshCategoriaSelect();
+      if (typeof atualizarSelectGrupos === "function") atualizarSelectGrupos();
+      renderEditorProdutos();
+      renderEditorIngredientes();
+    } else {
+      alert("❌ Senha incorreta!");
+    }
+    clickCount = 0;
+  }
+  setTimeout(() => (clickCount = 0), 1500);
+});
+
+// ===============================
+// TROCA DE ABAS DO EDITOR
+// ===============================
+document.getElementById("tab-cardapio").addEventListener("click", () => ativarAba("cardapio"));
+document.getElementById("tab-ingredientes").addEventListener("click", () => ativarAba("ingredientes"));
+
+function ativarAba(aba) {
+  document.querySelectorAll(".editor-tab").forEach(t => t.classList.remove("active"));
+  document.querySelector(`#tab-${aba}`).classList.add("active");
+
+  document.querySelectorAll(".editor-section").forEach(s => (s.style.display = "none"));
+  document.getElementById(`editor-${aba}`).style.display = "block";
+
+  if (aba === "cardapio") {
+    refreshCategoriaSelect();
+    renderEditorProdutos();
+  }
+  if (aba === "ingredientes") {
+    if (typeof atualizarSelectGrupos === "function") atualizarSelectGrupos();
+    renderEditorIngredientes();
+  }
+}
+
+// ===============================
+// UTIL: Popular select de categorias SEM apagar dados
+// ===============================
+function refreshCategoriaSelect() {
+  const sel = document.getElementById("novo-categoria");
+  if (!sel) return;
+  // Limpa opções do select (UI), mas NÃO mexe em 'categorias'
+  sel.innerHTML = "";
+  (categorias || []).forEach(c => {
+    const opt = document.createElement("option");
+    opt.value = c.nome;
+    opt.textContent = c.nome;
+    sel.appendChild(opt);
+  });
+}
+
+// ===============================
+// EDITOR DE PRODUTOS
+// ===============================
+document.getElementById("salvar-produto").addEventListener("click", () => {
+  const nome = document.getElementById("novo-nome").value.trim();
+  const categoria = document.getElementById("novo-categoria").value;
+  const preco = parseFloat(document.getElementById("novo-preco").value);
+  const imagem = document.getElementById("novo-imagem").value.trim();
+  const descricao = document.getElementById("novo-descricao").value.trim();
+
+  if (!nome || isNaN(preco) || !imagem || !categoria) {
+    alert("Preencha nome, imagem, preço e escolha uma categoria!");
+    return;
+  }
+
+  const limites = {
+    Carnes: parseInt(document.getElementById("limite-carnes").value) || 0,
+    Molhos: parseInt(document.getElementById("limite-molhos").value) || 0,
+    "Crocantes Extras": parseInt(document.getElementById("limite-crocantes").value) || 0,
+    Proteínas: parseInt(document.getElementById("limite-proteinas").value) || 0,
+    Toppings: parseInt(document.getElementById("limite-toppings").value) || 0,
+    Caldas: parseInt(document.getElementById("limite-caldas").value) || 0
+  };
+
+  const grupo = (categorias || []).find(c => c.nome === categoria);
+  if (!grupo) {
+    alert("Categoria não encontrada!");
+    return;
+  }
+
+  grupo.itens = grupo.itens || [];
+  grupo.itens.push({
+    nome,
+    preco,
+    imagem,
+    descricao,
+    limites,
+    ingredientesPermitidos: {}
+  });
+
+  // Limpa apenas os campos do formulário (UI)
+  document.querySelectorAll("#editor-cardapio input, #editor-cardapio textarea").forEach(i => (i.value = ""));
+  refreshCategoriaSelect();
+  renderEditorProdutos();
+  if (typeof renderCardapio === "function") renderCardapio();
+});
+
+function renderEditorProdutos() {
+  const container = document.getElementById("produtos-editor");
+  if (!container) return;
+  container.innerHTML = "";
+
+  (categorias || []).forEach(cat => {
+    const divCat = document.createElement("div");
+    divCat.innerHTML = `<h3 style="color:var(--secondary); margin-top:1rem;">${cat.nome}</h3>`;
+
+    (cat.itens || []).forEach((item, idx) => {
+      const div = document.createElement("div");
+      div.className = "editor-item";
+      div.style = "background:#fff; margin:0.3rem 0; padding:0.4rem 0.6rem; border-radius:6px; box-shadow:0 0 3px #ccc;";
+      div.innerHTML = `
+        <strong>${item.nome}</strong> - R$ ${Number(item.preco || 0).toFixed(2)} 
+        <small style="color:#555;">[${item.imagem || ""}]</small><br>
+        <em style="font-size:0.85rem; color:#777;">${item.descricao || ""}</em><br>
+        <button class="btn-edit" onclick="editarProduto('${cat.nome.replace(/'/g, "\\'")}', ${idx})">✏️ Editar</button>
+        <button class="btn-delete" onclick="excluirProduto('${cat.nome.replace(/'/g, "\\'")}', ${idx})">🗑️ Excluir</button>
+      `;
+      divCat.appendChild(div);
+    });
+    container.appendChild(divCat);
+  });
+}
+
+function editarProduto(catNome, idx) {
+  const categoria = (categorias || []).find(c => c.nome === catNome);
+  if (!categoria) return;
+  const item = (categoria.itens || [])[idx];
+  if (!item) return;
+
+  const novoNome = prompt("Novo nome:", item.nome) ?? item.nome;
+  const novoPreco = parseFloat(prompt("Novo preço:", item.preco)) || item.preco;
+  const novaDesc = prompt("Nova descrição:", item.descricao) ?? item.descricao;
+  const novaImagem = prompt("Nova imagem (ex: hadouken.jpg):", item.imagem) ?? item.imagem;
+
+  if (confirm("Deseja editar os ingredientes permitidos e limites deste item?")) {
+    const gruposDisponiveis = (ingredientes || []).map(g => g.grupo);
+    item.ingredientesPermitidos = item.ingredientesPermitidos || {};
+    item.limites = item.limites || {};
+
+    gruposDisponiveis.forEach(gr => {
+      const nomes = (ingredientes.find(g => g.grupo === gr)?.opcoes || []).map(o => o.nome);
+      const atuais = item.ingredientesPermitidos[gr] || [];
+      const entrada = prompt(
+        `Grupo: ${gr}\nIngredientes disponíveis:\n${nomes.join(", ")}\n\nAtuais: ${atuais.join(", ")}\nDigite os nomes separados por vírgula:`
+      );
+      if (entrada !== null) {
+        item.ingredientesPermitidos[gr] = entrada.split(",").map(s => s.trim()).filter(Boolean);
+      }
+
+      const limiteAtual = item.limites[gr] || 0;
+      const novoLimite = parseInt(prompt(`Limite de escolhas para ${gr}:`, limiteAtual)) || limiteAtual;
+      item.limites[gr] = novoLimite;
+    });
+  }
+
+  Object.assign(item, { nome: novoNome, preco: novoPreco, descricao: novaDesc, imagem: novaImagem });
+
+  renderEditorProdutos();
+  if (typeof renderCardapio === "function") renderCardapio();
+}
+
+function excluirProduto(catNome, idx) {
+  const categoria = (categorias || []).find(c => c.nome === catNome);
+  if (!categoria) return;
+  if (confirm(`Excluir ${categoria.itens[idx].nome}?`)) {
+    categoria.itens.splice(idx, 1);
+    renderEditorProdutos();
+    if (typeof renderCardapio === "function") renderCardapio();
+  }
+}
+
+// ===============================
+// GERENCIAMENTO DE GRUPOS DE PRODUTOS (NOVO)
+// ===============================
+document.getElementById("salvar-grupo-cardapio").addEventListener("click", () => {
+  const nome = (document.getElementById("novo-grupo-cardapio-nome").value || "").trim();
+  if (!nome) return alert("Digite o nome do novo grupo de produtos!");
+
+  // NÃO remove nada. Apenas adiciona se não existir.
+  const exists = (categorias || []).some(c => c.nome.toLowerCase() === nome.toLowerCase());
+  if (exists) {
+    alert("Este grupo já existe no cardápio.");
+    return;
+  }
+
+  categorias.push({ nome, itens: [] });
+  document.getElementById("novo-grupo-cardapio-nome").value = "";
+
+  refreshCategoriaSelect();
+  renderEditorProdutos();
+  if (typeof renderCardapio === "function") renderCardapio();
+
+  alert(`✅ Grupo de produtos "${nome}" criado com sucesso!`);
+});
+
+// ===============================
+// GERENCIAMENTO DE GRUPOS/INGREDIENTES (já existente)
+// ===============================
+
+// Criar novo grupo de ingredientes
+document.getElementById("salvar-grupo").addEventListener("click", () => {
+  const nome = (document.getElementById("novo-grupo-nome").value || "").trim();
+  if (!nome) return alert("Digite o nome do novo grupo de ingredientes!");
+
+  if ((ingredientes || []).some(g => g.grupo.toLowerCase() === nome.toLowerCase())) {
+    alert("Esse grupo de ingredientes já existe!");
+    return;
+  }
+
+  ingredientes.push({ grupo: nome, opcoes: [] });
+  atualizarTudo();
+  atualizarSelectGrupos();
+  renderEditorIngredientes();
+  document.getElementById("novo-grupo-nome").value = "";
+  alert(`✅ Grupo de ingredientes "${nome}" criado com sucesso!`);
+});
+
+// Atualiza select com todos os grupos de ingredientes
+function atualizarSelectGrupos() {
+  const select = document.getElementById("novo-grupo");
+  if (!select) return;
+  select.innerHTML = "";
+  (ingredientes || []).forEach(g => {
+    const opt = document.createElement("option");
+    opt.value = g.grupo;
+    opt.textContent = g.grupo;
+    select.appendChild(opt);
+  });
+}
+
+// Criar novo ingrediente
+document.getElementById("salvar-ingrediente").addEventListener("click", () => {
+  const grupo = document.getElementById("novo-grupo").value;
+  const nome = (document.getElementById("novo-ingrediente").value || "").trim();
+  if (!nome) return alert("Digite o nome do ingrediente!");
+
+  let grupoExistente = (ingredientes || []).find(g => g.grupo === grupo);
+  if (!grupoExistente) {
+    grupoExistente = { grupo, opcoes: [] };
+    ingredientes.push(grupoExistente);
+  }
+
+  grupoExistente.opcoes.push({ nome, pausado: false });
+  document.getElementById("novo-ingrediente").value = "";
+  renderEditorIngredientes();
+});
+
+// Renderiza grupos e ingredientes
+function renderEditorIngredientes() {
+  const container = document.getElementById("ingredientes-editor");
+  if (!container) return;
+  container.innerHTML = "";
+
+  atualizarSelectGrupos();
+
+  (ingredientes || []).forEach(g => {
+    const div = document.createElement("div");
+    div.style = "background:#fff; margin:1rem 0; padding:0.6rem; border-radius:8px; box-shadow:0 0 4px #ccc;";
+    div.innerHTML = `<h4 style="color:var(--primary);">${g.grupo}</h4>`;
+
+    (g.opcoes || []).forEach((op, idx) => {
+      const btnPause = op.pausado
+        ? `<button class='btn-on' onclick="alternarIngrediente('${g.grupo.replace(/'/g, "\\'")}', ${idx})">Ativar</button>`
+        : `<button class='btn-off' onclick="alternarIngrediente('${g.grupo.replace(/'/g, "\\'")}', ${idx})">Pausar</button>`;
+
+      const linha = document.createElement("div");
+      linha.style = "margin:4px 0; display:flex; justify-content:space-between; align-items:center;";
+      linha.innerHTML = `
+        <span style="${op.pausado ? "color:#999; text-decoration:line-through;" : ""}">
+          ${op.nome}
+        </span>
+        <div>${btnPause}
+          <button class='btn-delete' onclick="excluirIngrediente('${g.grupo.replace(/'/g, "\\'")}', ${idx})">Excluir</button>
+        </div>
+      `;
+      div.appendChild(linha);
+    });
+
+    container.appendChild(div);
+  });
+}
+
+function alternarIngrediente(grupoNome, idx) {
+  const grupo = (ingredientes || []).find(g => g.grupo === grupoNome);
+  if (!grupo) return;
+  grupo.opcoes[idx].pausado = !grupo.opcoes[idx].pausado;
+  renderEditorIngredientes();
+}
+
+function excluirIngrediente(grupoNome, idx) {
+  const grupo = (ingredientes || []).find(g => g.grupo === grupoNome);
+  if (!grupo) return;
+  if (confirm(`Excluir ${grupo.opcoes[idx].nome}?`)) {
+    grupo.opcoes.splice(idx, 1);
+    renderEditorIngredientes();
+  }
+}
+
+// ===============================
+// IMPORTAR JSON (corrigido v6.3)
+// ===============================
+document.getElementById("import-json").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return alert("Nenhum arquivo selecionado!");
+
+  const reader = new FileReader();
+  reader.onload = function () {
+    try {
+      const data = JSON.parse(reader.result);
+
+      if (!data || (!data.categorias && !data.ingredientes)) {
+        alert("❌ Arquivo inválido — formato incorreto!");
+        return;
+      }
+
+      // Substitui apenas se os dados forem válidos
+      if (Array.isArray(data.categorias)) categorias = data.categorias;
+      if (Array.isArray(data.ingredientes)) ingredientes = data.ingredientes;
+
+      // Salva no localStorage
+      localStorage.setItem("palatarius_data", JSON.stringify({ categorias, ingredientes }));
+
+      // Recarrega completamente o sistema
+      renderCardapio();
+      renderEditorProdutos();
+      renderEditorIngredientes();
+
+      alert("✅ Importação concluída com sucesso!");
+      console.log("📦 Cardápio e ingredientes importados:", data);
+    } catch (err) {
+      console.error("Erro ao importar JSON:", err);
+      alert("❌ Erro ao importar JSON. Verifique o arquivo!");
+    }
+  };
+
+  reader.readAsText(file);
+});
+
+</script>
+
+<script>
+/* =========================================================
+   BLOCO 5 — DADOS INICIAIS DO CARDÁPIO PALATARIUS
+========================================================= */
+
+window.addEventListener("DOMContentLoaded", initializeDefaultData);
+
+function initializeDefaultData() {
+  // ===============================
+  // 🍔 GRUPOS DE PRODUTOS
+  // ===============================
+  categorias = [
+    {
+      nome: "Hambúrgueres",
+      itens: [
+        { nome: "Hadouken", preco: 10.50, imagem: "hadouken.jpg", descricao: "O golpe clássico da Palatarius! Pão americano macio com gergelim, carne artesanal 60g (blend bovino + bacon ou calabresa), ovo, alface e tomate frescos, ketchup e maionese especial. Um hambúrguer imbatível — rápido, direto e cheio de poder!", limites: { "Carnes":1, "Molhos":1, "Crocantes Extras":1 }},
+        { nome: "Fatality", preco: 11.00, imagem: "fatality.jpg", descricao: "Explosão de sabor que nocauteia a fome! X-Bacon artesanal com carne 60g, queijo derretido, ovo, salada fresca e bacon crocante. O golpe final do sabor — um verdadeiro campeão das arenas!", limites: { "Carnes":1, "Molhos":1, "Crocantes Extras":1 }},
+        { nome: "Chamas do Dragão", preco: 11.00, imagem: "chamas_dragao.jpg", descricao: "Intenso como o cosmo! Blend calabresa artesanal 60g, queijo derretido, ovo, salada fresca, e fatias de calabresa na chapa. Finalizado com ketchup e maionese Palatarius. Perfeito para quem carrega o fogo sagrado da fome!", limites: { "Carnes":1, "Molhos":2, "Crocantes Extras":1 }},
+        { nome: "Kamehameha", preco: 18.00, imagem: "kamehameha.jpg", descricao: "Poder em dobro! Dois blends artesanais 60g, dois ovos, queijo, bacon, calabresa, presunto, milho, ervilha e batata palha. Energia pura que explode em sabor — um lanche lendário!", limites: { "Carnes":2, "Molhos":2, "Crocantes Extras":2 }},
+        { nome: "Modo Bijuu", preco: 25.00, imagem: "modo_bijuu.jpg", descricao: "Força máxima! Três blends de 60g, três ovos, queijo, bacon, presunto, milho, ervilha e batata palha. Um chakra de sabor para quem quer liberar o monstro da fome interior!", limites: { "Carnes":3, "Molhos":2, "Crocantes Extras":2 }},
+        { nome: "Banquete do Luffy", preco: 12.00, imagem: "banquete_luffy.jpg", descricao: "O X-Tudo dos piratas! Blend artesanal 60g, ovo, salada, bacon, presunto, queijo, milho, ervilha e batata palha. Um banquete digno do Capitão do Chapéu de Palha!", limites: { "Carnes":1, "Molhos":2, "Crocantes Extras":1 }},
+        { nome: "De Volta pro Sabor", preco: 9.50, imagem: "de_volta_sabor.jpg", descricao: "O clássico que nunca sai de moda! Pão americano, carne artesanal suculenta, cheddar cremoso e molho de alho torrado. Simples e cheio de personalidade — puro sabor em cada mordida!", limites: { "Carnes":1, "Molhos":1, "Crocantes Extras":1 }},
+        { nome: "Exterminador de Fome", preco: 14.00, imagem: "exterminador_fome.jpg", descricao: "O poder do cheddar em dose dupla! Duas carnes artesanais 60g, duas camadas de cheddar derretido, molho especial Palatarius, e pão americano com gergelim. Uma máquina de sabor — 'I'll be back... pra mais um!'", limites: { "Carnes":2, "Molhos":2, "Crocantes Extras":1 }},
+        { nome: "Jurassic Chick", preco: 12.00, imagem: "jurassic_chick.jpg", descricao: "Crocância e cremosidade em perfeita harmonia! Filé de frango empanado, cheddar, alface americana, molho de alho torrado e pão com gergelim. Um clássico jurássico!", limites: { "Carnes":1, "Molhos":1, "Crocantes Extras":1 }},
+        { nome: "Matrix Verde", preco: 9.50, imagem: "matrix_verde.jpg", descricao: "Frescor e sabor artesanal! Pão americano, carne artesanal, molho Palatarius, alface americana crocante e tomate fresco. Escolha o sabor da realidade!", limites: { "Carnes":1, "Molhos":1, "Crocantes Extras":0 }},
+        { nome: "Caçadores da Gema Perdida", preco: 11.00, imagem: "egg_palatarius.jpg", descricao: "Um clássico artesanal com sabor de casa! Pão americano, carne artesanal, queijo mussarela e ovo frito no ponto perfeito.", limites: { "Carnes":1, "Molhos":1, "Crocantes Extras":0 }}
+      ]
+    },
+    {
+      nome: "Batatas",
+      itens: [
+        { nome: "Final Boss", preco: 55.00, imagem: "final_boss.jpg", descricao: "Desafio épico! Batatas crocantes 35cm cobertas com bacon, calabresa, ovos de codorna, azeitonas, queijo ralado e cheddar cremoso.", limites: { "Proteínas":2, "Acompanhamentos":6 }},
+        { nome: "Smash Bros", preco: 6.00, imagem: "smash_bros.jpg", descricao: "Versão compacta e saborosa. Batata crocante com bacon, calabresa e cheddar.", limites: { "Proteínas":2, "Acompanhamentos":4 }},
+        { nome: "Fatality Batata", preco: 45.00, imagem: "fatality_batata.jpg", descricao: "Batatas crocantes com calabresa, cheddar, bacon e ovos de codorna, frango a passarinho, anéis de cebola e nuggets, com 2 molhos especiais.", limites: { "Proteínas":3, "Molhos":2, "Acompanhamentos":6 }},
+        { nome: "Brutality", preco: 55.00, imagem: "brutality.jpg", descricao: "Batatas crocantes com calabresa, cheddar, bacon, ovos de codorna e acompanhamentos premium com molhos Palatarius.", limites: { "Proteínas":3, "Acompanhamentos":6 }}
+      ]
+    },
+    {
+      nome: "Batatas Recheadas",
+      itens: [
+        { nome: "Power Mash", preco: 12.00, imagem: "power_mash.jpg", descricao: "Purê cremoso de batatas com queijo derretido. Escolha 1 proteína e até 18 acompanhamentos.", limites: { "Proteínas":1, "Acompanhamentos":5 }},
+        { nome: "DeLorean Pot", preco: 18.00, imagem: "delorean_pot.jpg", descricao: "Versão família com purê, 2 proteínas e acompanhamentos. Cremosa e nostálgica!", limites: { "Proteínas":2, "Acompanhamentos":6 }},
+        { nome: "Missão Cheddar", preco: 15.00, imagem: "missao_cheddar.jpg", descricao: "Recheada com bacon, cheddar e catupiry derretido. Uma missão impossível de resistir!", limites: { "Molhos":1, "Acompanhamentos":3 }},
+        { nome: "Supremo T-800", preco: 20.00, imagem: "supremo_t800.jpg", descricao: "Dupla de proteínas, muito cheddar, bacon e crocância. Potência total!", limites: { "Proteínas":2, "Molhos":2 }}
+      ]
+    },
+    {
+      nome: "Pastéis",
+      itens: [
+        { nome: "Pastel Shuriken", preco: 10.00, imagem: "pastel_shuriken.jpg", descricao: "Pastel 15cm — crocante e rápido no gatilho! Monte o seu com 1 proteína e acompanhamentos.", limites: { "Proteínas":1, "Acompanhamentos":4 }},
+        { nome: "Pastel Grand Line", preco: 15.00, imagem: "pastel_grand_line.jpg", descricao: "Pastel 25cm — tamanho de aventura! Monte o seu com 2 proteínas e acompanhamentos à sua escolha.", limites: { "Proteínas":2, "Acompanhamentos":6 }}
+      ]
+    },
+    {
+      nome: "Cachorros-Quentes",
+      itens: [
+        { nome: "Hot Dog Noob Raiz", preco: 11.50, imagem: "hotdog_noob_raiz.jpg", descricao: "O clássico da base! Pão, salsicha ou linguiça, legumes e molhos Palatarius. Finalizado com batata palha e ovo de codorna.", limites: { "Molhos":2, "Acompanhamentos":4 }},
+        { nome: "Prensado Obby", preco: 13.00, imagem: "prensado_obby.jpg", descricao: "Hot dog prensado com purê, batata palha, queijo ralado e ovo. Um clássico lendário!", limites: { "Molhos":2, "Acompanhamentos":5 }},
+        { nome: "Prensado Modo Criativo", preco: 18.00, imagem: "modo_criativo.jpg", descricao: "Crie seu lanche do seu jeito! Escolha proteína extra e até 18 ingredientes. Seu sabor, suas regras!", limites: { "Proteínas":2, "Molhos":3, "Acompanhamentos":6 }}
+      ]
+    },
+    {
+      nome: "Sorvetes & Açaís",
+      itens: [
+        { nome: "Açaí Palatarius", preco: 15.00, imagem: "acai_palatarius.jpg", descricao: "Açaí cremoso com 4 toppings e 2 caldas. Doce e refrescante!", limites: { "Toppings":4, "Caldas":2 }},
+        { nome: "Taça Suprema", preco: 18.00, imagem: "taca_suprema.jpg", descricao: "Sorvete + açaí com caldas Fini e toppings variados.", limites: { "Toppings":5, "Caldas":3 }}
+      ]
+    },
+    {
+      nome: "Bebidas",
+      itens: [
+        { nome: "Guaracamp Copo", preco: 2.00, imagem: "guaracamp.jpg", descricao: "Copo gelado de Guaracamp, refrescante e delicioso!" },
+        { nome: "Refrigerante Mini 200ml", preco: 3.00, imagem: "refri_mini.jpg", descricao: "Mini refri gelado, 200ml de sabor!" },
+        { nome: "Água com Gás", preco: 3.50, imagem: "agua_gas.jpg", descricao: "Água gaseificada cristalina, perfeita para acompanhar." },
+        { nome: "Água sem Gás", preco: 3.50, imagem: "agua_semgas.jpg", descricao: "Água mineral pura e gelada." },
+        { nome: "Refrigerante Lata 350ml", preco: 5.50, imagem: "refri_lata.jpg", descricao: "Refrigerante 350ml, geladinho!" },
+        { nome: "Convecção 2L", preco: 7.50, imagem: "convencao_2l.jpg", descricao: "Refresco família 2L, ideal para compartilhar." },
+        { nome: "Refrigerante Sabores 2L", preco: 12.00, imagem: "refri_2l.jpg", descricao: "Guaraná, Laranja e outros sabores 2L." },
+        { nome: "Coca-Cola 2L", preco: 14.00, imagem: "coca_2l.jpg", descricao: "A clássica Coca-Cola 2 litros, sempre perfeita!" }
+      ]
+    }
+  ];
+
+  // ===============================
+  // 🧂 INGREDIENTES PADRÃO
+  // ===============================
+  ingredientes = [
+    { grupo: "Carnes", opcoes: [
+      { nome: "Blend Acém Bovino + Bacon", pausado: false },
+      { nome: "Blend Acém Bovino + Costela Bovina", pausado: false }
+    ]},
+    { grupo: "Molhos", opcoes: [
+      { nome: "Billy Jack" }, { nome: "Ketchup de Goiabada" }, { nome: "Ketchup de Goiabada Picante" },
+      { nome: "Alho e Ervas Finas" }, { nome: "Tártaro" }, { nome: "Tasty" },
+      { nome: "Molho de Bacon" }, { nome: "Molho Verde" }
+    ]},
+    { grupo: "Crocantes Extras", opcoes: [
+      { nome: "Alho Torrado" }, { nome: "Cebola Crispy" }
+    ]},
+    { grupo: "Proteínas", opcoes: [
+      { nome: "Carne" }, { nome: "Frango" }, { nome: "Costela" }, { nome: "Pernil" }, { nome: "Calabresa" }
+    ]},
+    { grupo: "Acompanhamentos", opcoes: [
+      { nome: "Bacon" }, { nome: "Presunto" }, { nome: "Ovo" }, { nome: "Milho Verde" },
+      { nome: "Ervilha" }, { nome: "Passas" }, { nome: "Azeitona" }, { nome: "Tomate Cru" },
+      { nome: "Cebola" }, { nome: "Champignon" }, { nome: "Palmito" }, { nome: "Cebola Crispy" },
+      { nome: "Alho Torrado" }, { nome: "Queijo Minas" }, { nome: "Queijo Mussarela" },
+      { nome: "Queijo Prato" }, { nome: "Catupiry" }, { nome: "Cheddar" }, { nome: "Orégano" }, { nome: "Queijo Parmesão" }
+    ]},
+    { grupo: "Toppings", opcoes: [
+      { nome: "Canudo de Biscoito" }, { nome: "Sucrilhos" }, { nome: "Granola" },
+      { nome: "Amendoim" }, { nome: "Paçoca" }, { nome: "Granulado" },
+      { nome: "Flocos de Arroz" }, { nome: "Aveia" }, { nome: "Chocoball" },
+      { nome: "Jujuba" }, { nome: "Delicado" }, { nome: "Leite em Pó" }
+    ]},
+    { grupo: "Caldas", opcoes: [
+      { nome: "Chocolate" }, { nome: "Morango" }, { nome: "Brigadeiro" },
+      { nome: "Leite Condensado" }, { nome: "Amendoim" }, { nome: "Floresta Negra" },
+      { nome: "Banana Caramelada" }, { nome: "Limão" }, { nome: "Chocomenta" }, { nome: "Menta" }
+    ]},
+    { grupo: "Caldas Fini (+R$1)", opcoes: [
+      { nome: "Fini Dentaduras" }, { nome: "Fini Bananas" }, { nome: "Fini Beijos" }
+    ]}
+  ];
+
+  renderCardapio();
+}
+</script>
+<script>
+/* =========================================================
+   BLOCO 6 — SALVAMENTO LOCAL, RESTAURAÇÃO E FINALIZAÇÃO (v7)
+   Inclui salvamento automático e persistente de tudo
+========================================================= */
+
+// ===============================
+// SALVAR E RESTAURAR LOCALSTORAGE
+// ===============================
+function salvarLocal() {
+  try {
+    const data = { categorias, ingredientes };
+    localStorage.setItem("palatarius_data", JSON.stringify(data));
+    console.log("💾 Dados salvos automaticamente no localStorage.");
+  } catch (err) {
+    console.error("❌ Erro ao salvar dados locais:", err);
+  }
+}
+// Sempre salva após qualquer alteração de estrutura
+function atualizarTudo() {
+  salvarLocal();
+  renderCardapio();
+  renderEditorProdutos();
+  renderEditorIngredientes();
+}
+
+function restaurarLocal() {
+  const data = localStorage.getItem("palatarius_data");
+  if (data) {
+    try {
+      const obj = JSON.parse(data);
+      if (obj.categorias && obj.ingredientes) {
+        categorias = obj.categorias;
+        ingredientes = obj.ingredientes;
+        renderCardapio();
+        renderEditorProdutos();
+        renderEditorIngredientes();
+        console.log("✅ Dados restaurados com sucesso do localStorage.");
+        return true;
+      }
+    } catch (err) {
+      console.error("❌ Erro ao restaurar dados locais:", err);
+    }
+  }
+  return false;
+}
+
+// ===============================
+// SALVAMENTO AUTOMÁTICO GLOBAL
+// ===============================
+function ativarSalvamentoAutomatico() {
+  const eventos = [
+    "click",
+    "input",
+    "change"
+  ];
+
+  eventos.forEach(evt => {
+    document.body.addEventListener(evt, debounce(() => salvarLocal(), 1000));
+  });
+
+  console.log("⚙️ Salvamento automático ativo (eventos globais).");
+}
+
+// Função debounce para evitar salvar muitas vezes seguidas
+function debounce(func, delay) {
+  let timer;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => func.apply(this, args), delay);
+  };
+}
+
+// ===============================
+// INICIALIZAÇÃO GLOBAL
+// ===============================
+window.addEventListener("DOMContentLoaded", () => {
+  const restaurado = restaurarLocal();
+  if (!restaurado) {
+    console.log("⚙️ Nenhum dado local encontrado — inicializando dados padrão.");
+    if (typeof initializeDefaultData === "function") initializeDefaultData();
+  }
+
+  ativarSalvamentoAutomatico();
+
+  // Garante salvamento ao sair da página
+  window.addEventListener("beforeunload", salvarLocal);
+
+  console.log("🚀 Sistema Palatarius v7 iniciado com sucesso!");
+});
+
+// ===============================
+// FECHAR EDITOR
+// ===============================
+document.getElementById("close-editor").addEventListener("click", () => {
+  salvarLocal();
+  document.getElementById("editor-screen").classList.remove("active");
+  alert("✅ Editor fechado. Todas as alterações foram salvas automaticamente!");
+});
+
+// ===============================
+// INTEGRAÇÃO COM FUNÇÕES DO EDITOR
+// (Garantir salvamento após ações críticas)
+// ===============================
+function salvarDepois(callback) {
+  try {
+    callback();
+  } finally {
+    salvarLocal();
+  }
+}
+
+// Substitui as principais funções para garantir persistência
+const _oldRenderCardapio = window.renderCardapio;
+window.renderCardapio = function() {
+  if (typeof _oldRenderCardapio === "function") _oldRenderCardapio();
+  salvarLocal();
+};
+
+const _oldRenderEditorProdutos = window.renderEditorProdutos;
+window.renderEditorProdutos = function() {
+  if (typeof _oldRenderEditorProdutos === "function") _oldRenderEditorProdutos();
+  salvarLocal();
+};
+
+const _oldRenderEditorIngredientes = window.renderEditorIngredientes;
+window.renderEditorIngredientes = function() {
+  if (typeof _oldRenderEditorIngredientes === "function") _oldRenderEditorIngredientes();
+  salvarLocal();
+};
+</script>
+
+</body>
+</html>
