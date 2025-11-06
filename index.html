@@ -638,7 +638,10 @@
           card.className = 'product-card';
           card.innerHTML = `
             <div class="product-image">
-              ${p.image ? `<img src="assets/images/${p.image}" alt="${p.name}" onerror="this.style.display='none'">` : 'Foto em breve'}
+              ${p.imageUrl ? `<img src="${p.imageUrl}" alt="${p.name}" onerror="this.style.display='none'">` : 
+              ${p.imageUrl ? `<img src="${p.imageUrl}" alt="${p.name}" onerror="this.style.display='none'">` : 
+                p.image ? `<img src="assets/images/${p.image}" alt="${p.name}" onerror="this.style.display='none'">` : 
+                'Foto em breve'}
             </div>
             <div class="product-content">
               <div class="product-title">${p.name}</div>
@@ -914,10 +917,24 @@
           item.innerHTML = `
             <input value="${p.name}" placeholder="Nome" onchange="categories[${i}].products[${j}].name=this.value">
             <input value="${p.description||''}" placeholder="Desc" onchange="categories[${i}].products[${j}].description=this.value">
-            <div style="display:flex; gap:0.5rem; margin-top:0.5rem; align-items:center;">
-              <input type="text" value="${p.image||''}" placeholder="nome.jpg" id="img-${i}-${j}" style="flex:1;">
-              <label class="upload-btn" for="upload-${i}-${j}">Escolher</label>
-              <input type="file" id="upload-${i}-${j}" accept="image/*" style="display:none;" onchange="handleUpload(event,${i},${j})">
+            <div style="display:flex; gap:0.5rem; margin-top:0.5rem; align-items:flex-start; flex-direction:column;">
+              <small style="color:var(--light);">Imagem (GitHub ou local):</small>
+              <input 
+                type="text" 
+                placeholder="https://raw.githubusercontent.com/..." 
+                value="${p.imageUrl || ''}" 
+                onchange="categories[${i}].products[${j}].imageUrl=this.value; categories[${i}].products[${j}].image=''" 
+                style="flex:1; font-size:0.85rem; padding:0.4rem;">
+              <div style="display:flex; gap:0.3rem; width:100%;">
+                <input 
+                  type="text" 
+                  value="${p.image||''}" 
+                  placeholder="ou nome-local.jpg" 
+                  id="img-${i}-${j}" 
+                  style="flex:1; font-size:0.85rem; padding:0.4rem;">
+                <label class="upload-btn" for="upload-${i}-${j}">Escolher</label>
+                <input type="file" id="upload-${i}-${j}" accept="image/*" style="display:none;" onchange="handleUpload(event,${i},${j})">
+              </div>
             </div>
             <input type="number" step="0.01" value="${p.price}" placeholder="Preço base" onchange="categories[${i}].products[${j}].price=this.value">
             <div style="margin-top:0.5rem;">
@@ -994,21 +1011,22 @@
         name: 'Novo Item',
         description: '',
         image: '',
+        imageUrl: '',
         price: '0.00',
         customizable: false
       });
       renderEditor();
     }
 
-    function handleUpload(e, catIdx, prodIdx) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const filename = file.name;
-      categories[catIdx].products[prodIdx].image = filename;
-      document.getElementById(`img-${catIdx}-${prodIdx}`).value = filename;
-      alert(`Imagem "${filename}" salva! Coloque em assets/images/`);
-    }
-
+      function handleUpload(e, catIdx, prodIdx) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const filename = file.name;
+        categories[catIdx].products[prodIdx].image = filename;
+        categories[catIdx].products[prodIdx].imageUrl = ''; // Limpa o link do GitHub
+        document.getElementById(`img-${catIdx}-${catIdx}-${prodIdx}`).value = filename;
+        alert(`Imagem local "${filename}" salva! Coloque em assets/images/`);
+      }
     // === EVENTOS ===
     document.addEventListener('DOMContentLoaded', () => {
       if (customer.name) show('menu-screen');
