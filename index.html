@@ -19,7 +19,7 @@
     }
     * { box-sizing: border-box; margin:0; padding:0; }
     body { font-family: system-ui, sans-serif; background: var(--bg-base); color: #fff; }
-    header { background: var(--gray-dark); padding: 1rem; text-align: center; position: sticky; top:0; z-index:1000; }
+    header { background: var(--gray-dark); padding: 1rem; text-align: center; position: sticky; top:0; z-index:1000; box-shadow: 0 2px 8px rgba(255,214,10,0.2); border-bottom: 1px solid rgba(255,214,10,0.15); }
     header h1 { color: var(--primary-yellow); font-size: 1.8rem; }
     section { display: none; padding: 1rem; }
     section.active { display: block; }
@@ -34,7 +34,7 @@
     .row .form-group { flex: 1; }
     .btn {
       padding: 0.6rem 1rem; border: none; border-radius: var(--radius-input);
-      font-weight: 600; cursor: pointer; min-height: 44px;
+      font-weight: 600; cursor: pointer; min-height: 44px; transition: filter 0.2s;
     }
     .btn-primary { background: var(--primary-red); color: #fff; }
     .btn-secondary { background: var(--primary-yellow); color: #000; }
@@ -477,23 +477,37 @@
       closeModal();
     }
 
-    // === CARRINHO ===
+    // === CARRINHO COM INGREDIENTES ===
     function renderCart() {
       const container = document.getElementById('cart-items');
       container.innerHTML = '';
       let subtotal = 0;
       cart.forEach((item, i) => {
-        const price = parseFloat(item.price) * item.quantity;
-        subtotal += price;
+        let extrasTotal = 0;
+        let ingredientsHTML = '';
+        if (item.ingredients && item.ingredients.length > 0) {
+          ingredientsHTML = '<div style="font-size:0.85rem; color:#aaa; margin-top:0.2rem;">';
+          item.ingredients.forEach(ing => {
+            ingredientsHTML += `• ${ing.group}: ${ing.name}`;
+            if (ing.price > 0) {
+              ingredientsHTML += ` (+R$ ${ing.price.toFixed(2).replace('.', ',')})`;
+              extrasTotal += ing.price;
+            }
+            ingredientsHTML += '<br>';
+          });
+          ingredientsHTML += '</div>';
+        }
+        const itemPrice = parseFloat(item.price) * item.quantity;
+        subtotal += itemPrice;
         const div = document.createElement('div');
         div.className = 'cart-item';
         div.innerHTML = `
           <div style="flex:1;">
             <div class="product-title">${item.name}</div>
             <div style="font-size:0.9rem; color:#ccc;">
-              R$ ${parseFloat(item.price).toFixed(2)} × ${item.quantity}
-              ${item.ingredients?.length ? '<br><small>' + item.ingredients.map(ing => ing.name + (ing.price > 0 ? ` (+R$${ing.price})` : '')).join(', ') + '</small>' : ''}
+              R$ ${parseFloat(item.price).toFixed(2).replace('.', ',')} × ${item.quantity}
             </div>
+            ${ingredientsHTML}
           </div>
           <div class="quantity-control">
             <button onclick="cart[${i}].quantity=Math.max(1,cart[${i}].quantity-1);saveToStorage();renderCart();updateCartBadge();">-</button>
@@ -504,7 +518,6 @@
         `;
         container.appendChild(div);
       });
-
       const freight = customer.type === 'Entrega' ? parseFloat(customer.address?.freight || 0) : 0;
       document.getElementById('subtotal').textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
       document.getElementById('freight').textContent = `R$ ${freight.toFixed(2).replace('.', ',')}`;
@@ -551,16 +564,117 @@
       });
     }
 
-    function saveCatalog() {
-      saveToStorage();
-      alert('Cardápio salvo com sucesso!');
+    // === EDITOR DE GRUPOS DE INGREDIENTES ===
+    function renderGroupEditor() {
+      const container = document.createElement('div');
+      container.id = "ingredient-group-editor";
+      container.style = "margin-top:2rem; background:#111; padding:1rem; border-radius:10px;";
+      container.innerHTML = `
+        <h3 style="color:var(--primary-yellow); text-align:center;">Gerenciar Grupos de Ingredientes</h3>
+        <button class="btn btn-primary" style="width:100%; margin:0.8rem 0;" onclick="addIngredientGroup()">+ Novo Grupo</button>
+        <div id="group-list"></div>
+      `;
+      document.getElementById('editor-screen').appendChild(container);
+      renderGroups();
     }
 
-    function exportHTML() {
-      const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
+    function renderGroups() {
+      const list = document.getElementById('group-list');
+      list.innerHTML = '';
+      ingredientGroups.forEach((g, gi) => {
+        const div = document.createElement('div');
+        div.style = "background:#1a1a1a; padding:1rem; margin-bottom:1rem; border-radius:8px;";
+        div.innerHTML = `
+          <input value="${g.name}" style="width:100%; margin-bottom:0.3rem; padding:0.4rem;" onchange="ingredientGroups[${gi}].name=this.value">
+          <div class="row" style="margin-bottom:0.3rem;">
+            <div class="form-group">
+              <label>Obrigatório?</label>
+              <select onchange="ingredientGroups[${gi}].required=this.value==='true'">
+                <option value="false" ${!g.required ? 'selected' : ''}>Não</option>
+                <option value="true" ${g.required ? 'selected' : ''}>Sim</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Máximo de opções</label>
+              <input type="number" value="${g.max}" min="1" onchange="ingredientGroups[${gi}].max=parseInt(this.value)">
+            </div>
+            <div class="form-group">
+              <label>Tipo</label>
+              <select onchange="ingredientGroups[${gi}].type=this.value">
+                <option value="checkbox" ${g.type==='checkbox'?'selected':''}>Múltipla</option>
+                <option value="radio" ${g.type==='radio'?'selected':''}>Única</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-small btn-secondary" style="margin-bottom:0.5rem;" onclick="addItemToGroup(${gi})">+ Ingrediente</button>
+          <div id="items-${gi}"></div>
+          <button class="btn btn-small" style="background:#E53935; margin-top:0.5rem;" onclick="if(confirm('Excluir grupo?')){ingredientGroups.splice(${gi},1);renderGroups();}">Excluir Grupo</button>
+        `;
+        list.appendChild(div);
+
+        const itemsDiv = div.querySelector(`#items-${gi}`);
+        g.items.forEach((it, ii) => {
+          const itemDiv = document.createElement('div');
+          itemDiv.style = "display:flex; align-items:center; gap:0.5rem; margin-top:0.3rem;";
+          itemDiv.innerHTML = `
+            <input value="${it.name}" style="flex:1; padding:0.4rem;" onchange="ingredientGroups[${gi}].items[${ii}].name=this.value">
+            <input type="number" step="0.01" value="${it.price}" style="width:80px; padding:0.4rem;" onchange="ingredientGroups[${gi}].items[${ii}].price=parseFloat(this.value)">
+            <button class="btn btn-small" style="background:#E53935;" onclick="ingredientGroups[${gi}].items.splice(${ii},1);renderGroups();">×</button>
+          `;
+          itemsDiv.appendChild(itemDiv);
+        });
+      });
+    }
+
+    function addIngredientGroup() {
+      ingredientGroups.push({
+        id: 'g' + Date.now(),
+        name: 'Novo Grupo',
+        required: false,
+        max: 1,
+        type: 'checkbox',
+        items: []
+      });
+      renderGroups();
+    }
+
+    function addItemToGroup(gi) {
+      ingredientGroups[gi].items.push({ name: 'Novo Ingrediente', price: 0 });
+      renderGroups();
+    }
+
+    function saveAllData() {
+      saveToStorage();
+      alert('Cardápio e Grupos de Ingredientes salvos com sucesso!');
+    }
+
+    // === FINALIZAÇÃO E OTIMIZAÇÕES ===
+    window.addEventListener('beforeunload', () => {
+      saveToStorage();
+    });
+
+    const btnSave = document.getElementById('editor-save');
+    if (btnSave) {
+      btnSave.addEventListener('click', () => {
+        saveAllData();
+        btnSave.textContent = 'Salvo!';
+        setTimeout(() => btnSave.textContent = 'Salvar Cardápio', 2000);
+      });
+    }
+
+    function exportFullHTML() {
+      const html = document.documentElement.outerHTML;
+      const blob = new Blob([html], { type: 'text/html' });
       const a = document.createElement('a');
-      a.href = url; a.download = 'cardapio-palatarius.html'; a.click();
+      a.href = URL.createObjectURL(blob);
+      a.download = 'palatarius-cardapio-final.html';
+      a.click();
+      alert('Arquivo exportado com sucesso!');
+    }
+
+    const btnExport = document.getElementById('editor-export');
+    if (btnExport) {
+      btnExport.onclick = exportFullHTML;
     }
 
     // === EVENTOS ===
@@ -601,6 +715,7 @@
         if (pwd === EDITOR_PASSWORD) {
           backupCategories = JSON.parse(JSON.stringify(categories));
           renderEditor();
+          setTimeout(renderGroupEditor, 500);
           showScreen('editor-screen');
         } else if (pwd !== null) {
           alert('Senha incorreta.');
@@ -612,9 +727,20 @@
         categories = backupCategories || categories;
         showScreen('menu-screen');
       });
-      document.getElementById('editor-save').addEventListener('click', saveCatalog);
-      document.getElementById('editor-export').addEventListener('click', exportHTML);
+
+      // Hover nos botões
+      document.querySelectorAll('.btn-primary').forEach(b => {
+        b.addEventListener('mouseenter', () => b.style.filter = 'brightness(1.2)');
+        b.addEventListener('mouseleave', () => b.style.filter = 'brightness(1)');
+      });
+
+      // Fechar modal ao clicar fora
+      document.getElementById('modal-overlay').addEventListener('click', (e) => {
+        if (e.target.id === 'modal-overlay') closeModal();
+      });
     });
+
+    console.log('Sistema Palatarius inicializado com sucesso!');
   </script>
 </body>
 </html>
