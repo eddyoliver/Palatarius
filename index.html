@@ -730,9 +730,14 @@
         if (validateCustomerForm()) showScreen('menu-screen');
       });
 
-      document.getElementById('order-type').addEventListener('change', e => {
-        document.getElementById('delivery-fields').style.display = e.target.value === 'Entrega' ? 'block' : 'none';
-      });
+      // Forçar exibição correta dos campos de endereço ao carregar a página
+      const orderTypeSelect = document.getElementById('order-type');
+      function toggleDeliveryFields() {
+        document.getElementById('delivery-fields').style.display =
+          orderTypeSelect.value === 'Entrega' ? 'block' : 'none';
+      }
+      orderTypeSelect.addEventListener('change', toggleDeliveryFields);
+      toggleDeliveryFields(); // ← executa na carga inicial
 
       document.getElementById('address-km').addEventListener('change', e => {
         document.getElementById('uber-freight-group').style.display = e.target.value === 'Outro' ? 'block' : 'none';
