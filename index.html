@@ -644,23 +644,26 @@
     }
 
     function saveAllData() {
-      saveToStorage();
-      alert('Cardápio e Grupos de Ingredientes salvos com sucesso!');
+      // Atualiza e salva tudo no localStorage
+      localStorage.setItem('palatarius_categories', JSON.stringify(categories));
+      localStorage.setItem('palatarius_customer', JSON.stringify(customer));
+      localStorage.setItem('palatarius_cart', JSON.stringify(cart));
+      localStorage.setItem('palatarius_observations', cartObservations);
+      localStorage.setItem('palatarius_ingredientGroups', JSON.stringify(ingredientGroups));
+
+      // Confirma visualmente
+      alert('✅ Cardápio e Grupos de Ingredientes salvos com sucesso!');
+      
+      // Recarrega dados atualizados imediatamente
+      categories = JSON.parse(localStorage.getItem('palatarius_categories'));
+      ingredientGroups = JSON.parse(localStorage.getItem('palatarius_ingredientGroups'));
+      
+      // Atualiza visual do editor e cardápio
+      renderEditor();
+      renderCategories();
+      renderProducts();
     }
 
-    // === FINALIZAÇÃO E OTIMIZAÇÕES ===
-    window.addEventListener('beforeunload', () => {
-      saveToStorage();
-    });
-
-    const btnSave = document.getElementById('editor-save');
-    if (btnSave) {
-      btnSave.addEventListener('click', () => {
-        saveAllData();
-        btnSave.textContent = 'Salvo!';
-        setTimeout(() => btnSave.textContent = 'Salvar Cardápio', 2000);
-      });
-    }
 
     function exportFullHTML() {
       const html = document.documentElement.outerHTML;
@@ -680,6 +683,20 @@
     // === EVENTOS ===
     document.addEventListener('DOMContentLoaded', () => {
       if (customer.name) showScreen('menu-screen');
+      // Exibir resumo do cliente e endereço no cabeçalho
+      if (customer.name) {
+        const header = document.querySelector('header');
+        let info = `<div style="font-size:0.8rem; color:#ccc; margin-top:0.3rem;">`;
+        info += `<strong>${customer.name}</strong> • ${customer.phone} • ${customer.type}`;
+        if (customer.type === 'Entrega' && customer.address) {
+          info += `<br>${customer.address.logradouro}, nº ${customer.address.number} - ${customer.address.bairro}`;
+          info += ` (KM ${customer.address.km})`;
+        }
+        info += `</div>`;
+        header.insertAdjacentHTML('beforeend', info);
+      }
+
+
       else showScreen('customer-screen');
 
       document.getElementById('customer-form').addEventListener('submit', e => {
@@ -705,7 +722,30 @@
       document.getElementById('checkout-whatsapp').addEventListener('click', () => {
         if (cart.length === 0) return alert('Carrinho vazio');
         const total = document.getElementById('total').textContent;
-        const msg = `*PEDIDO*\n*Nome:* ${customer.name}\n*Tel:* ${customer.phone}\n*Total:* ${total}`;
+      let msg = `*PEDIDO PALATARIUS* 🍔\n`;
+      msg += `*Nome:* ${customer.name}\n`;
+      msg += `*Telefone:* ${customer.phone}\n`;
+      msg += `*Tipo:* ${customer.type}\n`;
+
+      if (customer.type === 'Entrega' && customer.address) {
+        msg += `*Endereço:* ${customer.address.logradouro}, ${customer.address.number} - ${customer.address.bairro} (KM ${customer.address.km})\n`;
+      }
+
+      msg += `\n*Itens do Pedido:*\n`;
+
+      cart.forEach((item, i) => {
+        msg += `• ${item.name} (x${item.quantity}) - R$ ${parseFloat(item.price).toFixed(2)}\n`;
+        if (item.ingredients && item.ingredients.length > 0) {
+          item.ingredients.forEach(ing => {
+            msg += `   - ${ing.group}: ${ing.name}${ing.price > 0 ? ` (+R$ ${ing.price.toFixed(2)})` : ''}\n`;
+          });
+        }
+      });
+
+      msg += `\n*Observações:* ${cartObservations || 'Nenhuma'}\n`;
+      msg += `\n*Total:* ${total}\n`;
+      msg += `\n📍 FAVOR ENVIAR SUA LOCALIZAÇÃO PARA FACILITAR A ENTREGA!\n🍔 PALATARIUS AGRADECE! 🙌`;
+
         window.open(`https://wa.me/5521997599132?text=${encodeURIComponent(msg)}`);
       });
 
