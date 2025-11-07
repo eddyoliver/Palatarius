@@ -1,5 +1,5 @@
 {
-  "atualizado_em": "2025-11-07T17:09:27.758Z",
+  "atualizado_em": "2025-11-07T23:41:09.031Z",
   "versao": "10.1",
   "categorias": [
     {
@@ -288,25 +288,6 @@
           }
         },
         {
-          "nome": "Smash Bros",
-          "preco": 6,
-          "imagem": "smash_bros.jpg",
-          "descricao": "Versão compacta e saborosa. Batata crocante com bacon, calabresa e cheddar.",
-          "limites": {
-            "Proteínas": 0,
-            "Acompanhamentos": 0,
-            "Carnes": 0,
-            "Molhos": 0,
-            "Crocantes Extras": 0,
-            "Toppings": 0,
-            "Caldas": 0,
-            "Caldas Fini (+R$1)": 0,
-            "Sabores Açai": 0,
-            "Sabores Sorvete": 0
-          },
-          "ingredientesPermitidos": {}
-        },
-        {
           "nome": "Fatality Batata",
           "preco": 45,
           "imagem": "fatality_batata.jpg",
@@ -364,6 +345,27 @@
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
             "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {}
+        },
+        {
+          "nome": "Smash Bros",
+          "preco": 6,
+          "imagem": "smash_bros.jpg",
+          "descricao": "Versão compacta e saborosa. Batata crocante com bacon, calabresa e cheddar.",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Acompanhamentos": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {}
         }
