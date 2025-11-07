@@ -410,6 +410,36 @@
     background: #1ebc58;
   }
 
+  /* =======================
+   Ajuste para celular — Botão flutuante menor
+    ======================= */
+    @media (max-width: 600px) {
+      .floating-btn {
+        bottom: 1rem;
+        left: 1rem;
+        padding: 0.8rem;
+        border-radius: 50%;
+        font-size: 1.4rem;
+        width: 52px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+        z-index: 9500; /* Fica abaixo do carrinho e modal */
+      }
+
+      /* Oculta o texto longo "Venha nos Visitar!" em telas pequenas */
+      .floating-btn::after {
+        content: "🏠";
+      }
+      .floating-btn span, 
+      .floating-btn::before {
+        display: none !important;
+      }
+    }
+
+
   </style>
 </head>
 
