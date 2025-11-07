@@ -1,5 +1,5 @@
 {
-  "atualizado_em": "2025-11-07T16:57:44.134Z",
+  "atualizado_em": "2025-11-07T17:09:27.758Z",
   "versao": "10.1",
   "categorias": [
     {
@@ -8,7 +8,7 @@
         {
           "nome": "Hadouken",
           "preco": 10.5,
-          "imagem": "hadouken.jpg",
+          "imagem": "Hadouken.jpg",
           "descricao": "O golpe clássico da Palatarius! Pão americano macio com gergelim, carne artesanal 60g (blend bovino + bacon ou calabresa), ovo, alface e tomate frescos, ketchup e maionese especial. Um hambúrguer imbatível — rápido, direto e cheio de poder!",
           "limites": {
             "Carnes": 1,
@@ -20,7 +20,9 @@
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
-            "Sabores Sorvete": 0
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 1,
+            "Refrigerantes Sabores": 1
           },
           "ingredientesPermitidos": {
             "Carnes": "*",
@@ -31,7 +33,7 @@
         {
           "nome": "Fatality",
           "preco": 11,
-          "imagem": "fatality.jpg",
+          "imagem": "Fatality.jpg",
           "descricao": "Explosão de sabor que nocauteia a fome! X-Bacon artesanal com carne 60g, queijo derretido, ovo, salada fresca e bacon crocante. O golpe final do sabor — um verdadeiro campeão das arenas!",
           "limites": {
             "Carnes": 1,
@@ -43,7 +45,9 @@
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
-            "Sabores Sorvete": 0
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 1,
+            "Refrigerantes Sabores": 1
           },
           "ingredientesPermitidos": {
             "Carnes": "*",
@@ -502,7 +506,7 @@
         {
           "nome": "Prensado Obby",
           "preco": 13,
-          "imagem": "Prensado_obby.jpg",
+          "imagem": "prensado_obby.jpg",
           "descricao": "Hot dog prensado com purê, batata palha, queijo ralado e ovo. Um clássico lendário!",
           "limites": {
             "Molhos": 1,
@@ -515,7 +519,8 @@
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
             "Sabores Sorvete": 0,
-            "HotDog Proteina": 1
+            "HotDog Proteina": 1,
+            "Refrigerantes Sabores": 1
           },
           "ingredientesPermitidos": {
             "Molhos": "*",
