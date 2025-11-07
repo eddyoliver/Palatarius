@@ -313,6 +313,103 @@
       .card img { height: 120px; }
       #cart { width: 100%; }
     }
+
+/* =======================
+   BOTÃO "VENHA NOS VISITAR"
+======================= */
+.floating-btn {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  cursor: pointer;
+  transition: all 0.3s;
+  z-index: 10000;
+}
+.floating-btn:hover {
+  background: var(--secondary);
+  transform: scale(1.05);
+}
+
+/* =======================
+   MODAL VISITE-NOS
+======================= */
+  #visite-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 10001;
+  }
+  .visite-content {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    max-width: 700px;
+    width: 90%;
+    text-align: center;
+    animation: fadeIn 0.4s ease;
+  }
+  .visite-content h2 {
+    color: var(--secondary);
+    margin-bottom: 0.5rem;
+  }
+  .visite-content p {
+    color: #444;
+    line-height: 1.6;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  .visite-fotos {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .visite-fotos img {
+    width: 30%;
+    min-width: 150px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    object-fit: cover;
+    height: 120px;
+  }
+  .visite-info {
+    margin-top: 1rem;
+  }
+  .maps-btn, .whatsapp-btn {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: 0.2s;
+  }
+  .maps-btn {
+    background: var(--accent);
+    color: #222;
+  }
+  .maps-btn:hover {
+    background: #ffe083;
+  }
+  .whatsapp-btn {
+    background: #25d366;
+    color: white;
+  }
+  .whatsapp-btn:hover {
+    background: #1ebc58;
+  }
+
   </style>
 </head>
 
@@ -528,6 +625,41 @@
       </div>
     </div>
   </section>
+  <!-- =======================
+     SEÇÃO VISITE-NOS
+======================= -->
+<button id="visite-btn" class="floating-btn">🏠 Venha nos Visitar!</button>
+
+<div id="visite-modal">
+  <div class="visite-content">
+    <h2>🍔 Bem-vindo à Palatarius!</h2>
+    <p>
+      Um espaço geek e aconchegante onde o sabor encontra a diversão!  
+      Aqui a galera se reúne pra saborear nossos hambúrgueres artesanais,  
+      curtir o fliperama, jogar PS4 e viver momentos épicos com os amigos.  
+      Venha sentir o <strong>Sabor Geek da Galáxia!</strong> 🎮✨
+    </p>
+
+    <div class="visite-fotos">
+      <img src="assets/images/loja_1.jpg" alt="Fachada da Loja Palatarius">
+      <img src="assets/images/fliperama.jpg" alt="Fliperama Palatarius">
+      <img src="assets/images/ps4_area.jpg" alt="Área Gamer PS4">
+    </div>
+
+    <div class="visite-info">
+      <p><strong>📍 Endereço:</strong> BR-465, nº 199 – Campo Lindo, Seropédica-RJ<br>
+      (Próximo à LifeFit KM40)</p>
+      <a href="https://www.google.com/maps/place/Palatarius/@-22.8060553,-43.6377571,19.5z/data=!4m6!3m5!1s0x9957204e3e3a25:0xdd752037ad31df35!8m2!3d-22.8059955!4d-43.6378252!16s%2Fg%2F11mdfkrt_t?hl=pt-BR&entry=ttu&g_ep=EgoyMDI1MTEwNC4xIKXMDSoASAFQAw%3D%3D"
+         target="_blank" class="maps-btn">🗺️ Ver no Google Maps</a>
+
+      <p style="margin-top:0.5rem;"><strong>📞 WhatsApp:</strong> (21) 99759-9132</p>
+      <a href="https://wa.me/5521997599132?text=Olá!%20Vim%20pelo%20cardápio%20digital%20e%20quero%20saber%20mais%20sobre%20a%20Palatarius!"
+         target="_blank" class="whatsapp-btn">💬 Falar com a Palatarius</a>
+    </div>
+
+    <button id="fechar-visite" class="primary" style="margin-top:1rem;">Fechar</button>
+  </div>
+</div>
 
   <!-- =======================
        6️⃣ RODAPÉ SECRETO
@@ -1552,6 +1684,17 @@ window.addEventListener("load", async () => {
     };
 
   console.log("🚀 Palatarius v10.1 — botão de exportação sempre ativo.");
+});
+</script>
+<script>
+const btnVisite = document.getElementById("visite-btn");
+const modalVisite = document.getElementById("visite-modal");
+const fecharVisite = document.getElementById("fechar-visite");
+
+btnVisite.addEventListener("click", () => modalVisite.style.display = "flex");
+fecharVisite.addEventListener("click", () => modalVisite.style.display = "none");
+modalVisite.addEventListener("click", e => {
+  if (e.target === modalVisite) modalVisite.style.display = "none";
 });
 </script>
 
