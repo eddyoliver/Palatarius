@@ -1,0 +1,1463 @@
+{
+  "atualizado_em": "2025-11-07T16:57:44.134Z",
+  "versao": "10.1",
+  "categorias": [
+    {
+      "nome": "Hambúrgueres",
+      "itens": [
+        {
+          "nome": "Hadouken",
+          "preco": 10.5,
+          "imagem": "hadouken.jpg",
+          "descricao": "O golpe clássico da Palatarius! Pão americano macio com gergelim, carne artesanal 60g (blend bovino + bacon ou calabresa), ovo, alface e tomate frescos, ketchup e maionese especial. Um hambúrguer imbatível — rápido, direto e cheio de poder!",
+          "limites": {
+            "Carnes": 1,
+            "Molhos": 1,
+            "Crocantes Extras": 1,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {
+            "Carnes": "*",
+            "Molhos": "*",
+            "Crocantes Extras": "*"
+          }
+        },
+        {
+          "nome": "Fatality",
+          "preco": 11,
+          "imagem": "fatality.jpg",
+          "descricao": "Explosão de sabor que nocauteia a fome! X-Bacon artesanal com carne 60g, queijo derretido, ovo, salada fresca e bacon crocante. O golpe final do sabor — um verdadeiro campeão das arenas!",
+          "limites": {
+            "Carnes": 1,
+            "Molhos": 1,
+            "Crocantes Extras": 1,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {
+            "Carnes": "*",
+            "Molhos": "*",
+            "Crocantes Extras": "*"
+          }
+        },
+        {
+          "nome": "Chamas do Dragão",
+          "preco": 11,
+          "imagem": "Chamas_Dragao.jpg",
+          "descricao": "Intenso como o cosmo! Blend calabresa artesanal 60g, queijo derretido, ovo, salada fresca, e fatias de calabresa na chapa. Finalizado com ketchup e maionese Palatarius. Perfeito para quem carrega o fogo sagrado da fome!",
+          "limites": {
+            "Carnes": 1,
+            "Molhos": 1,
+            "Crocantes Extras": 1,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {
+            "Carnes": "*",
+            "Molhos": "*",
+            "Crocantes Extras": "*"
+          }
+        },
+        {
+          "nome": "Kamehameha",
+          "preco": 18,
+          "imagem": "kamehameha.jpg",
+          "descricao": "Poder em dobro! Dois blends artesanais 60g, dois ovos, queijo, bacon, calabresa, presunto, milho, ervilha e batata palha. Energia pura que explode em sabor — um lanche lendário!",
+          "limites": {
+            "Carnes": 2,
+            "Molhos": 1,
+            "Crocantes Extras": 1,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {
+            "Carnes": "*",
+            "Molhos": "*",
+            "Crocantes Extras": "*"
+          }
+        },
+        {
+          "nome": "Modo Bijuu",
+          "preco": 25,
+          "imagem": "modo_bijuu.jpg",
+          "descricao": "Força máxima! Três blends de 60g, três ovos, queijo, bacon, presunto, milho, ervilha e batata palha. Um chakra de sabor para quem quer liberar o monstro da fome interior!",
+          "limites": {
+            "Carnes": 3,
+            "Molhos": 1,
+            "Crocantes Extras": 1,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {
+            "Carnes": "*",
+            "Molhos": "*",
+            "Crocantes Extras": "*"
+          }
+        },
+        {
+          "nome": "Banquete do Luffy",
+          "preco": 12,
+          "imagem": "Banquete_Luffy.jpg",
+          "descricao": "O X-Tudo dos piratas! Blend artesanal 60g, ovo, salada, bacon, presunto, queijo, milho, ervilha e batata palha. Um banquete digno do Capitão do Chapéu de Palha!",
+          "limites": {
+            "Carnes": 1,
+            "Molhos": 1,
+            "Crocantes Extras": 1,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {
+            "Carnes": "*",
+            "Molhos": "*",
+            "Crocantes Extras": "*"
+          }
+        },
+        {
+          "nome": "De Volta pro Sabor",
+          "preco": 9.5,
+          "imagem": "de_volta_sabor.jpg",
+          "descricao": "O clássico que nunca sai de moda! Pão americano, carne artesanal suculenta, cheddar cremoso e molho de alho torrado. Simples e cheio de personalidade — puro sabor em cada mordida!",
+          "limites": {
+            "Carnes": 1,
+            "Molhos": 1,
+            "Crocantes Extras": 1,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {
+            "Carnes": "*",
+            "Molhos": "*",
+            "Crocantes Extras": "*"
+          }
+        },
+        {
+          "nome": "Exterminador de Fome",
+          "preco": 14,
+          "imagem": "exterminador_fome.jpg",
+          "descricao": "O poder do cheddar em dose dupla! Duas carnes artesanais 60g, duas camadas de cheddar derretido, molho especial Palatarius, e pão americano com gergelim. Uma máquina de sabor — 'I'll be back... pra mais um!'",
+          "limites": {
+            "Carnes": 2,
+            "Molhos": 1,
+            "Crocantes Extras": 1,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {
+            "Carnes": "*",
+            "Molhos": "*",
+            "Crocantes Extras": "*"
+          }
+        },
+        {
+          "nome": "Jurassic Chick",
+          "preco": 12,
+          "imagem": "jurassic_chick.jpg",
+          "descricao": "Crocância e cremosidade em perfeita harmonia! Filé de frango empanado, cheddar, alface americana, molho de alho torrado e pão com gergelim. Um clássico jurássico!",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 1,
+            "Crocantes Extras": 1,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {
+            "Molhos": "*",
+            "Crocantes Extras": "*"
+          }
+        },
+        {
+          "nome": "Matrix Verde",
+          "preco": 9.5,
+          "imagem": "matrix_verde.jpg",
+          "descricao": "Frescor e sabor artesanal! Pão americano, carne artesanal, molho Palatarius, alface americana crocante e tomate fresco. Escolha o sabor da realidade!",
+          "limites": {
+            "Carnes": 1,
+            "Molhos": 1,
+            "Crocantes Extras": 1,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {
+            "Carnes": "*",
+            "Molhos": "*",
+            "Crocantes Extras": "*"
+          }
+        },
+        {
+          "nome": "Caçadores da Gema Perdida",
+          "preco": 11,
+          "imagem": "egg_palatarius.jpg",
+          "descricao": "Um clássico artesanal com sabor de casa! Pão americano, carne artesanal, queijo mussarela e ovo frito no ponto perfeito.",
+          "limites": {
+            "Carnes": 1,
+            "Molhos": 1,
+            "Crocantes Extras": 1,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {
+            "Carnes": "*",
+            "Molhos": "*",
+            "Crocantes Extras": "*"
+          }
+        }
+      ]
+    },
+    {
+      "nome": "Batatas",
+      "itens": [
+        {
+          "nome": "Final Boss",
+          "preco": 35,
+          "imagem": "final_boss.jpg",
+          "descricao": "Desafio épico! Batatas crocantes 35cm cobertas com Bastante bacon, calabresa, ovos de codorna, azeitonas, queijo ralado e cheddar cremoso.",
+          "limites": {
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Carnes": 0,
+            "Molhos": 1,
+            "Crocantes Extras": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {
+            "Molhos": "*"
+          }
+        },
+        {
+          "nome": "Smash Bros",
+          "preco": 6,
+          "imagem": "smash_bros.jpg",
+          "descricao": "Versão compacta e saborosa. Batata crocante com bacon, calabresa e cheddar.",
+          "limites": {
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {}
+        },
+        {
+          "nome": "Fatality Batata",
+          "preco": 45,
+          "imagem": "fatality_batata.jpg",
+          "descricao": "Batatas crocantes com calabresa, cheddar, bacon e ovos de codorna, frango a passarinho, anéis de cebola e nuggets, com 2 molhos especiais.",
+          "limites": {
+            "Proteínas": 0,
+            "Molhos": 2,
+            "Acompanhamentos": 0,
+            "Carnes": 0,
+            "Crocantes Extras": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {
+            "Molhos": "*"
+          }
+        },
+        {
+          "nome": "Brutality",
+          "preco": 55,
+          "imagem": "brutality.jpg",
+          "descricao": "Batatas crocantes com calabresa, cheddar, bacon, frango a passarinho, nuget de frango, aneis de cebola, ovos de codorna e acompanhamentos premium com molhos Palatarius.",
+          "limites": {
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Carnes": 0,
+            "Molhos": 3,
+            "Crocantes Extras": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {
+            "Molhos": "*"
+          }
+        },
+        {
+          "nome": "Scorpion",
+          "preco": 25,
+          "imagem": "SCORPION.jpg",
+          "descricao": "Batatas crocantes 25cm cobertas com bacon, calabresa, ovos de codorna, azeitonas, queijo ralado e cheddar cremoso.",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 1,
+            "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Acompanhamentos": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {}
+        }
+      ]
+    },
+    {
+      "nome": "Batatas Recheadas",
+      "itens": [
+        {
+          "nome": "Power Mash",
+          "preco": 10,
+          "imagem": "power_mash.jpg",
+          "descricao": "Purê cremoso de batatas com queijo derretido. Escolha 1 proteína e até 18 acompanhamentos.",
+          "limites": {
+            "Proteínas": 1,
+            "Acompanhamentos": 15,
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {
+            "Proteínas": "*",
+            "Acompanhamentos": "*"
+          }
+        },
+        {
+          "nome": "DeLorean Pot",
+          "preco": 18,
+          "imagem": "delorean_pot.jpg",
+          "descricao": "Versão família com purê, 2 proteínas e acompanhamentos. Cremosa e nostálgica!",
+          "limites": {
+            "Proteínas": 2,
+            "Acompanhamentos": 18,
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 1,
+            "Sabores Sorvete": 1
+          },
+          "ingredientesPermitidos": {
+            "Proteínas": "*",
+            "Acompanhamentos": "*"
+          }
+        }
+      ]
+    },
+    {
+      "nome": "Pastéis",
+      "itens": [
+        {
+          "nome": "Pastel Shuriken",
+          "preco": 10,
+          "imagem": "pastel_shuriken.jpg",
+          "descricao": "Pastel 15cm — crocante e rápido no gatilho! Monte o seu com 1 proteína e acompanhamentos.",
+          "limites": {
+            "Proteínas": 1,
+            "Acompanhamentos": 15,
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {
+            "Proteínas": "*",
+            "Acompanhamentos": "*"
+          }
+        },
+        {
+          "nome": "Pastel Grand Line",
+          "preco": 15,
+          "imagem": "pastel_grand_line.jpg",
+          "descricao": "Pastel 25cm — tamanho de aventura! Monte o seu com 2 proteínas e acompanhamentos à sua escolha.",
+          "limites": {
+            "Proteínas": 2,
+            "Acompanhamentos": 18,
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0
+          },
+          "ingredientesPermitidos": {
+            "Proteínas": "*",
+            "Acompanhamentos": "*"
+          }
+        }
+      ]
+    },
+    {
+      "nome": "Cachorros-Quentes",
+      "itens": [
+        {
+          "nome": "Hot Dog Noob Raiz",
+          "preco": 11.5,
+          "imagem": "hotdog_noob_raiz.jpg",
+          "descricao": "O clássico da base! Pão, salsicha ou linguiça, legumes e molhos Palatarius. Finalizado com batata palha e ovo de codorna.",
+          "limites": {
+            "Molhos": 1,
+            "Acompanhamentos": 0,
+            "Carnes": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 1
+          },
+          "ingredientesPermitidos": {
+            "Molhos": "*",
+            "Acompanhamentos": [
+              "Bacon",
+              "Ovo",
+              "Milho Verde",
+              "Azeitona",
+              "Champignon",
+              "Alho Torrado",
+              "Queijo Prato",
+              "Orégano"
+            ],
+            "HotDog Proteina": "*"
+          }
+        },
+        {
+          "nome": "Prensado Obby",
+          "preco": 13,
+          "imagem": "Prensado_obby.jpg",
+          "descricao": "Hot dog prensado com purê, batata palha, queijo ralado e ovo. Um clássico lendário!",
+          "limites": {
+            "Molhos": 1,
+            "Acompanhamentos": 0,
+            "Carnes": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 1
+          },
+          "ingredientesPermitidos": {
+            "Molhos": "*",
+            "HotDog Proteina": "*"
+          }
+        },
+        {
+          "nome": "Prensado Modo Criativo",
+          "preco": 18,
+          "imagem": "modo_criativo.jpg",
+          "descricao": "Crie seu lanche do seu jeito! Escolha proteína extra e até 18 ingredientes. Seu sabor, suas regras!",
+          "limites": {
+            "Proteínas": 1,
+            "Molhos": 1,
+            "Acompanhamentos": 18,
+            "Carnes": 0,
+            "Crocantes Extras": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 1
+          },
+          "ingredientesPermitidos": {
+            "Molhos": "*",
+            "Proteínas": "*",
+            "Acompanhamentos": "*",
+            "HotDog Proteina": "*"
+          }
+        }
+      ]
+    },
+    {
+      "nome": "Sorvetes & Açaís",
+      "itens": [
+        {
+          "nome": "Copo 200ml",
+          "preco": 6.5,
+          "imagem": "Acai.jpg",
+          "descricao": "Copo pequeno de 200ml de Sorvete ou Açai, complementado com toppings a sua escolha e a calda.",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Toppings": 12,
+            "Caldas": 1,
+            "Acompanhamentos": 0,
+            "Caldas Fini (+R$1)": 3,
+            "Sabores Açai": 1,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0
+          },
+          "ingredientesPermitidos": {
+            "Caldas": "*",
+            "Caldas Fini (+R$1)": "*",
+            "Sabores Açai": "*",
+            "Toppings": "*"
+          }
+        },
+        {
+          "nome": "Copo 300ml",
+          "preco": 9,
+          "imagem": "Acai.jpg",
+          "descricao": "Copo pequeno de 300ml de Sorvete ou Açai, complementado com toppings a sua escolha e a calda.",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Toppings": 12,
+            "Caldas": 1,
+            "Acompanhamentos": 0,
+            "Caldas Fini (+R$1)": 3,
+            "Sabores Açai": 2,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0
+          },
+          "ingredientesPermitidos": {
+            "Toppings": "*",
+            "Caldas": "*",
+            "Caldas Fini (+R$1)": "*",
+            "Sabores Açai": "*"
+          }
+        },
+        {
+          "nome": "Copo 400ml",
+          "preco": 11,
+          "imagem": "Sorvete.jpg",
+          "descricao": "Copo pequeno de 400ml de Sorvete ou Açai ou meio a meio, complementado com toppings a sua escolha e até 2 caldas.",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Toppings": 12,
+            "Caldas": 2,
+            "Acompanhamentos": 0,
+            "Caldas Fini (+R$1)": 3,
+            "Sabores Açai": 2,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0
+          },
+          "ingredientesPermitidos": {
+            "Toppings": "*",
+            "Caldas": "*",
+            "Caldas Fini (+R$1)": "*",
+            "Sabores Açai": "*"
+          }
+        },
+        {
+          "nome": "Copo 500ml",
+          "preco": 14,
+          "imagem": "Sorvete.jpg",
+          "descricao": "Copo pequeno de 500ml de Sorvete ou Açai ou meio a meio, complementado com toppings a sua escolha e até 2 caldas.",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Toppings": 12,
+            "Caldas": 2,
+            "Acompanhamentos": 0,
+            "Caldas Fini (+R$1)": 3,
+            "Sabores Açai": 2,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0
+          },
+          "ingredientesPermitidos": {
+            "Toppings": "*",
+            "Caldas": "*",
+            "Caldas Fini (+R$1)": "*",
+            "Sabores Açai": "*"
+          }
+        },
+        {
+          "nome": "Copo 700ml",
+          "preco": 20,
+          "imagem": "Sorvete.jpg",
+          "descricao": "Copo pequeno de 700ml de Sorvete ou Açai ou meio a meio, complementado com até 12 toppings a sua escolha e até 2 caldas.",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Toppings": 12,
+            "Caldas": 2,
+            "Acompanhamentos": 0,
+            "Caldas Fini (+R$1)": 3,
+            "Sabores Açai": 3,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0
+          },
+          "ingredientesPermitidos": {
+            "Toppings": "*",
+            "Caldas": "*",
+            "Caldas Fini (+R$1)": "*",
+            "Sabores Açai": "*"
+          }
+        },
+        {
+          "nome": "Copo 1 Litro",
+          "preco": 24,
+          "imagem": "Sorvete.jpg",
+          "descricao": "Copo pequeno de 1000ml (1 Litro) de Sorvete ou Açai, até 3 sabores, complementado com até 12 toppings a sua escolha e até 2 caldas.",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Toppings": 12,
+            "Caldas": 2,
+            "Acompanhamentos": 0,
+            "Caldas Fini (+R$1)": 3,
+            "Sabores Açai": 4,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0
+          },
+          "ingredientesPermitidos": {
+            "Toppings": "*",
+            "Caldas": "*",
+            "Caldas Fini (+R$1)": "*",
+            "Sabores Açai": "*"
+          }
+        }
+      ]
+    },
+    {
+      "nome": "Bebidas",
+      "itens": [
+        {
+          "nome": "Guaracamp Copo",
+          "preco": 2,
+          "imagem": "Guaracamp.png",
+          "descricao": "Copo gelado de Guaracamp, refrescante e delicioso!",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 1
+          },
+          "ingredientesPermitidos": {
+            "Refrigerantes Sabores": [
+              "Guaraná",
+              "Açai"
+            ]
+          }
+        },
+        {
+          "nome": "Refrigerante Mini 200ml",
+          "preco": 3,
+          "imagem": "mini_refri.png",
+          "descricao": "Mini refri gelado, 200ml de sabor!",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 1
+          },
+          "ingredientesPermitidos": {
+            "Refrigerantes Sabores": [
+              "Fanta Uva",
+              "Laranja",
+              "Uva",
+              "Coca-cola"
+            ]
+          }
+        },
+        {
+          "nome": "Água com Gás",
+          "preco": 3.5,
+          "imagem": "agua.png",
+          "descricao": "Água gaseificada cristalina, perfeita para acompanhar.",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
+          },
+          "ingredientesPermitidos": {}
+        },
+        {
+          "nome": "Água sem Gás",
+          "preco": 2,
+          "imagem": "agua.png",
+          "descricao": "Água mineral pura e gelada.",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
+          },
+          "ingredientesPermitidos": {}
+        },
+        {
+          "nome": "Refrigerante Lata 350ml",
+          "preco": 5.5,
+          "imagem": "Lata_Coca.png",
+          "descricao": "Refrigerante 350ml, geladinho!",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 1
+          },
+          "ingredientesPermitidos": {
+            "Refrigerantes Sabores": [
+              "Fanta Laranja",
+              "Fanta Uva",
+              "Coca Zero",
+              "Coca-cola"
+            ]
+          }
+        },
+        {
+          "nome": "Convecção 2L",
+          "preco": 7.5,
+          "imagem": "convensao2l.png",
+          "descricao": "Refresco família 2L, ideal para compartilhar.",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 1
+          },
+          "ingredientesPermitidos": {
+            "Refrigerantes Sabores": [
+              "Guaraná",
+              "Laranja"
+            ]
+          }
+        },
+        {
+          "nome": "Refrigerante Sabores 2L",
+          "preco": 12,
+          "imagem": "Fanta_sabores.png",
+          "descricao": "Guaraná, Laranja e outros sabores 2L.",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 1
+          },
+          "ingredientesPermitidos": {
+            "Refrigerantes Sabores": [
+              "Fanta Laranja",
+              "Fanta Uva",
+              "Sprite"
+            ]
+          }
+        },
+        {
+          "nome": "Coca-Cola 2L",
+          "preco": 14,
+          "imagem": "Coca-cola.png",
+          "descricao": "A clássica Coca-Cola 2 litros, sempre perfeita!",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 1
+          },
+          "ingredientesPermitidos": {
+            "Refrigerantes Sabores": [
+              "Coca-Cola Zero 2L",
+              "Coca-Cola 2L"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "nome": "Tapiocas",
+      "itens": [
+        {
+          "nome": "“Tapioca Kanto” – Pequena",
+          "preco": 10,
+          "imagem": "Tapioca_kanto.jpg",
+          "descricao": "Primeira Região Pokémon (Kanto, 1996)\nA clássica de todas!\nFeita com massa fina e crocante de tapioca, recheada com 1 proteína à escolha (carne, frango, costela, pernil ou calabresa) e até 10 acompanhamentos da casa.\nSabor tradicional, direto e nostálgico — como a jornada começa!",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 1,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Acompanhamentos": 15,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0
+          },
+          "ingredientesPermitidos": {
+            "Proteínas": "*",
+            "Acompanhamentos": "*"
+          }
+        },
+        {
+          "nome": "“Tapioca Johto” – Média",
+          "preco": 15,
+          "imagem": "tapioca_johto.jpg",
+          "descricao": "Segunda Região Pokémon (Johto, 1999)\nUma evolução da clássica!\nFeita com massa artesanal de tapioca, recheada com 2 proteínas e acompanhamentos selecionados (até 18 itens).\nCombina texturas e sabores equilibrados — perfeita para quem já evoluiu o paladar!",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 2,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Acompanhamentos": 18,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0
+          },
+          "ingredientesPermitidos": {
+            "Proteínas": "*",
+            "Acompanhamentos": "*"
+          }
+        }
+      ]
+    }
+  ],
+  "ingredientes": [
+    {
+      "grupo": "Carnes",
+      "opcoes": [
+        {
+          "nome": "Blend Acém Bovino + Bacon",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Blend Acém Bovino + Costela Bovina",
+          "valor": 0,
+          "pausado": false
+        }
+      ]
+    },
+    {
+      "grupo": "Molhos",
+      "opcoes": [
+        {
+          "nome": "Billy Jack",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Ketchup de Goiabada",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Ketchup de Goiabada Picante",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Alho e Ervas Finas",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Tártaro",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Tasty",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Molho de Bacon",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Molho Verde",
+          "valor": 0,
+          "pausado": false
+        }
+      ]
+    },
+    {
+      "grupo": "Crocantes Extras",
+      "opcoes": [
+        {
+          "nome": "Alho Torrado",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Cebola Crispy",
+          "valor": 0,
+          "pausado": false
+        }
+      ]
+    },
+    {
+      "grupo": "Proteínas",
+      "opcoes": [
+        {
+          "nome": "Carne",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Frango",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Costela",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Pernil",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Calabresa",
+          "valor": 0,
+          "pausado": false
+        }
+      ]
+    },
+    {
+      "grupo": "Acompanhamentos",
+      "opcoes": [
+        {
+          "nome": "Bacon",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Presunto",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Ovo",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Milho Verde",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Ervilha",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Passas",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Azeitona",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Tomate Cru",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Cebola",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Champignon",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Palmito",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Cebola Crispy",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Alho Torrado",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Queijo Minas",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Queijo Mussarela",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Queijo Prato",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Catupiry",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Cheddar",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Orégano",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Queijo Parmesão",
+          "valor": 0,
+          "pausado": false
+        }
+      ]
+    },
+    {
+      "grupo": "Toppings",
+      "opcoes": [
+        {
+          "nome": "Canudo de Biscoito",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Sucrilhos",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Granola",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Amendoim",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Paçoca",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Granulado",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Flocos de Arroz",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Aveia",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Chocoball",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Jujuba",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Delicado",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Leite em Pó",
+          "valor": 0,
+          "pausado": false
+        }
+      ]
+    },
+    {
+      "grupo": "Caldas",
+      "opcoes": [
+        {
+          "nome": "Chocolate",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Morango",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Brigadeiro",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Leite Condensado",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Amendoim",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Floresta Negra",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Banana Caramelada",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Limão",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Chocomenta",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Menta",
+          "valor": 0,
+          "pausado": false
+        }
+      ]
+    },
+    {
+      "grupo": "Caldas Fini (+R$1)",
+      "opcoes": [
+        {
+          "nome": "Fini Dentaduras",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Fini Bananas",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Fini Beijos",
+          "valor": 0,
+          "pausado": false
+        }
+      ]
+    },
+    {
+      "grupo": "Sabores Açai",
+      "opcoes": [
+        {
+          "nome": "Açai Natural",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Açai com Maracuja",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Açai com Morango",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Açai com Banana",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Açai com Leitinho",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Sorvete Maracujá",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Sorvete Napolitano",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Sorvete Prestigio",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Sorvete Chocolate",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Sorvete Torta de Limão",
+          "valor": 0,
+          "pausado": false
+        }
+      ]
+    },
+    {
+      "grupo": "Sabores Sorvete",
+      "opcoes": []
+    },
+    {
+      "grupo": "HotDog Proteina",
+      "opcoes": [
+        {
+          "nome": "Salsicha",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Linguiça",
+          "valor": 0,
+          "pausado": false
+        }
+      ]
+    },
+    {
+      "grupo": "Refrigerantes Sabores",
+      "opcoes": [
+        {
+          "nome": "Coca-Cola Zero 2L",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Coca-Cola 2L",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Fanta Laranja",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Fanta Uva",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Sprite",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Guaraná",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Laranja",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Uva",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Abacaxi",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Limão",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Coca Zero",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Coca-cola",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Açai",
+          "valor": 0,
+          "pausado": false
+        }
+      ]
+    }
+  ]
+}

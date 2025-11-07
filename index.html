@@ -508,11 +508,16 @@
 
       <div class="editor-form">
         <h3>Novo Ingrediente</h3>
+
         <label>Grupo:</label>
         <select id="novo-grupo"></select>
 
         <label>Nome do Ingrediente:</label>
         <input type="text" id="novo-ingrediente" placeholder="Ex: Cheddar, Alho Torrado...">
+
+        <!-- ✅ Campo adicionado -->
+        <label>Valor (R$):</label>
+        <input id="novo-ingrediente-valor" type="number" step="0.01" min="0" placeholder="Valor (R$)">
 
         <button id="salvar-ingrediente" class="primary" style="margin-top:0.5rem;">Salvar Ingrediente</button>
       </div>
@@ -534,11 +539,10 @@
 
 <script>
 /* =========================================================
-   BLOCO 3 — FUNCIONALIDADES DO CLIENTE (v7)
-   Cardápio Dinâmico + Modal + Carrinho + WhatsApp
+   BLOCO 3 — FUNCIONALIDADES DO CLIENTE (v8)
+   Agora com preços individuais por ingrediente
 ========================================================= */
 
-// Estruturas principais
 let cliente = {};
 let categorias = [];
 let ingredientes = [];
@@ -554,318 +558,259 @@ document.getElementById("continuar-btn").addEventListener("click", () => {
   const tipo = document.getElementById("cliente-tipo").value;
   const endereco = document.getElementById("cliente-endereco").value.trim();
   const local = document.getElementById("cliente-local").value;
-
-  if (!nome || !telefone) {
-    alert("Por favor, preencha nome e número!");
-    return;
-  }
+  if (!nome || !telefone) return alert("Por favor, preencha nome e número!");
 
   let entrega = 0;
-  if (tipo === "Entrega") {
-    if (["KM39", "KM40", "KM41", "KM42"].includes(local)) entrega = 4;
-  }
-
+  if (tipo === "Entrega" && ["KM39", "KM40", "KM41", "KM42"].includes(local)) entrega = 4;
   cliente = { nome, telefone, tipo, endereco, local, entrega };
+
   document.getElementById("cliente-screen").style.display = "none";
   document.getElementById("cardapio-screen").style.display = "block";
   renderCardapio();
 });
 
 // ===============================
-// RENDERIZAÇÃO DO CARDÁPIO (DINÂMICO v7)
+// RENDERIZAÇÃO DO CARDÁPIO
 // ===============================
 function renderCardapio() {
-  const telaCardapio = document.getElementById("cardapio-screen");
-  if (!telaCardapio) return;
+  const tela = document.getElementById("cardapio-screen");
+  tela.innerHTML = "";
 
-  // 🔹 Limpa conteúdo atual do cardápio
-  telaCardapio.innerHTML = "";
-
-  // 🔹 Caso não existam categorias
-  if (!categorias || categorias.length === 0) {
-    telaCardapio.innerHTML = `
-      <p style="text-align:center; color:#777; font-size:1.1rem;">
-        Nenhum produto cadastrado ainda.<br>
-        Use o Editor para adicionar novas categorias e produtos.
-      </p>`;
+  if (!categorias?.length) {
+    tela.innerHTML = `<p style="text-align:center;color:#777;">Nenhum produto cadastrado ainda.</p>`;
     return;
   }
 
-  // 🔹 Renderiza dinamicamente todas as categorias
   categorias.forEach(cat => {
-    const secao = document.createElement("section");
-    secao.classList.add("grupo-cardapio");
+    const sec = document.createElement("section");
+    sec.classList.add("grupo-cardapio");
+    sec.innerHTML = `<h2 class="section-title">${cat.nome}</h2>`;
 
-    // 🔹 Cabeçalho da categoria
-    const titulo = document.createElement("h2");
-    titulo.className = "section-title";
-    titulo.textContent = cat.nome;
-    secao.appendChild(titulo);
-
-    // 🔹 Grid de produtos
     const grid = document.createElement("div");
     grid.className = "card-grid";
 
-    // 🔹 Caso não haja itens na categoria
-    if (!cat.itens || cat.itens.length === 0) {
-      grid.innerHTML = `<p style="text-align:center; color:#aaa;">Nenhum produto neste grupo.</p>`;
+    if (!cat.itens?.length) {
+      grid.innerHTML = `<p style="text-align:center;color:#aaa;">Nenhum produto neste grupo.</p>`;
     } else {
       cat.itens.forEach(item => {
+        const img = item.imagem ? `assets/images/${item.imagem}` : "assets/images/placeholder.jpg";
         const card = document.createElement("div");
         card.className = "card";
-
-        // 🔹 Caminho seguro da imagem
-        const caminhoImagem = item.imagem
-          ? `assets/images/${item.imagem}`
-          : "assets/images/placeholder.jpg";
-
         card.innerHTML = `
-          <img src="${caminhoImagem}" 
-               alt="${item.nome}" 
-               onerror="if(!this.dataset.err){this.dataset.err=1;this.src='assets/images/placeholder.jpg'}">
+          <img src="${img}" onerror="this.src='assets/images/placeholder.jpg'">
           <div class="card-content">
             <h3>${item.nome}</h3>
             <p>${item.descricao || ""}</p>
             <div class="price">R$ ${Number(item.preco || 0).toFixed(2)}</div>
-            <button onclick="abrirModalIngredientes('${cat.nome}','${item.nome}')">
-              Adicionar
-            </button>
-          </div>
-        `;
-
+            <button onclick="abrirModalIngredientes('${cat.nome}','${item.nome}')">Adicionar</button>
+          </div>`;
         grid.appendChild(card);
       });
     }
-
-    secao.appendChild(grid);
-    telaCardapio.appendChild(secao);
+    sec.appendChild(grid);
+    tela.appendChild(sec);
   });
-
-  // 🔹 Log informativo no console
-  console.log(`🍔 Cardápio renderizado: ${categorias.length} categorias e ${categorias.reduce((t,c)=>t+(c.itens?.length||0),0)} produtos.`);
 }
 
-/// ===============================
-// MODAL DE INGREDIENTES (v7 — corrigido por produto)
 // ===============================
-function abrirModalIngredientes(categoria, nome) {
-  const cat = categorias.find(c => c.nome === categoria);
-  const item = cat?.itens?.find(i => i.nome === nome);
+// MODAL DE INGREDIENTES (v8 com valores)
+// ===============================
+function abrirModalIngredientes(catNome, itemNome) {
+  const cat = categorias.find(c => c.nome === catNome);
+  const item = cat?.itens?.find(i => i.nome === itemNome);
   if (!item) return alert("Item não encontrado!");
 
   itemSelecionado = item;
-
-  document.getElementById("modal-item-nome").innerText = nome;
+  document.getElementById("modal-item-nome").innerText = itemNome;
   document.getElementById("ingredientes-modal").style.display = "flex";
   gerarIngredientesModal(item);
 }
 
 function gerarIngredientesModal(item) {
-  const container = document.getElementById("ingredientes-grupos");
-  container.innerHTML = "";
+  const cont = document.getElementById("ingredientes-grupos");
+  cont.innerHTML = "";
+  item.ingredientesPermitidos ||= {};
+  item.limites ||= {};
 
-  // Garante estrutura limpa
-  item.ingredientesPermitidos = item.ingredientesPermitidos || {};
-  item.limites = item.limites || {};
-
-  if (!ingredientes || ingredientes.length === 0) {
-    container.innerHTML = `<p style="color:#777;">Nenhum grupo de ingredientes cadastrado.</p>`;
+  if (!ingredientes?.length) {
+    cont.innerHTML = `<p style="color:#777;">Nenhum grupo de ingredientes cadastrado.</p>`;
     return;
   }
 
-  // Se o item não tiver configuração específica, mostra tudo
-  const gruposFiltrados = Object.keys(item.ingredientesPermitidos).length
-    ? ingredientes.filter(gr => Object.keys(item.ingredientesPermitidos).includes(gr.grupo))
+  const grupos = Object.keys(item.ingredientesPermitidos).length
+    ? ingredientes.filter(g => Object.keys(item.ingredientesPermitidos).includes(g.grupo))
     : ingredientes;
 
-  gruposFiltrados.forEach(grupo => {
+  grupos.forEach(gr => {
     const div = document.createElement("div");
     div.className = "ingrediente-grupo";
+    const limite = item.limites?.[gr.grupo] || getLimitePadrao(gr.grupo);
+    let html = `<h4>${gr.grupo} (máx ${limite})</h4>`;
 
-    // Limite específico ou padrão
-    const limite = item.limites?.[grupo.grupo] || getLimitePadrao(grupo.grupo);
-    let html = `<h4>${grupo.grupo} (máx ${limite})</h4>`;
+    const permitidos = item.ingredientesPermitidos?.[gr.grupo] || gr.opcoes.map(o => o.nome);
+    const opcoes = gr.opcoes.filter(o => permitidos === "*" || permitidos.includes(o.nome));
 
-    // Ingredientes disponíveis e permitidos
-    const permitidos = item.ingredientesPermitidos?.[grupo.grupo] || grupo.opcoes.map(o => o.nome);
-    const opcoes = grupo.opcoes.filter(op => permitidos.includes(op.nome));
-
-    if (opcoes.length === 0) {
-      html += `<p style="color:#999; font-size:0.85rem;">Nenhum ingrediente disponível neste grupo.</p>`;
+    if (!opcoes.length) {
+      html += `<p style="color:#999;">Nenhum ingrediente disponível.</p>`;
     } else {
       opcoes.forEach(op => {
-        const isPausado = op.pausado === true;
+        const pausado = op.pausado === true;
+        const valor = Number(op.valor || 0);
+        const textoValor = valor > 0 ? ` (+R$ ${valor.toFixed(2)})` : "";
         html += `
-          <label ${isPausado ? 'class="paused"' : ''}>
+          <label ${pausado ? 'class="paused"' : ''}>
             <input type="checkbox" 
-                   name="${grupo.grupo}" 
+                   name="${gr.grupo}" 
                    value="${op.nome}" 
-                   ${isPausado ? 'disabled' : ''}>
-            <span>${op.nome}</span>
+                   data-valor="${valor}" 
+                   ${pausado ? "disabled" : ""}>
+            <span>${op.nome}${textoValor}</span>
           </label>`;
       });
     }
 
     div.innerHTML = html;
-    container.appendChild(div);
+    cont.appendChild(div);
 
-    // Controle de limite individual
-    div.querySelectorAll('input[type="checkbox"]').forEach(input => {
-      input.addEventListener("change", e => {
+    // controle de limite
+    div.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener("change", e => {
         const checks = div.querySelectorAll('input:checked');
         if (checks.length > limite) {
           e.target.checked = false;
-          alert(`Máximo permitido: ${limite} opções em ${grupo.grupo}`);
+          alert(`Máx. permitido: ${limite} em ${gr.grupo}`);
         }
       });
     });
   });
 }
 
-function getLimitePadrao(grupo) {
-  const padroes = {
-    "Carnes": 1,
-    "Molhos": 2,
-    "Crocantes Extras": 1,
-    "Proteínas": 2,
-    "Acompanhamentos": 5,
-    "Toppings": 3,
-    "Caldas": 3,
-    "Caldas Fini (+R$1)": 2,
+function getLimitePadrao(gr) {
+  const pad = {
+    "Carnes": 1, "Molhos": 2, "Crocantes Extras": 1,
+    "Proteínas": 2, "Acompanhamentos": 5,
+    "Toppings": 3, "Caldas": 3, "Caldas Fini (+R$1)": 2
   };
-  return padroes[grupo] || 1;
+  return pad[gr] || 1;
 }
 
-document.getElementById("close-modal").addEventListener("click", () => {
-  document.getElementById("ingredientes-modal").style.display = "none";
-  document.getElementById("ingredientes-grupos").innerHTML = "";
-  document.getElementById("obs").value = "";
-  itemSelecionado = null;
-});
-
-document.getElementById("add-to-cart").addEventListener("click", () => {
-  if (!itemSelecionado) return;
-
-  const selecionados = {};
-  document.querySelectorAll("#ingredientes-grupos .ingrediente-grupo").forEach(div => {
-    const grupo = div.querySelector("h4").innerText.split(" (")[0];
-    const checks = [...div.querySelectorAll("input:checked")].map(i => i.value);
-    if (checks.length) selecionados[grupo] = checks;
-  });
-
-  const obs = document.getElementById("obs").value.trim();
-  adicionarAoCarrinho(itemSelecionado, selecionados, obs);
-
+document.getElementById("close-modal").onclick = () => {
   document.getElementById("ingredientes-modal").style.display = "none";
   document.getElementById("obs").value = "";
-  document.getElementById("ingredientes-grupos").innerHTML = "";
   itemSelecionado = null;
-});
+};
 
 // ===============================
 // CARRINHO
 // ===============================
-function adicionarAoCarrinho(item, ingredientesEscolhidos, obs) {
-  carrinho.push({ ...item, ingredientesEscolhidos, obs });
+document.getElementById("add-to-cart").addEventListener("click", () => {
+  if (!itemSelecionado) return;
+
+  const selecionados = {};
+  let totalExtras = 0;
+
+  document.querySelectorAll("#ingredientes-grupos .ingrediente-grupo").forEach(div => {
+    const grupo = div.querySelector("h4").innerText.split(" (")[0];
+    const checks = [...div.querySelectorAll("input:checked")];
+    if (checks.length) {
+      selecionados[grupo] = checks.map(i => i.value);
+      totalExtras += checks.reduce((s, c) => s + Number(c.dataset.valor || 0), 0);
+    }
+  });
+
+  const obs = document.getElementById("obs").value.trim();
+  adicionarAoCarrinho(itemSelecionado, selecionados, obs, totalExtras);
+
+  document.getElementById("ingredientes-modal").style.display = "none";
+  document.getElementById("obs").value = "";
+  itemSelecionado = null;
+});
+
+function adicionarAoCarrinho(item, ingredientesEscolhidos, obs, extras = 0) {
+  const precoFinal = (Number(item.preco) || 0) + extras;
+  carrinho.push({ ...item, precoFinal, ingredientesEscolhidos, obs });
   atualizarCarrinho();
 }
 
 function atualizarCarrinho() {
-  const container = document.getElementById("cart-items");
-  container.innerHTML = "";
+  const cont = document.getElementById("cart-items");
+  cont.innerHTML = "";
   let total = 0;
 
-  carrinho.forEach((item, index) => {
-    total += Number(item.preco) || 0;
+  carrinho.forEach((it, i) => {
+    total += Number(it.precoFinal) || 0;
     const div = document.createElement("div");
     div.className = "cart-item";
-
-    let html = `<p><strong>${item.nome}</strong> - R$ ${Number(item.preco).toFixed(2)}</p>`;
-
-    if (item.ingredientesEscolhidos) {
-      Object.entries(item.ingredientesEscolhidos).forEach(([grupo, lista]) => {
-        html += `<p style="font-size:0.85rem; color:#555;">${grupo}: ${lista.join(", ")}</p>`;
-      });
+    let html = `<p><strong>${it.nome}</strong> - R$ ${it.precoFinal.toFixed(2)}</p>`;
+    if (it.ingredientesEscolhidos) {
+      for (const [g, l] of Object.entries(it.ingredientesEscolhidos)) {
+        html += `<p style="font-size:0.85rem;color:#555;">${g}: ${l.join(", ")}</p>`;
+      }
     }
-    if (item.obs) {
-      html += `<p style="font-size:0.85rem; color:#777;"><em>Obs:</em> ${item.obs}</p>`;
-    }
-    html += `<button style="background:none; border:none; color:red; font-weight:bold; float:right;" onclick="removerItem(${index})">x</button>`;
-
+    if (it.obs) html += `<p style="font-size:0.85rem;color:#777;"><em>Obs:</em> ${it.obs}</p>`;
+    html += `<button onclick="removerItem(${i})" style="background:none;border:none;color:red;font-weight:bold;float:right;">x</button>`;
     div.innerHTML = html;
-    container.appendChild(div);
+    cont.appendChild(div);
   });
 
   document.getElementById("cart-total").innerText = `Total: R$ ${total.toFixed(2)}`;
   document.getElementById("cart").classList.add("active");
 }
 
-function removerItem(index) {
-  carrinho.splice(index, 1);
+function removerItem(i) {
+  carrinho.splice(i, 1);
   atualizarCarrinho();
 }
 
-document.getElementById("close-cart").addEventListener("click", () => {
+document.getElementById("close-cart").onclick = () =>
   document.getElementById("cart").classList.remove("active");
-});
 
 // ===============================
-// ENVIAR PARA WHATSAPP
+// WHATSAPP
 // ===============================
 document.getElementById("send-whatsapp").addEventListener("click", () => {
-  if (carrinho.length === 0) {
-    alert("Carrinho vazio!");
-    return;
-  }
+  if (!carrinho.length) return alert("Carrinho vazio!");
 
-  let mensagem = `🍔 *Pedido Palatarius*%0A`;
-  mensagem += `👤 *Cliente:* ${cliente.nome}%0A`;
-  mensagem += `📞 *Telefone:* ${cliente.telefone}%0A`;
-  mensagem += `📦 *Tipo:* ${cliente.tipo}%0A`;
+  let msg = `🍔 *Pedido Palatarius*%0A`;
+  msg += `👤 *Cliente:* ${cliente.nome}%0A📞 *Telefone:* ${cliente.telefone}%0A📦 *Tipo:* ${cliente.tipo}%0A`;
 
   if (cliente.tipo === "Entrega") {
-    mensagem += `📍 *Local:* ${cliente.local || "Não informado"}%0A`;
-    mensagem += `🏠 *Endereço:* ${cliente.endereco || "Não informado"}%0A`;
-
-    if (["KM39", "KM40", "KM41", "KM42"].includes(cliente.local)) {
-      mensagem += `🚚 *Taxa de Entrega:* R$ 4,00%0A`;
-    } else {
-      mensagem += `🚚 *Taxa de Entrega:* a combinar%0A`;
-    }
+    msg += `📍 *Local:* ${cliente.local || "—"}%0A🏠 *Endereço:* ${cliente.endereco || "—"}%0A`;
+    msg += ["KM39","KM40","KM41","KM42"].includes(cliente.local)
+      ? `🚚 *Taxa de Entrega:* R$ 4,00%0A`
+      : `🚚 *Taxa de Entrega:* a combinar%0A`;
   }
-
-  mensagem += `%0A=============================%0A`;
+  msg += `%0A=============================%0A`;
 
   let subtotal = 0;
-  carrinho.forEach(item => {
-    subtotal += Number(item.preco) || 0;
-    mensagem += `🥪 *${item.nome}* - R$ ${Number(item.preco).toFixed(2)}%0A`;
-    if (item.ingredientesEscolhidos) {
-      Object.entries(item.ingredientesEscolhidos).forEach(([grupo, lista]) => {
-        mensagem += `• ${grupo}: ${lista.join(", ")}%0A`;
-      });
+  carrinho.forEach(it => {
+    subtotal += it.precoFinal || 0;
+    msg += `🥪 *${it.nome}* - R$ ${it.precoFinal.toFixed(2)}%0A`;
+    if (it.ingredientesEscolhidos) {
+      for (const [g, l] of Object.entries(it.ingredientesEscolhidos)) {
+        msg += `• ${g}: ${l.join(", ")}%0A`;
+      }
     }
-    if (item.obs) mensagem += `📝 Obs: ${item.obs}%0A`;
-    mensagem += `-----------------------------%0A`;
+    if (it.obs) msg += `📝 Obs: ${it.obs}%0A`;
+    msg += `-----------------------------%0A`;
   });
 
   const taxa = cliente.entrega || 0;
   const total = subtotal + taxa;
-  mensagem += `💰 *Subtotal:* R$ ${subtotal.toFixed(2)}%0A`;
-  if (taxa > 0) mensagem += `🚚 *Taxa:* R$ ${taxa.toFixed(2)}%0A`;
-  mensagem += `💵 *Total Geral:* R$ ${total.toFixed(2)}%0A`;
-  mensagem += `%0A=============================%0A`;
-  mensagem += `✅ *Pedido gerado via Cardápio Digital Palatarius*`;
+  msg += `💰 *Subtotal:* R$ ${subtotal.toFixed(2)}%0A`;
+  if (taxa > 0) msg += `🚚 *Taxa:* R$ ${taxa.toFixed(2)}%0A`;
+  msg += `💵 *Total Geral:* R$ ${total.toFixed(2)}%0A%0A✅ *Pedido gerado via Cardápio Digital Palatarius*`;
 
-  const numero = "5521997599132";
-  window.open(`https://wa.me/${numero}?text=${mensagem}`, "_blank");
+  window.open(`https://wa.me/5521997599132?text=${msg}`, "_blank");
 });
 </script>
 
+
 <script>
 /* =========================================================
-   BLOCO 4 — EDITOR ADMINISTRATIVO AVANÇADO (v7 - safe)
-   (Adiciona grupos de produtos SEM apagar os existentes)
+   BLOCO 4 — EDITOR ADMINISTRATIVO AVANÇADO (v9)
+   Agora com campo de VALOR para ingredientes
+   (Compatível com BLOCO 3 v8)
 ========================================================= */
 
 // ===============================
@@ -880,7 +825,6 @@ footer.addEventListener("click", () => {
     if (senha === "EdLeoMarc&2025") {
       document.getElementById("editor-screen").classList.add("active");
       alert("✅ Acesso concedido ao editor Palatarius!");
-      // garante selects atualizados ao abrir
       refreshCategoriaSelect();
       if (typeof atualizarSelectGrupos === "function") atualizarSelectGrupos();
       renderEditorProdutos();
@@ -917,12 +861,11 @@ function ativarAba(aba) {
 }
 
 // ===============================
-// UTIL: Popular select de categorias SEM apagar dados
+// ATUALIZA SELECT DE CATEGORIAS
 // ===============================
 function refreshCategoriaSelect() {
   const sel = document.getElementById("novo-categoria");
   if (!sel) return;
-  // Limpa opções do select (UI), mas NÃO mexe em 'categorias'
   sel.innerHTML = "";
   (categorias || []).forEach(c => {
     const opt = document.createElement("option");
@@ -933,7 +876,7 @@ function refreshCategoriaSelect() {
 }
 
 // ===============================
-// EDITOR DE PRODUTOS
+// ADICIONAR PRODUTO
 // ===============================
 document.getElementById("salvar-produto").addEventListener("click", () => {
   const nome = document.getElementById("novo-nome").value.trim();
@@ -943,7 +886,7 @@ document.getElementById("salvar-produto").addEventListener("click", () => {
   const descricao = document.getElementById("novo-descricao").value.trim();
 
   if (!nome || isNaN(preco) || !imagem || !categoria) {
-    alert("Preencha nome, imagem, preço e escolha uma categoria!");
+    alert("Preencha nome, imagem, preço e categoria!");
     return;
   }
 
@@ -956,46 +899,42 @@ document.getElementById("salvar-produto").addEventListener("click", () => {
     Caldas: parseInt(document.getElementById("limite-caldas").value) || 0
   };
 
-  const grupo = (categorias || []).find(c => c.nome === categoria);
-  if (!grupo) {
-    alert("Categoria não encontrada!");
-    return;
-  }
+  const grupo = categorias.find(c => c.nome === categoria);
+  if (!grupo) return alert("Categoria não encontrada!");
 
-  grupo.itens = grupo.itens || [];
+  grupo.itens ||= [];
   grupo.itens.push({
-    nome,
-    preco,
-    imagem,
-    descricao,
+    nome, preco, imagem, descricao,
     limites,
     ingredientesPermitidos: {}
   });
 
-  // Limpa apenas os campos do formulário (UI)
   document.querySelectorAll("#editor-cardapio input, #editor-cardapio textarea").forEach(i => (i.value = ""));
   refreshCategoriaSelect();
   renderEditorProdutos();
   if (typeof renderCardapio === "function") renderCardapio();
+  if (typeof salvarLocal === "function") salvarLocal();
 });
 
+// ===============================
+// LISTAGEM DE PRODUTOS
+// ===============================
 function renderEditorProdutos() {
   const container = document.getElementById("produtos-editor");
   if (!container) return;
   container.innerHTML = "";
 
-  (categorias || []).forEach(cat => {
+  categorias.forEach(cat => {
     const divCat = document.createElement("div");
-    divCat.innerHTML = `<h3 style="color:var(--secondary); margin-top:1rem;">${cat.nome}</h3>`;
-
+    divCat.innerHTML = `<h3 style="color:var(--secondary);margin-top:1rem;">${cat.nome}</h3>`;
     (cat.itens || []).forEach((item, idx) => {
       const div = document.createElement("div");
       div.className = "editor-item";
-      div.style = "background:#fff; margin:0.3rem 0; padding:0.4rem 0.6rem; border-radius:6px; box-shadow:0 0 3px #ccc;";
+      div.style = "background:#fff;margin:.3rem 0;padding:.4rem .6rem;border-radius:6px;box-shadow:0 0 3px #ccc;";
       div.innerHTML = `
         <strong>${item.nome}</strong> - R$ ${Number(item.preco || 0).toFixed(2)} 
         <small style="color:#555;">[${item.imagem || ""}]</small><br>
-        <em style="font-size:0.85rem; color:#777;">${item.descricao || ""}</em><br>
+        <em style="font-size:.85rem;color:#777;">${item.descricao || ""}</em><br>
         <button class="btn-edit" onclick="editarProduto('${cat.nome.replace(/'/g, "\\'")}', ${idx})">✏️ Editar</button>
         <button class="btn-delete" onclick="excluirProduto('${cat.nome.replace(/'/g, "\\'")}', ${idx})">🗑️ Excluir</button>
       `;
@@ -1005,141 +944,277 @@ function renderEditorProdutos() {
   });
 }
 
-function editarProduto(catNome, idx) {
-  const categoria = (categorias || []).find(c => c.nome === catNome);
-  if (!categoria) return;
-  const item = (categoria.itens || [])[idx];
-  if (!item) return;
+// ===============================
+// MODAL DE EDIÇÃO DE PRODUTO
+// ===============================
+let itemEmEdicaoRef = null;
 
-  const novoNome = prompt("Novo nome:", item.nome) ?? item.nome;
-  const novoPreco = parseFloat(prompt("Novo preço:", item.preco)) || item.preco;
-  const novaDesc = prompt("Nova descrição:", item.descricao) ?? item.descricao;
-  const novaImagem = prompt("Nova imagem (ex: hadouken.jpg):", item.imagem) ?? item.imagem;
+// cria modal se não existir
+(function ensureProdutoModal() {
+  if (document.getElementById("produto-modal")) return;
+  const modal = document.createElement("div");
+  modal.id = "produto-modal";
+  modal.style = `
+    display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
+    align-items:center;justify-content:center;z-index:9999;
+  `;
+  modal.innerHTML = `
+    <div style="background:#fff;width:min(900px,95vw);max-height:90vh;overflow:auto;padding:1rem;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.2);">
+      <h3>Editar Produto</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+        <div><label>Nome:</label><input type="text" id="pm-nome"></div>
+        <div><label>Preço (R$):</label><input type="number" id="pm-preco" step="0.01"></div>
+        <div><label>Imagem:</label><input type="text" id="pm-imagem" placeholder="hadouken.jpg"></div>
+        <div style="grid-column:1/-1;"><label>Descrição:</label><textarea id="pm-descricao" rows="3"></textarea></div>
+      </div>
+      <h4 style="margin-top:1rem;">Ingredientes Permitidos por Grupo</h4>
+      <p style="margin:.25rem 0 .75rem;color:#555;font-size:.9rem;">
+        Marque <strong>Selecionar grupo inteiro</strong> para liberar todas as opções do grupo.
+        Ou marque ingredientes específicos. Cada ingrediente pode ter um <em>valor adicional</em>.
+      </p>
+      <div id="pm-grupos" style="display:grid;gap:.75rem;"></div>
+      <div style="display:flex;gap:.5rem;margin-top:1rem;justify-content:flex-end;">
+        <button id="pm-cancelar">Cancelar</button>
+        <button id="pm-salvar" class="primary">Salvar Alterações</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  document.getElementById("pm-cancelar").onclick = fecharProdutoModal;
+  modal.onclick = e => { if (e.target === modal) fecharProdutoModal(); };
+})();
 
-  if (confirm("Deseja editar os ingredientes permitidos e limites deste item?")) {
-    const gruposDisponiveis = (ingredientes || []).map(g => g.grupo);
-    item.ingredientesPermitidos = item.ingredientesPermitidos || {};
-    item.limites = item.limites || {};
-
-    gruposDisponiveis.forEach(gr => {
-      const nomes = (ingredientes.find(g => g.grupo === gr)?.opcoes || []).map(o => o.nome);
-      const atuais = item.ingredientesPermitidos[gr] || [];
-      const entrada = prompt(
-        `Grupo: ${gr}\nIngredientes disponíveis:\n${nomes.join(", ")}\n\nAtuais: ${atuais.join(", ")}\nDigite os nomes separados por vírgula:`
-      );
-      if (entrada !== null) {
-        item.ingredientesPermitidos[gr] = entrada.split(",").map(s => s.trim()).filter(Boolean);
-      }
-
-      const limiteAtual = item.limites[gr] || 0;
-      const novoLimite = parseInt(prompt(`Limite de escolhas para ${gr}:`, limiteAtual)) || limiteAtual;
-      item.limites[gr] = novoLimite;
-    });
-  }
-
-  Object.assign(item, { nome: novoNome, preco: novoPreco, descricao: novaDesc, imagem: novaImagem });
-
-  renderEditorProdutos();
-  if (typeof renderCardapio === "function") renderCardapio();
+function abrirProdutoModal() { document.getElementById("produto-modal").style.display = "flex"; }
+function fecharProdutoModal() {
+  document.getElementById("produto-modal").style.display = "none";
+  itemEmEdicaoRef = null;
 }
 
+// função padrão para limites
+function getLimitePadraoLocal(grupoNome) {
+  if (typeof getLimitePadrao === "function") return getLimitePadrao(grupoNome);
+  const padroes = { Carnes: 1, Molhos: 2, "Crocantes Extras": 1, Proteínas: 2, Acompanhamentos: 5, Toppings: 3, Caldas: 3 };
+  return padroes[grupoNome] || 1;
+}
+
+// ABRIR MODAL DE EDIÇÃO DE PRODUTO
+function editarProduto(catNome, idx) {
+  const categoria = categorias.find(c => c.nome === catNome);
+  if (!categoria) return;
+  const item = categoria.itens[idx];
+  if (!item) return;
+
+  itemEmEdicaoRef = { catNome, idx };
+  document.getElementById("pm-nome").value = item.nome || "";
+  document.getElementById("pm-preco").value = item.preco || 0;
+  document.getElementById("pm-imagem").value = item.imagem || "";
+  document.getElementById("pm-descricao").value = item.descricao || "";
+
+  const wrap = document.getElementById("pm-grupos");
+  wrap.innerHTML = "";
+
+  (ingredientes || []).forEach(gr => {
+    const grupoNome = gr.grupo;
+    const opcoes = gr.opcoes || [];
+    const permitidos = item.ingredientesPermitidos?.[grupoNome];
+    const limiteAtual = item.limites?.[grupoNome] ?? getLimitePadraoLocal(grupoNome);
+    const isAll = permitidos === "*" || (Array.isArray(permitidos) && permitidos.length === opcoes.length);
+
+    const bloco = document.createElement("div");
+    bloco.className = "pm-grupo";
+    bloco.style = "border:1px solid var(--border);border-radius:8px;padding:.6rem;";
+
+    let html = `
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;">
+        <div style="font-weight:600;color:var(--primary);">${grupoNome}</div>
+        <div style="display:flex;align-items:center;gap:.5rem;">
+          <label><input type="checkbox" class="pm-grupo-all" data-grupo="${grupoNome}" ${isAll ? "checked" : ""}> Selecionar grupo inteiro</label>
+          <label>Limite: <input type="number" class="pm-grupo-limit" data-grupo="${grupoNome}" min="0" value="${parseInt(limiteAtual) || 0}" style="width:80px;"></label>
+        </div>
+      </div>
+      <div class="pm-grupo-opcoes" data-grupo="${grupoNome}" style="margin-top:.5rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.25rem .75rem;"></div>
+    `;
+    bloco.innerHTML = html;
+    wrap.appendChild(bloco);
+
+    const areaOp = bloco.querySelector(".pm-grupo-opcoes");
+    opcoes.forEach(op => {
+      const checked = isAll || (Array.isArray(permitidos) && permitidos.includes(op.nome));
+      const valor = op.valor ?? 0;
+      const opt = document.createElement("label");
+      opt.style = "display:flex;align-items:center;gap:.4rem;padding:.2rem 0;";
+      opt.innerHTML = `
+        <input type="checkbox" class="pm-opcao" data-grupo="${grupoNome}" value="${op.nome}" ${checked ? "checked" : ""} ${isAll ? "disabled" : ""}>
+        <span>${op.nome}</span>
+        <input type="number" class="pm-opcao-valor" data-grupo="${grupoNome}" data-nome="${op.nome}" step="0.01" min="0" value="${valor}" style="width:70px;border:1px solid #ccc;border-radius:4px;padding:2px 4px;">
+      `;
+      areaOp.appendChild(opt);
+    });
+  });
+
+  // Listener: selecionar grupo inteiro
+  wrap.querySelectorAll(".pm-grupo-all").forEach(cb => {
+    cb.addEventListener("change", e => {
+      const grupo = e.target.dataset.grupo;
+      const boxArea = wrap.querySelector(`.pm-grupo-opcoes[data-grupo="${grupo}"]`);
+      const all = e.target.checked;
+      boxArea.querySelectorAll(".pm-opcao").forEach(op => {
+        op.checked = all ? true : op.checked;
+        op.disabled = all;
+      });
+    });
+  });
+
+  abrirProdutoModal();
+}
+// ===============================
+// SALVAR ALTERAÇÕES DE PRODUTO (MODAL)
+// ===============================
+document.getElementById("pm-salvar").addEventListener("click", () => {
+  if (!itemEmEdicaoRef) return;
+  const { catNome, idx } = itemEmEdicaoRef;
+  const categoria = categorias.find(c => c.nome === catNome);
+  if (!categoria) return;
+  const item = categoria.itens[idx];
+  if (!item) return;
+
+  // Campos básicos
+  item.nome = document.getElementById("pm-nome").value.trim();
+  item.preco = parseFloat(document.getElementById("pm-preco").value) || 0;
+  item.imagem = document.getElementById("pm-imagem").value.trim();
+  item.descricao = document.getElementById("pm-descricao").value.trim();
+
+  // Ingredientes permitidos e limites
+  item.ingredientesPermitidos ||= {};
+  item.limites ||= {};
+
+  const wrap = document.getElementById("pm-grupos");
+  wrap.querySelectorAll(".pm-grupo").forEach(bloco => {
+    const grpName = bloco.querySelector(".pm-grupo-opcoes").dataset.grupo;
+    const allCheck = bloco.querySelector(`.pm-grupo-all[data-grupo="${grpName}"]`);
+    const limitInput = bloco.querySelector(`.pm-grupo-limit[data-grupo="${grpName}"]`);
+    const limitVal = parseInt(limitInput.value) || 0;
+
+    item.limites[grpName] = limitVal;
+
+    if (allCheck.checked) {
+      item.ingredientesPermitidos[grpName] = "*";
+    } else {
+      const selecionados = [...bloco.querySelectorAll(`.pm-opcao[data-grupo="${grpName}"]`)]
+        .filter(i => i.checked)
+        .map(i => i.value);
+      if (selecionados.length > 0)
+        item.ingredientesPermitidos[grpName] = selecionados;
+      else
+        delete item.ingredientesPermitidos[grpName];
+    }
+  });
+
+  fecharProdutoModal();
+  renderEditorProdutos();
+  if (typeof renderCardapio === "function") renderCardapio();
+  if (typeof salvarLocal === "function") salvarLocal();
+});
+
+// ===============================
+// EXCLUIR PRODUTO
+// ===============================
 function excluirProduto(catNome, idx) {
-  const categoria = (categorias || []).find(c => c.nome === catNome);
+  const categoria = categorias.find(c => c.nome === catNome);
   if (!categoria) return;
   if (confirm(`Excluir ${categoria.itens[idx].nome}?`)) {
     categoria.itens.splice(idx, 1);
     renderEditorProdutos();
     if (typeof renderCardapio === "function") renderCardapio();
+    if (typeof salvarLocal === "function") salvarLocal();
   }
 }
 
 // ===============================
-// GERENCIAMENTO DE GRUPOS DE PRODUTOS (NOVO)
+// GERENCIAMENTO DE GRUPOS DE PRODUTOS
 // ===============================
 document.getElementById("salvar-grupo-cardapio").addEventListener("click", () => {
-  const nome = (document.getElementById("novo-grupo-cardapio-nome").value || "").trim();
+  const nome = document.getElementById("novo-grupo-cardapio-nome").value.trim();
   if (!nome) return alert("Digite o nome do novo grupo de produtos!");
 
-  // NÃO remove nada. Apenas adiciona se não existir.
-  const exists = (categorias || []).some(c => c.nome.toLowerCase() === nome.toLowerCase());
-  if (exists) {
-    alert("Este grupo já existe no cardápio.");
-    return;
-  }
+  if (categorias.some(c => c.nome.toLowerCase() === nome.toLowerCase()))
+    return alert("Este grupo já existe!");
 
   categorias.push({ nome, itens: [] });
   document.getElementById("novo-grupo-cardapio-nome").value = "";
-
   refreshCategoriaSelect();
   renderEditorProdutos();
   if (typeof renderCardapio === "function") renderCardapio();
-
-  alert(`✅ Grupo de produtos "${nome}" criado com sucesso!`);
+  if (typeof salvarLocal === "function") salvarLocal();
+  alert(`✅ Grupo "${nome}" criado com sucesso!`);
 });
 
 // ===============================
-// GERENCIAMENTO DE GRUPOS/INGREDIENTES (já existente)
+// GERENCIAMENTO DE INGREDIENTES (NOVO FORMATO COM VALOR)
 // ===============================
-
-// Criar novo grupo de ingredientes
 document.getElementById("salvar-grupo").addEventListener("click", () => {
-  const nome = (document.getElementById("novo-grupo-nome").value || "").trim();
-  if (!nome) return alert("Digite o nome do novo grupo de ingredientes!");
+  const nome = document.getElementById("novo-grupo-nome").value.trim();
+  if (!nome) return alert("Digite o nome do grupo de ingredientes!");
 
-  if ((ingredientes || []).some(g => g.grupo.toLowerCase() === nome.toLowerCase())) {
-    alert("Esse grupo de ingredientes já existe!");
-    return;
-  }
+  if (ingredientes.some(g => g.grupo.toLowerCase() === nome.toLowerCase()))
+    return alert("Esse grupo já existe!");
 
   ingredientes.push({ grupo: nome, opcoes: [] });
-  atualizarTudo();
-  atualizarSelectGrupos();
+  if (typeof atualizarSelectGrupos === "function") atualizarSelectGrupos();
   renderEditorIngredientes();
+  if (typeof salvarLocal === "function") salvarLocal();
   document.getElementById("novo-grupo-nome").value = "";
-  alert(`✅ Grupo de ingredientes "${nome}" criado com sucesso!`);
+  alert(`✅ Grupo "${nome}" criado com sucesso!`);
 });
 
-// Atualiza select com todos os grupos de ingredientes
 function atualizarSelectGrupos() {
-  const select = document.getElementById("novo-grupo");
-  if (!select) return;
-  select.innerHTML = "";
-  (ingredientes || []).forEach(g => {
+  const sel = document.getElementById("novo-grupo");
+  if (!sel) return;
+  sel.innerHTML = "";
+  ingredientes.forEach(g => {
     const opt = document.createElement("option");
     opt.value = g.grupo;
     opt.textContent = g.grupo;
-    select.appendChild(opt);
+    sel.appendChild(opt);
   });
 }
 
-// Criar novo ingrediente
+// ===============================
+// SALVAR INGREDIENTE (COM VALOR)
+// ===============================
 document.getElementById("salvar-ingrediente").addEventListener("click", () => {
   const grupo = document.getElementById("novo-grupo").value;
-  const nome = (document.getElementById("novo-ingrediente").value || "").trim();
+  const nome = document.getElementById("novo-ingrediente").value.trim();
+  const valor = parseFloat(document.getElementById("novo-ingrediente-valor").value) || 0;
+
   if (!nome) return alert("Digite o nome do ingrediente!");
 
-  let grupoExistente = (ingredientes || []).find(g => g.grupo === grupo);
+  let grupoExistente = ingredientes.find(g => g.grupo === grupo);
   if (!grupoExistente) {
     grupoExistente = { grupo, opcoes: [] };
     ingredientes.push(grupoExistente);
   }
 
-  grupoExistente.opcoes.push({ nome, pausado: false });
+  grupoExistente.opcoes.push({ nome, valor, pausado: false });
   document.getElementById("novo-ingrediente").value = "";
+  document.getElementById("novo-ingrediente-valor").value = "";
   renderEditorIngredientes();
+  if (typeof salvarLocal === "function") salvarLocal();
 });
 
-// Renderiza grupos e ingredientes
+// ===============================
+// RENDERIZAR EDITOR DE INGREDIENTES
+// ===============================
 function renderEditorIngredientes() {
-  const container = document.getElementById("ingredientes-editor");
-  if (!container) return;
-  container.innerHTML = "";
+  const cont = document.getElementById("ingredientes-editor");
+  if (!cont) return;
+  cont.innerHTML = "";
 
   atualizarSelectGrupos();
 
-  (ingredientes || []).forEach(g => {
+  ingredientes.forEach(g => {
     const div = document.createElement("div");
-    div.style = "background:#fff; margin:1rem 0; padding:0.6rem; border-radius:8px; box-shadow:0 0 4px #ccc;";
+    div.style = "background:#fff;margin:1rem 0;padding:0.6rem;border-radius:8px;box-shadow:0 0 4px #ccc;";
     div.innerHTML = `<h4 style="color:var(--primary);">${g.grupo}</h4>`;
 
     (g.opcoes || []).forEach((op, idx) => {
@@ -1148,11 +1223,16 @@ function renderEditorIngredientes() {
         : `<button class='btn-off' onclick="alternarIngrediente('${g.grupo.replace(/'/g, "\\'")}', ${idx})">Pausar</button>`;
 
       const linha = document.createElement("div");
-      linha.style = "margin:4px 0; display:flex; justify-content:space-between; align-items:center;";
+      linha.style = "margin:4px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;";
       linha.innerHTML = `
-        <span style="${op.pausado ? "color:#999; text-decoration:line-through;" : ""}">
-          ${op.nome}
-        </span>
+        <div>
+          <span style="${op.pausado ? "color:#999;text-decoration:line-through;" : ""}">
+            ${op.nome} <small style="color:#555;">(R$ ${Number(op.valor || 0).toFixed(2)})</small>
+          </span>
+          <input type="number" step="0.01" min="0" value="${op.valor || 0}" 
+                 style="width:70px;margin-left:10px;padding:2px 4px;border:1px solid #ccc;border-radius:4px;"
+                 onchange="atualizarValorIngrediente('${g.grupo.replace(/'/g, "\\'")}', ${idx}, this.value)">
+        </div>
         <div>${btnPause}
           <button class='btn-delete' onclick="excluirIngrediente('${g.grupo.replace(/'/g, "\\'")}', ${idx})">Excluir</button>
         </div>
@@ -1160,28 +1240,37 @@ function renderEditorIngredientes() {
       div.appendChild(linha);
     });
 
-    container.appendChild(div);
+    cont.appendChild(div);
   });
 }
 
+function atualizarValorIngrediente(grupoNome, idx, valorNovo) {
+  const grupo = ingredientes.find(g => g.grupo === grupoNome);
+  if (!grupo) return;
+  grupo.opcoes[idx].valor = parseFloat(valorNovo) || 0;
+  if (typeof salvarLocal === "function") salvarLocal();
+}
+
 function alternarIngrediente(grupoNome, idx) {
-  const grupo = (ingredientes || []).find(g => g.grupo === grupoNome);
+  const grupo = ingredientes.find(g => g.grupo === grupoNome);
   if (!grupo) return;
   grupo.opcoes[idx].pausado = !grupo.opcoes[idx].pausado;
   renderEditorIngredientes();
+  if (typeof salvarLocal === "function") salvarLocal();
 }
 
 function excluirIngrediente(grupoNome, idx) {
-  const grupo = (ingredientes || []).find(g => g.grupo === grupoNome);
+  const grupo = ingredientes.find(g => g.grupo === grupoNome);
   if (!grupo) return;
   if (confirm(`Excluir ${grupo.opcoes[idx].nome}?`)) {
     grupo.opcoes.splice(idx, 1);
     renderEditorIngredientes();
+    if (typeof salvarLocal === "function") salvarLocal();
   }
 }
 
 // ===============================
-// IMPORTAR JSON (corrigido v6.3)
+// IMPORTAÇÃO DE JSON (COMPATÍVEL COM VALOR)
 // ===============================
 document.getElementById("import-json").addEventListener("change", e => {
   const file = e.target.files[0];
@@ -1191,35 +1280,37 @@ document.getElementById("import-json").addEventListener("change", e => {
   reader.onload = function () {
     try {
       const data = JSON.parse(reader.result);
-
       if (!data || (!data.categorias && !data.ingredientes)) {
-        alert("❌ Arquivo inválido — formato incorreto!");
+        alert("❌ Arquivo inválido!");
         return;
       }
 
-      // Substitui apenas se os dados forem válidos
       if (Array.isArray(data.categorias)) categorias = data.categorias;
       if (Array.isArray(data.ingredientes)) ingredientes = data.ingredientes;
 
-      // Salva no localStorage
-      localStorage.setItem("palatarius_data", JSON.stringify({ categorias, ingredientes }));
+      // Garante compatibilidade (caso ingredientes antigos não tenham valor)
+      ingredientes.forEach(g => {
+        g.opcoes = g.opcoes.map(op => ({
+          nome: op.nome,
+          pausado: op.pausado || false,
+          valor: op.valor || 0
+        }));
+      });
 
-      // Recarrega completamente o sistema
+      localStorage.setItem("palatarius_data", JSON.stringify({ categorias, ingredientes }));
       renderCardapio();
       renderEditorProdutos();
       renderEditorIngredientes();
 
       alert("✅ Importação concluída com sucesso!");
-      console.log("📦 Cardápio e ingredientes importados:", data);
+      console.log("📦 Dados importados:", data);
     } catch (err) {
       console.error("Erro ao importar JSON:", err);
-      alert("❌ Erro ao importar JSON. Verifique o arquivo!");
+      alert("❌ Erro ao importar JSON!");
     }
   };
-
   reader.readAsText(file);
 });
-
 </script>
 
 <script>
@@ -1352,135 +1443,118 @@ function initializeDefaultData() {
 </script>
 <script>
 /* =========================================================
-   BLOCO 6 — SALVAMENTO LOCAL, RESTAURAÇÃO E FINALIZAÇÃO (v7)
-   Inclui salvamento automático e persistente de tudo
+   BLOCO 6 — EXPORTAÇÃO FUNCIONAL GARANTIDA (v10.1)
+   Gera .JSON e .TXT mesmo offline / local / GitHub
 ========================================================= */
 
-// ===============================
-// SALVAR E RESTAURAR LOCALSTORAGE
-// ===============================
-function salvarLocal() {
+// Caminho online (usado só quando publicado no GitHub Pages)
+const JSON_URL = "https://eddyoliver.github.io/Palatarius/cardapio_palatarius.json";
+
+// ----------------------------------------------------------
+// RESTAURAÇÃO SEGURA  (ignora falhas de rede sem travar nada)
+// ----------------------------------------------------------
+async function restaurarLocal() {
   try {
-    const data = { categorias, ingredientes };
+    const response = await fetch(JSON_URL + "?v=" + Date.now());
+    if (!response.ok) throw new Error("Erro ao buscar remoto");
+    const data = await response.json();
+    categorias = data.categorias || [];
+    ingredientes = data.ingredientes || [];
+    renderCardapio(); renderEditorProdutos(); renderEditorIngredientes();
     localStorage.setItem("palatarius_data", JSON.stringify(data));
-    console.log("💾 Dados salvos automaticamente no localStorage.");
+    console.log("✅ Dados carregados do GitHub Pages.");
   } catch (err) {
-    console.error("❌ Erro ao salvar dados locais:", err);
-  }
-}
-// Sempre salva após qualquer alteração de estrutura
-function atualizarTudo() {
-  salvarLocal();
-  renderCardapio();
-  renderEditorProdutos();
-  renderEditorIngredientes();
-}
-
-function restaurarLocal() {
-  const data = localStorage.getItem("palatarius_data");
-  if (data) {
-    try {
-      const obj = JSON.parse(data);
-      if (obj.categorias && obj.ingredientes) {
-        categorias = obj.categorias;
-        ingredientes = obj.ingredientes;
-        renderCardapio();
-        renderEditorProdutos();
-        renderEditorIngredientes();
-        console.log("✅ Dados restaurados com sucesso do localStorage.");
-        return true;
-      }
-    } catch (err) {
-      console.error("❌ Erro ao restaurar dados locais:", err);
+    console.warn("⚠️  Falha de rede ou CORS — usando dados locais.", err);
+    const local = localStorage.getItem("palatarius_data");
+    if (local) {
+      const obj = JSON.parse(local);
+      categorias = obj.categorias || [];
+      ingredientes = obj.ingredientes || [];
     }
+    renderCardapio(); renderEditorProdutos(); renderEditorIngredientes();
   }
-  return false;
 }
 
-// ===============================
-// SALVAMENTO AUTOMÁTICO GLOBAL
-// ===============================
-function ativarSalvamentoAutomatico() {
-  const eventos = [
-    "click",
-    "input",
-    "change"
-  ];
-
-  eventos.forEach(evt => {
-    document.body.addEventListener(evt, debounce(() => salvarLocal(), 1000));
-  });
-
-  console.log("⚙️ Salvamento automático ativo (eventos globais).");
-}
-
-// Função debounce para evitar salvar muitas vezes seguidas
-function debounce(func, delay) {
-  let timer;
-  return function(...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => func.apply(this, args), delay);
-  };
-}
-
-// ===============================
-// INICIALIZAÇÃO GLOBAL
-// ===============================
-window.addEventListener("DOMContentLoaded", () => {
-  const restaurado = restaurarLocal();
-  if (!restaurado) {
-    console.log("⚙️ Nenhum dado local encontrado — inicializando dados padrão.");
-    if (typeof initializeDefaultData === "function") initializeDefaultData();
-  }
-
-  ativarSalvamentoAutomatico();
-
-  // Garante salvamento ao sair da página
-  window.addEventListener("beforeunload", salvarLocal);
-
-  console.log("🚀 Sistema Palatarius v7 iniciado com sucesso!");
-});
-
-// ===============================
-// FECHAR EDITOR
-// ===============================
-document.getElementById("close-editor").addEventListener("click", () => {
-  salvarLocal();
-  document.getElementById("editor-screen").classList.remove("active");
-  alert("✅ Editor fechado. Todas as alterações foram salvas automaticamente!");
-});
-
-// ===============================
-// INTEGRAÇÃO COM FUNÇÕES DO EDITOR
-// (Garantir salvamento após ações críticas)
-// ===============================
-function salvarDepois(callback) {
+// ----------------------------------------------------------
+// EXPORTADOR UNIVERSAL  (.json ou .txt)
+// ----------------------------------------------------------
+function exportarCardapio(formato = "json") {
   try {
-    callback();
-  } finally {
-    salvarLocal();
+    const data = {
+      atualizado_em: new Date().toISOString(),
+      versao: "10.1",
+      categorias: JSON.parse(JSON.stringify(categorias || [])),
+      ingredientes: JSON.parse(JSON.stringify(ingredientes || []))
+    };
+
+    data.ingredientes.forEach(gr => {
+      gr.opcoes = gr.opcoes.map(op => ({
+        nome: op.nome || "Ingrediente",
+        valor: op.valor !== undefined ? Number(op.valor) : 0,
+        pausado: !!op.pausado
+      }));
+    });
+
+    const conteudo = JSON.stringify(data, null, 2);
+    const tipo = formato === "txt" ? "text/plain" : "application/json";
+    const nome = formato === "txt" ? "cardapio_palatarius.txt" : "cardapio_palatarius.json";
+
+    const blob = new Blob([conteudo], { type: tipo });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = nome;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+
+    console.log(`✅ Exportado ${nome} (${blob.size} bytes)`);
+    alert(`📦 Cardápio exportado com sucesso!\nArquivo: ${nome}`);
+  } catch (err) {
+    console.error("❌ Erro ao exportar:", err);
+    alert("Erro ao gerar o arquivo. Veja o console (F12).");
   }
 }
 
-// Substitui as principais funções para garantir persistência
-const _oldRenderCardapio = window.renderCardapio;
-window.renderCardapio = function() {
-  if (typeof _oldRenderCardapio === "function") _oldRenderCardapio();
-  salvarLocal();
-};
+// ----------------------------------------------------------
+// BOTÕES DE EXPORTAÇÃO + FECHAR EDITOR (sempre criados)
+// ----------------------------------------------------------
+window.addEventListener("load", async () => {
+  // tenta carregar dados (mas não trava se falhar)
+  try { await restaurarLocal(); } catch(e) {}
 
-const _oldRenderEditorProdutos = window.renderEditorProdutos;
-window.renderEditorProdutos = function() {
-  if (typeof _oldRenderEditorProdutos === "function") _oldRenderEditorProdutos();
-  salvarLocal();
-};
+  const editor = document.getElementById("editor-cardapio");
+  if (editor) {
+    // botão JSON
+    const btnJson = document.createElement("button");
+    btnJson.textContent = "📤 Exportar JSON (Online)";
+    btnJson.className = "primary";
+    btnJson.style = "margin-top:1rem;";
+    btnJson.onclick = () => exportarCardapio("json");
 
-const _oldRenderEditorIngredientes = window.renderEditorIngredientes;
-window.renderEditorIngredientes = function() {
-  if (typeof _oldRenderEditorIngredientes === "function") _oldRenderEditorIngredientes();
-  salvarLocal();
-};
+    // botão TXT
+    const btnTxt = document.createElement("button");
+    btnTxt.textContent = "🧾 Exportar TXT (Offline)";
+    btnTxt.className = "secondary";
+    btnTxt.style = "margin-top:0.5rem;";
+    btnTxt.onclick = () => exportarCardapio("txt");
+
+    editor.appendChild(btnJson);
+    editor.appendChild(btnTxt);
+  }
+
+  const closeBtn = document.getElementById("close-editor");
+  if (closeBtn)
+    closeBtn.onclick = () => {
+      localStorage.setItem("palatarius_data", JSON.stringify({ categorias, ingredientes }));
+      document.getElementById("editor-screen").classList.remove("active");
+      alert("✅ Editor fechado. Exporte o JSON/TXT para salvar as alterações!");
+    };
+
+  console.log("🚀 Palatarius v10.1 — botão de exportação sempre ativo.");
+});
 </script>
+
 
 </body>
 </html>
