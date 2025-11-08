@@ -592,26 +592,6 @@
         <label>Descrição:</label>
         <textarea id="novo-descricao" placeholder="Descrição detalhada do produto"></textarea>
 
-        <h4>Limites de Ingredientes</h4>
-        <div class="grid-limites">
-          <label>Carnes (1 padrão):</label>
-          <input type="number" id="limite-carnes" min="0" value="1">
-
-          <label>Molhos (2 padrão):</label>
-          <input type="number" id="limite-molhos" min="0" value="2">
-
-          <label>Crocantes (1 padrão):</label>
-          <input type="number" id="limite-crocantes" min="0" value="1">
-
-          <label>Proteínas (2 padrão):</label>
-          <input type="number" id="limite-proteinas" min="0" value="2">
-
-          <label>Toppings (3 padrão):</label>
-          <input type="number" id="limite-toppings" min="0" value="3">
-
-          <label>Caldas (3 padrão):</label>
-          <input type="number" id="limite-caldas" min="0" value="3">
-        </div>
 
         <button id="salvar-produto" class="primary" style="margin-top:1rem;">Salvar Produto</button>
       </div>
@@ -703,8 +683,9 @@
 
 <script>
 /* =========================================================
-   BLOCO 3 — FUNCIONALIDADES DO CLIENTE (v8)
-   Agora com preços individuais por ingrediente
+   BLOCO 3 — FUNCIONALIDADES DO CLIENTE (v8.1)
+   Compatível com BLOCO 4 v9.6 (produtos limpos)
+   Agora exibe apenas ingredientes permitidos por produto
 ========================================================= */
 
 let cliente = {};
@@ -777,7 +758,7 @@ function renderCardapio() {
 }
 
 // ===============================
-// MODAL DE INGREDIENTES (v8 com valores)
+// MODAL DE INGREDIENTES (v8.1 com controle de permissões)
 // ===============================
 function abrirModalIngredientes(catNome, itemNome) {
   const cat = categorias.find(c => c.nome === catNome);
@@ -801,61 +782,65 @@ function gerarIngredientesModal(item) {
     return;
   }
 
-  const grupos = Object.keys(item.ingredientesPermitidos).length
-    ? ingredientes.filter(g => Object.keys(item.ingredientesPermitidos).includes(g.grupo))
-    : ingredientes;
+  // 🔒 Mostra somente grupos realmente liberados no produto
+  const gruposLiberados = Object.keys(item.ingredientesPermitidos);
+  if (!gruposLiberados.length) {
+    cont.innerHTML = `<p style="color:#777;">Nenhum ingrediente disponível para este item.</p>`;
+    return;
+  }
 
-  grupos.forEach(gr => {
+  ingredientes.forEach(gr => {
+    const grupoNome = gr.grupo;
+    const permitidos = item.ingredientesPermitidos?.[grupoNome];
+    if (!permitidos) return; // grupo não liberado → ignora
+
+    // Se o grupo inteiro foi liberado (*), usa todas as opções
+    let opcoesFiltradas = [];
+    if (permitidos === "*") {
+      opcoesFiltradas = gr.opcoes;
+    } else if (Array.isArray(permitidos)) {
+      // Mostra apenas ingredientes selecionados no editor
+      opcoesFiltradas = gr.opcoes.filter(o => permitidos.includes(o.nome));
+    }
+
+    if (!opcoesFiltradas.length) return;
+
     const div = document.createElement("div");
     div.className = "ingrediente-grupo";
-    const limite = item.limites?.[gr.grupo] || getLimitePadrao(gr.grupo);
-    let html = `<h4>${gr.grupo} (máx ${limite})</h4>`;
+    const limite = item.limites?.[grupoNome] || 0;
+    let html = `<h4>${grupoNome}${limite ? ` (máx ${limite})` : ""}</h4>`;
 
-    const permitidos = item.ingredientesPermitidos?.[gr.grupo] || gr.opcoes.map(o => o.nome);
-    const opcoes = gr.opcoes.filter(o => permitidos === "*" || permitidos.includes(o.nome));
-
-    if (!opcoes.length) {
-      html += `<p style="color:#999;">Nenhum ingrediente disponível.</p>`;
-    } else {
-      opcoes.forEach(op => {
-        const pausado = op.pausado === true;
-        const valor = Number(op.valor || 0);
-        const textoValor = valor > 0 ? ` (+R$ ${valor.toFixed(2)})` : "";
-        html += `
-          <label ${pausado ? 'class="paused"' : ''}>
-            <input type="checkbox" 
-                   name="${gr.grupo}" 
-                   value="${op.nome}" 
-                   data-valor="${valor}" 
-                   ${pausado ? "disabled" : ""}>
-            <span>${op.nome}${textoValor}</span>
-          </label>`;
-      });
-    }
+    opcoesFiltradas.forEach(op => {
+      const pausado = op.pausado === true;
+      const valor = Number(op.valor || 0);
+      const textoValor = valor > 0 ? ` (+R$ ${valor.toFixed(2)})` : "";
+      html += `
+        <label ${pausado ? 'class="paused"' : ''}>
+          <input type="checkbox" 
+                 name="${grupoNome}" 
+                 value="${op.nome}" 
+                 data-valor="${valor}" 
+                 ${pausado ? "disabled" : ""}>
+          <span>${op.nome}${textoValor}</span>
+        </label>`;
+    });
 
     div.innerHTML = html;
     cont.appendChild(div);
 
-    // controle de limite
-    div.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-      cb.addEventListener("change", e => {
-        const checks = div.querySelectorAll('input:checked');
-        if (checks.length > limite) {
-          e.target.checked = false;
-          alert(`Máx. permitido: ${limite} em ${gr.grupo}`);
-        }
+    // controle de limite, se existir
+    if (limite > 0) {
+      div.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.addEventListener("change", e => {
+          const checks = div.querySelectorAll('input:checked');
+          if (checks.length > limite) {
+            e.target.checked = false;
+            alert(`Máx. permitido: ${limite} em ${grupoNome}`);
+          }
+        });
       });
-    });
+    }
   });
-}
-
-function getLimitePadrao(gr) {
-  const pad = {
-    "Carnes": 1, "Molhos": 2, "Crocantes Extras": 1,
-    "Proteínas": 2, "Acompanhamentos": 5,
-    "Toppings": 3, "Caldas": 3, "Caldas Fini (+R$1)": 2
-  };
-  return pad[gr] || 1;
 }
 
 document.getElementById("close-modal").onclick = () => {
@@ -969,12 +954,11 @@ document.getElementById("send-whatsapp").addEventListener("click", () => {
 });
 </script>
 
-
 <script>
 /* =========================================================
-   BLOCO 4 — EDITOR ADMINISTRATIVO AVANÇADO (v9)
-   Agora com campo de VALOR para ingredientes
-   (Compatível com BLOCO 3 v8)
+   BLOCO 4 — EDITOR ADMINISTRATIVO AVANÇADO (v9.6)
+   Produtos iniciam limpos (sem limites nem ingredientes)
+   e ajustes no salvamento de edição
 ========================================================= */
 
 // ===============================
@@ -1040,7 +1024,7 @@ function refreshCategoriaSelect() {
 }
 
 // ===============================
-// ADICIONAR PRODUTO
+// ADICIONAR PRODUTO — sem limites nem ingredientes padrão
 // ===============================
 document.getElementById("salvar-produto").addEventListener("click", () => {
   const nome = document.getElementById("novo-nome").value.trim();
@@ -1054,23 +1038,17 @@ document.getElementById("salvar-produto").addEventListener("click", () => {
     return;
   }
 
-  const limites = {
-    Carnes: parseInt(document.getElementById("limite-carnes").value) || 0,
-    Molhos: parseInt(document.getElementById("limite-molhos").value) || 0,
-    "Crocantes Extras": parseInt(document.getElementById("limite-crocantes").value) || 0,
-    Proteínas: parseInt(document.getElementById("limite-proteinas").value) || 0,
-    Toppings: parseInt(document.getElementById("limite-toppings").value) || 0,
-    Caldas: parseInt(document.getElementById("limite-caldas").value) || 0
-  };
-
   const grupo = categorias.find(c => c.nome === categoria);
   if (!grupo) return alert("Categoria não encontrada!");
 
   grupo.itens ||= [];
   grupo.itens.push({
-    nome, preco, imagem, descricao,
-    limites,
-    ingredientesPermitidos: {}
+    nome,
+    preco,
+    imagem,
+    descricao,
+    limites: {},                // ✅ Nenhum limite padrão
+    ingredientesPermitidos: {}  // ✅ Nenhum ingrediente até edição manual
   });
 
   document.querySelectorAll("#editor-cardapio input, #editor-cardapio textarea").forEach(i => (i.value = ""));
@@ -1078,6 +1056,8 @@ document.getElementById("salvar-produto").addEventListener("click", () => {
   renderEditorProdutos();
   if (typeof renderCardapio === "function") renderCardapio();
   if (typeof salvarLocal === "function") salvarLocal();
+
+  alert(`✅ Produto "${nome}" criado! Agora edite para escolher os ingredientes.`);
 });
 
 // ===============================
@@ -1109,11 +1089,10 @@ function renderEditorProdutos() {
 }
 
 // ===============================
-// MODAL DE EDIÇÃO DE PRODUTO
+// MODAL DE EDIÇÃO DE PRODUTO (sem limites padrão)
 // ===============================
 let itemEmEdicaoRef = null;
 
-// cria modal se não existir
 (function ensureProdutoModal() {
   if (document.getElementById("produto-modal")) return;
   const modal = document.createElement("div");
@@ -1154,14 +1133,9 @@ function fecharProdutoModal() {
   itemEmEdicaoRef = null;
 }
 
-// função padrão para limites
-function getLimitePadraoLocal(grupoNome) {
-  if (typeof getLimitePadrao === "function") return getLimitePadrao(grupoNome);
-  const padroes = { Carnes: 1, Molhos: 2, "Crocantes Extras": 1, Proteínas: 2, Acompanhamentos: 5, Toppings: 3, Caldas: 3 };
-  return padroes[grupoNome] || 1;
-}
-
+// ===============================
 // ABRIR MODAL DE EDIÇÃO DE PRODUTO
+// ===============================
 function editarProduto(catNome, idx) {
   const categoria = categorias.find(c => c.nome === catNome);
   if (!categoria) return;
@@ -1181,7 +1155,7 @@ function editarProduto(catNome, idx) {
     const grupoNome = gr.grupo;
     const opcoes = gr.opcoes || [];
     const permitidos = item.ingredientesPermitidos?.[grupoNome];
-    const limiteAtual = item.limites?.[grupoNome] ?? getLimitePadraoLocal(grupoNome);
+    const limiteAtual = item.limites?.[grupoNome] ?? 0;
     const isAll = permitidos === "*" || (Array.isArray(permitidos) && permitidos.length === opcoes.length);
 
     const bloco = document.createElement("div");
@@ -1231,6 +1205,7 @@ function editarProduto(catNome, idx) {
 
   abrirProdutoModal();
 }
+
 // ===============================
 // SALVAR ALTERAÇÕES DE PRODUTO (MODAL)
 // ===============================
@@ -1248,9 +1223,9 @@ document.getElementById("pm-salvar").addEventListener("click", () => {
   item.imagem = document.getElementById("pm-imagem").value.trim();
   item.descricao = document.getElementById("pm-descricao").value.trim();
 
-  // Ingredientes permitidos e limites
-  item.ingredientesPermitidos ||= {};
-  item.limites ||= {};
+  // Ingredientes e limites — limpeza completa
+  item.ingredientesPermitidos = {};
+  item.limites = {};
 
   const wrap = document.getElementById("pm-grupos");
   wrap.querySelectorAll(".pm-grupo").forEach(bloco => {
@@ -1261,17 +1236,16 @@ document.getElementById("pm-salvar").addEventListener("click", () => {
 
     item.limites[grpName] = limitVal;
 
-    if (allCheck.checked) {
+    if (allCheck && allCheck.checked) {
       item.ingredientesPermitidos[grpName] = "*";
-    } else {
-      const selecionados = [...bloco.querySelectorAll(`.pm-opcao[data-grupo="${grpName}"]`)]
-        .filter(i => i.checked)
-        .map(i => i.value);
-      if (selecionados.length > 0)
-        item.ingredientesPermitidos[grpName] = selecionados;
-      else
-        delete item.ingredientesPermitidos[grpName];
+      return;
     }
+
+    const selecionados = [...bloco.querySelectorAll(`.pm-opcao[data-grupo="${grpName}"]`)]
+      .filter(i => i.checked)
+      .map(i => i.value);
+
+    if (selecionados.length > 0) item.ingredientesPermitidos[grpName] = selecionados;
   });
 
   fecharProdutoModal();
@@ -1281,200 +1255,24 @@ document.getElementById("pm-salvar").addEventListener("click", () => {
 });
 
 // ===============================
-// EXCLUIR PRODUTO
+// EXCLUIR PRODUTO (corrigido v9.6)
 // ===============================
 function excluirProduto(catNome, idx) {
   const categoria = categorias.find(c => c.nome === catNome);
   if (!categoria) return;
-  if (confirm(`Excluir ${categoria.itens[idx].nome}?`)) {
+
+  const produto = categoria.itens[idx];
+  if (!produto) return;
+
+  if (confirm(`🗑️ Deseja realmente excluir "${produto.nome}"?`)) {
     categoria.itens.splice(idx, 1);
     renderEditorProdutos();
     if (typeof renderCardapio === "function") renderCardapio();
     if (typeof salvarLocal === "function") salvarLocal();
+    alert(`✅ Produto "${produto.nome}" removido com sucesso!`);
   }
 }
 
-// ===============================
-// GERENCIAMENTO DE GRUPOS DE PRODUTOS
-// ===============================
-document.getElementById("salvar-grupo-cardapio").addEventListener("click", () => {
-  const nome = document.getElementById("novo-grupo-cardapio-nome").value.trim();
-  if (!nome) return alert("Digite o nome do novo grupo de produtos!");
-
-  if (categorias.some(c => c.nome.toLowerCase() === nome.toLowerCase()))
-    return alert("Este grupo já existe!");
-
-  categorias.push({ nome, itens: [] });
-  document.getElementById("novo-grupo-cardapio-nome").value = "";
-  refreshCategoriaSelect();
-  renderEditorProdutos();
-  if (typeof renderCardapio === "function") renderCardapio();
-  if (typeof salvarLocal === "function") salvarLocal();
-  alert(`✅ Grupo "${nome}" criado com sucesso!`);
-});
-
-// ===============================
-// GERENCIAMENTO DE INGREDIENTES (NOVO FORMATO COM VALOR)
-// ===============================
-document.getElementById("salvar-grupo").addEventListener("click", () => {
-  const nome = document.getElementById("novo-grupo-nome").value.trim();
-  if (!nome) return alert("Digite o nome do grupo de ingredientes!");
-
-  if (ingredientes.some(g => g.grupo.toLowerCase() === nome.toLowerCase()))
-    return alert("Esse grupo já existe!");
-
-  ingredientes.push({ grupo: nome, opcoes: [] });
-  if (typeof atualizarSelectGrupos === "function") atualizarSelectGrupos();
-  renderEditorIngredientes();
-  if (typeof salvarLocal === "function") salvarLocal();
-  document.getElementById("novo-grupo-nome").value = "";
-  alert(`✅ Grupo "${nome}" criado com sucesso!`);
-});
-
-function atualizarSelectGrupos() {
-  const sel = document.getElementById("novo-grupo");
-  if (!sel) return;
-  sel.innerHTML = "";
-  ingredientes.forEach(g => {
-    const opt = document.createElement("option");
-    opt.value = g.grupo;
-    opt.textContent = g.grupo;
-    sel.appendChild(opt);
-  });
-}
-
-// ===============================
-// SALVAR INGREDIENTE (COM VALOR)
-// ===============================
-document.getElementById("salvar-ingrediente").addEventListener("click", () => {
-  const grupo = document.getElementById("novo-grupo").value;
-  const nome = document.getElementById("novo-ingrediente").value.trim();
-  const valor = parseFloat(document.getElementById("novo-ingrediente-valor").value) || 0;
-
-  if (!nome) return alert("Digite o nome do ingrediente!");
-
-  let grupoExistente = ingredientes.find(g => g.grupo === grupo);
-  if (!grupoExistente) {
-    grupoExistente = { grupo, opcoes: [] };
-    ingredientes.push(grupoExistente);
-  }
-
-  grupoExistente.opcoes.push({ nome, valor, pausado: false });
-  document.getElementById("novo-ingrediente").value = "";
-  document.getElementById("novo-ingrediente-valor").value = "";
-  renderEditorIngredientes();
-  if (typeof salvarLocal === "function") salvarLocal();
-});
-
-// ===============================
-// RENDERIZAR EDITOR DE INGREDIENTES
-// ===============================
-function renderEditorIngredientes() {
-  const cont = document.getElementById("ingredientes-editor");
-  if (!cont) return;
-  cont.innerHTML = "";
-
-  atualizarSelectGrupos();
-
-  ingredientes.forEach(g => {
-    const div = document.createElement("div");
-    div.style = "background:#fff;margin:1rem 0;padding:0.6rem;border-radius:8px;box-shadow:0 0 4px #ccc;";
-    div.innerHTML = `<h4 style="color:var(--primary);">${g.grupo}</h4>`;
-
-    (g.opcoes || []).forEach((op, idx) => {
-      const btnPause = op.pausado
-        ? `<button class='btn-on' onclick="alternarIngrediente('${g.grupo.replace(/'/g, "\\'")}', ${idx})">Ativar</button>`
-        : `<button class='btn-off' onclick="alternarIngrediente('${g.grupo.replace(/'/g, "\\'")}', ${idx})">Pausar</button>`;
-
-      const linha = document.createElement("div");
-      linha.style = "margin:4px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;";
-      linha.innerHTML = `
-        <div>
-          <span style="${op.pausado ? "color:#999;text-decoration:line-through;" : ""}">
-            ${op.nome} <small style="color:#555;">(R$ ${Number(op.valor || 0).toFixed(2)})</small>
-          </span>
-          <input type="number" step="0.01" min="0" value="${op.valor || 0}" 
-                 style="width:70px;margin-left:10px;padding:2px 4px;border:1px solid #ccc;border-radius:4px;"
-                 onchange="atualizarValorIngrediente('${g.grupo.replace(/'/g, "\\'")}', ${idx}, this.value)">
-        </div>
-        <div>${btnPause}
-          <button class='btn-delete' onclick="excluirIngrediente('${g.grupo.replace(/'/g, "\\'")}', ${idx})">Excluir</button>
-        </div>
-      `;
-      div.appendChild(linha);
-    });
-
-    cont.appendChild(div);
-  });
-}
-
-function atualizarValorIngrediente(grupoNome, idx, valorNovo) {
-  const grupo = ingredientes.find(g => g.grupo === grupoNome);
-  if (!grupo) return;
-  grupo.opcoes[idx].valor = parseFloat(valorNovo) || 0;
-  if (typeof salvarLocal === "function") salvarLocal();
-}
-
-function alternarIngrediente(grupoNome, idx) {
-  const grupo = ingredientes.find(g => g.grupo === grupoNome);
-  if (!grupo) return;
-  grupo.opcoes[idx].pausado = !grupo.opcoes[idx].pausado;
-  renderEditorIngredientes();
-  if (typeof salvarLocal === "function") salvarLocal();
-}
-
-function excluirIngrediente(grupoNome, idx) {
-  const grupo = ingredientes.find(g => g.grupo === grupoNome);
-  if (!grupo) return;
-  if (confirm(`Excluir ${grupo.opcoes[idx].nome}?`)) {
-    grupo.opcoes.splice(idx, 1);
-    renderEditorIngredientes();
-    if (typeof salvarLocal === "function") salvarLocal();
-  }
-}
-
-// ===============================
-// IMPORTAÇÃO DE JSON (COMPATÍVEL COM VALOR)
-// ===============================
-document.getElementById("import-json").addEventListener("change", e => {
-  const file = e.target.files[0];
-  if (!file) return alert("Nenhum arquivo selecionado!");
-
-  const reader = new FileReader();
-  reader.onload = function () {
-    try {
-      const data = JSON.parse(reader.result);
-      if (!data || (!data.categorias && !data.ingredientes)) {
-        alert("❌ Arquivo inválido!");
-        return;
-      }
-
-      if (Array.isArray(data.categorias)) categorias = data.categorias;
-      if (Array.isArray(data.ingredientes)) ingredientes = data.ingredientes;
-
-      // Garante compatibilidade (caso ingredientes antigos não tenham valor)
-      ingredientes.forEach(g => {
-        g.opcoes = g.opcoes.map(op => ({
-          nome: op.nome,
-          pausado: op.pausado || false,
-          valor: op.valor || 0
-        }));
-      });
-
-      localStorage.setItem("palatarius_data", JSON.stringify({ categorias, ingredientes }));
-      renderCardapio();
-      renderEditorProdutos();
-      renderEditorIngredientes();
-
-      alert("✅ Importação concluída com sucesso!");
-      console.log("📦 Dados importados:", data);
-    } catch (err) {
-      console.error("Erro ao importar JSON:", err);
-      alert("❌ Erro ao importar JSON!");
-    }
-  };
-  reader.readAsText(file);
-});
 </script>
 
 <script>

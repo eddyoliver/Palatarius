@@ -1,5 +1,5 @@
 {
-  "atualizado_em": "2025-11-08T02:26:52.359Z",
+  "atualizado_em": "2025-11-08T21:31:07.267Z",
   "versao": "10.1",
   "categorias": [
     {
@@ -585,7 +585,7 @@
           "imagem": "hotdog_noob_raiz.jpg",
           "descricao": "O clássico da base! Pão, salsicha ou linguiça, legumes e molhos Palatarius. Finalizado com batata palha e ovo de codorna.",
           "limites": {
-              "Proteínas": 0,
+            "Proteínas": 0,
             "Molhos": 0,
             "Acompanhamentos": 0,
             "Carnes": 0,
