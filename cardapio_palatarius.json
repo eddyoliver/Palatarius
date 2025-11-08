@@ -1,5 +1,5 @@
 {
-  "atualizado_em": "2025-11-07T23:41:09.031Z",
+  "atualizado_em": "2025-11-08T02:26:52.359Z",
   "versao": "10.1",
   "categorias": [
     {
@@ -21,8 +21,8 @@
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
             "Sabores Sorvete": 0,
-            "HotDog Proteina": 1,
-            "Refrigerantes Sabores": 1
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Carnes": "*",
@@ -46,8 +46,8 @@
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
             "Sabores Sorvete": 0,
-            "HotDog Proteina": 1,
-            "Refrigerantes Sabores": 1
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Carnes": "*",
@@ -70,7 +70,9 @@
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
-            "Sabores Sorvete": 0
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Carnes": "*",
@@ -93,7 +95,9 @@
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
-            "Sabores Sorvete": 0
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Carnes": "*",
@@ -116,7 +120,9 @@
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
-            "Sabores Sorvete": 0
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Carnes": "*",
@@ -139,7 +145,9 @@
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
-            "Sabores Sorvete": 0
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Carnes": "*",
@@ -162,7 +170,9 @@
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
-            "Sabores Sorvete": 0
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Carnes": "*",
@@ -185,7 +195,9 @@
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
-            "Sabores Sorvete": 0
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Carnes": "*",
@@ -208,7 +220,9 @@
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
-            "Sabores Sorvete": 0
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Molhos": "*",
@@ -230,7 +244,9 @@
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
-            "Sabores Sorvete": 0
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Carnes": "*",
@@ -253,7 +269,9 @@
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
-            "Sabores Sorvete": 0
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Carnes": "*",
@@ -281,7 +299,9 @@
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
-            "Sabores Sorvete": 0
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Molhos": "*"
@@ -302,7 +322,9 @@
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
-            "Sabores Sorvete": 0
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Molhos": "*"
@@ -323,7 +345,9 @@
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
-            "Sabores Sorvete": 0
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Molhos": "*"
@@ -344,15 +368,40 @@
             "Acompanhamentos": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
-            "Sabores Sorvete": 0
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
-          "ingredientesPermitidos": {}
+          "ingredientesPermitidos": {
+            "Molhos": "*"
+          }
         },
         {
           "nome": "Smash Bros",
           "preco": 6,
           "imagem": "smash_bros.jpg",
           "descricao": "Versão compacta e saborosa. Batata crocante com bacon, calabresa e cheddar.",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Acompanhamentos": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
+          },
+          "ingredientesPermitidos": {}
+        },
+        {
+          "nome": "! UP - Batata Pequena",
+          "preco": 4,
+          "imagem": "Batata_Comum_P_1-UP_copiar.jpg",
+          "descricao": "Batata Frita pequena otima para acompanhar aquele lanche!",
           "limites": {
             "Carnes": 0,
             "Molhos": 0,
@@ -389,7 +438,9 @@
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
-            "Sabores Sorvete": 0
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Proteínas": "*",
@@ -410,8 +461,10 @@
             "Toppings": 0,
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
-            "Sabores Açai": 1,
-            "Sabores Sorvete": 1
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Proteínas": "*",
@@ -438,7 +491,9 @@
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
-            "Sabores Sorvete": 0
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Proteínas": "*",
@@ -460,7 +515,9 @@
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
-            "Sabores Sorvete": 0
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Proteínas": "*",
@@ -472,39 +529,6 @@
     {
       "nome": "Cachorros-Quentes",
       "itens": [
-        {
-          "nome": "Hot Dog Noob Raiz",
-          "preco": 11.5,
-          "imagem": "hotdog_noob_raiz.jpg",
-          "descricao": "O clássico da base! Pão, salsicha ou linguiça, legumes e molhos Palatarius. Finalizado com batata palha e ovo de codorna.",
-          "limites": {
-            "Molhos": 1,
-            "Acompanhamentos": 0,
-            "Carnes": 0,
-            "Crocantes Extras": 0,
-            "Proteínas": 0,
-            "Toppings": 0,
-            "Caldas": 0,
-            "Caldas Fini (+R$1)": 0,
-            "Sabores Açai": 0,
-            "Sabores Sorvete": 0,
-            "HotDog Proteina": 1
-          },
-          "ingredientesPermitidos": {
-            "Molhos": "*",
-            "Acompanhamentos": [
-              "Bacon",
-              "Ovo",
-              "Milho Verde",
-              "Azeitona",
-              "Champignon",
-              "Alho Torrado",
-              "Queijo Prato",
-              "Orégano"
-            ],
-            "HotDog Proteina": "*"
-          }
-        },
         {
           "nome": "Prensado Obby",
           "preco": 13,
@@ -522,7 +546,7 @@
             "Sabores Açai": 0,
             "Sabores Sorvete": 0,
             "HotDog Proteina": 1,
-            "Refrigerantes Sabores": 1
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Molhos": "*",
@@ -545,7 +569,8 @@
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
             "Sabores Sorvete": 0,
-            "HotDog Proteina": 1
+            "HotDog Proteina": 1,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Molhos": "*",
@@ -553,6 +578,27 @@
             "Acompanhamentos": "*",
             "HotDog Proteina": "*"
           }
+        },
+        {
+          "nome": "Hot Dog Noob Raiz",
+          "preco": 11.5,
+          "imagem": "hotdog_noob_raiz.jpg",
+          "descricao": "O clássico da base! Pão, salsicha ou linguiça, legumes e molhos Palatarius. Finalizado com batata palha e ovo de codorna.",
+          "limites": {
+              "Proteínas": 0,
+            "Molhos": 0,
+            "Acompanhamentos": 0,
+            "Carnes": 0,
+            "Crocantes Extras": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
+          },
+          "ingredientesPermitidos": {}
         }
       ]
     },
@@ -575,7 +621,8 @@
             "Caldas Fini (+R$1)": 3,
             "Sabores Açai": 1,
             "Sabores Sorvete": 0,
-            "HotDog Proteina": 0
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Caldas": "*",
@@ -600,7 +647,8 @@
             "Caldas Fini (+R$1)": 3,
             "Sabores Açai": 2,
             "Sabores Sorvete": 0,
-            "HotDog Proteina": 0
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Toppings": "*",
@@ -625,7 +673,8 @@
             "Caldas Fini (+R$1)": 3,
             "Sabores Açai": 2,
             "Sabores Sorvete": 0,
-            "HotDog Proteina": 0
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Toppings": "*",
@@ -650,7 +699,8 @@
             "Caldas Fini (+R$1)": 3,
             "Sabores Açai": 2,
             "Sabores Sorvete": 0,
-            "HotDog Proteina": 0
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Toppings": "*",
@@ -675,7 +725,8 @@
             "Caldas Fini (+R$1)": 3,
             "Sabores Açai": 3,
             "Sabores Sorvete": 0,
-            "HotDog Proteina": 0
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Toppings": "*",
@@ -700,7 +751,8 @@
             "Caldas Fini (+R$1)": 3,
             "Sabores Açai": 4,
             "Sabores Sorvete": 0,
-            "HotDog Proteina": 0
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Toppings": "*",
