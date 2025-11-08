@@ -990,7 +990,8 @@
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
             "Sabores Sorvete": 0,
-            "HotDog Proteina": 0
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Proteínas": "*",
@@ -1013,7 +1014,8 @@
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
             "Sabores Sorvete": 0,
-            "HotDog Proteina": 0
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0
           },
           "ingredientesPermitidos": {
             "Proteínas": "*",
