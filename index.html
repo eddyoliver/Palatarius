@@ -1273,6 +1273,115 @@ function excluirProduto(catNome, idx) {
   }
 }
 
+// ===============================
+// RENDERIZAÇÃO DO EDITOR DE INGREDIENTES (v9.7 completo)
+// ===============================
+function renderEditorIngredientes() {
+  const cont = document.getElementById("ingredientes-editor");
+  if (!cont) return;
+  cont.innerHTML = "";
+
+  if (!ingredientes?.length) {
+    cont.innerHTML = `<p style="color:#777;">Nenhum grupo de ingredientes cadastrado ainda.</p>`;
+    return;
+  }
+
+  ingredientes.forEach(gr => {
+    const div = document.createElement("div");
+    div.className = "ingrediente-grupo-editor";
+    div.style = `
+      background:#fff;
+      margin:1rem 0;
+      padding:0.8rem;
+      border-radius:8px;
+      box-shadow:0 0 5px rgba(0,0,0,0.1);
+    `;
+    div.innerHTML = `<h4 style="color:var(--primary);margin-bottom:0.5rem;">${gr.grupo}</h4>`;
+
+    if (!gr.opcoes || !gr.opcoes.length) {
+      div.innerHTML += `<p style="color:#999;">Nenhum ingrediente neste grupo.</p>`;
+    } else {
+      gr.opcoes.forEach((op, idx) => {
+        const linha = document.createElement("div");
+        linha.style = `
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          flex-wrap:wrap;
+          border-bottom:1px solid #eee;
+          padding:4px 0;
+        `;
+
+        const valor = Number(op.valor || 0);
+        const pausado = op.pausado === true;
+
+        linha.innerHTML = `
+          <div style="flex:1;">
+            <span style="${pausado ? "color:#999;text-decoration:line-through;" : "color:#222;"}">
+              ${op.nome}
+            </span>
+            <small style="color:#555;">(R$ ${valor.toFixed(2)})</small>
+          </div>
+          <div style="display:flex;align-items:center;gap:.3rem;">
+            <input type="number" step="0.01" min="0" value="${valor}" 
+                   style="width:70px;padding:3px 4px;border:1px solid #ccc;border-radius:4px;"
+                   onchange="atualizarValorIngrediente('${gr.grupo.replace(/'/g, "\\'")}', ${idx}, this.value)">
+            <button class="${pausado ? "btn-on" : "btn-off"}"
+                    onclick="alternarIngrediente('${gr.grupo.replace(/'/g, "\\'")}', ${idx})">
+              ${pausado ? "Ativar" : "Pausar"}
+            </button>
+            <button class="btn-delete"
+                    onclick="excluirIngrediente('${gr.grupo.replace(/'/g, "\\'")}', ${idx})">🗑️</button>
+          </div>
+        `;
+
+        div.appendChild(linha);
+      });
+    }
+
+    cont.appendChild(div);
+  });
+}
+
+// ===============================
+// FUNÇÃO: ATUALIZAR VALOR DO INGREDIENTE
+// ===============================
+function atualizarValorIngrediente(grupoNome, idx, novoValor) {
+  const grupo = ingredientes.find(g => g.grupo === grupoNome);
+  if (!grupo) return;
+  grupo.opcoes[idx].valor = parseFloat(novoValor) || 0;
+  if (typeof salvarLocal === "function") salvarLocal();
+  if (typeof renderCardapio === "function") renderCardapio();
+}
+
+// ===============================
+// FUNÇÃO: PAUSAR / ATIVAR INGREDIENTE
+// ===============================
+function alternarIngrediente(grupoNome, idx) {
+  const grupo = ingredientes.find(g => g.grupo === grupoNome);
+  if (!grupo) return;
+  grupo.opcoes[idx].pausado = !grupo.opcoes[idx].pausado;
+  if (typeof salvarLocal === "function") salvarLocal();
+  renderEditorIngredientes();
+  if (typeof renderCardapio === "function") renderCardapio(); // atualiza cardápio do cliente
+}
+
+// ===============================
+// FUNÇÃO: EXCLUIR INGREDIENTE
+// ===============================
+function excluirIngrediente(grupoNome, idx) {
+  const grupo = ingredientes.find(g => g.grupo === grupoNome);
+  if (!grupo) return;
+  const ing = grupo.opcoes[idx];
+  if (confirm(`Excluir o ingrediente "${ing.nome}"?`)) {
+    grupo.opcoes.splice(idx, 1);
+    if (typeof salvarLocal === "function") salvarLocal();
+    renderEditorIngredientes();
+    if (typeof renderCardapio === "function") renderCardapio();
+  }
+}
+
+
 </script>
 
 <script>
