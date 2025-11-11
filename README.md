@@ -31,11 +31,6 @@ Desenvolvido com HTML, CSS e JavaScript puros, o sistema combina design moderno,
 
 ## 🧂 Painel Administrativo Secreto
 
-### 🔐 Acesso
-- Clique **3 vezes no rodapé** do site.
-- Digite a senha:  
-EdLeoMarc&2025
-
 markdown
 Copiar código
 - O editor será aberto sobre o site.
@@ -134,4 +129,5 @@ ChatGPT (OpenAI – GPT-5)
 ## 🧩 Licença
 
 © 2025 Palatarius. Todos os direitos reservados.  
+
 Uso e modificação permitidos apenas com autorização da marca Palatarius.
