@@ -1,5 +1,5 @@
 {
-  "atualizado_em": "2025-11-10T17:01:26.521Z",
+  "atualizado_em": "2025-11-11T14:52:16.816Z",
   "versao": "10.1",
   "categorias": [
     {
@@ -398,7 +398,7 @@
           "ingredientesPermitidos": {}
         },
         {
-          "nome": "! UP - Batata Pequena",
+          "nome": "1 UP - Batata Pequena",
           "preco": 4,
           "imagem": "Batata_Comum_P_1-UP_copiar.jpg",
           "descricao": "Batata Frita pequena otima para acompanhar aquele lanche!",
@@ -407,15 +407,23 @@
             "Molhos": 0,
             "Crocantes Extras": 0,
             "Proteínas": 0,
+            "Acompanhamentos": 0,
             "Toppings": 0,
             "Caldas": 0,
-            "Acompanhamentos": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
             "Sabores Sorvete": 0,
             "HotDog Proteina": 0,
             "Refrigerantes Sabores": 0
           },
+          "ingredientesPermitidos": {}
+        },
+        {
+          "nome": "Aneis do Poder",
+          "preco": 6,
+          "imagem": "aneis_do_poder.jpg",
+          "descricao": "Direto das forjas de Mordor, uma porção com 5 lendários de anéis de cebola empanados — dourados, crocantes e cheios de sabor.\nIdeal para acompanhar qualquer missão Palatarius!",
+          "limites": {},
           "ingredientesPermitidos": {}
         }
       ]

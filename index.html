@@ -441,6 +441,125 @@
       display: none !important;
     }
   }
+  /* =======================
+    🎞️ ESTILO DO BANNER ROTATIVO
+  ======================= */
+  #banner-container {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto 1rem auto;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  }
+
+  .banner-slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+  }
+
+  .banner-slide.active {
+    opacity: 1;
+  }
+
+  #banner-container {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    height: 300px; /* altura padrão desktop */
+    margin: 0 auto 1rem auto;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  }
+
+  @media (max-width: 768px) {
+    #banner-container {
+      height: 200px; /* altura menor no celular */
+      max-width: 95%;
+      border-radius: 8px;
+    }
+  }
+
+  /* Versão mobile */
+  @media (max-width: 768px) {
+    #banner-container {
+      max-width: 95%;
+      border-radius: 8px;
+    }
+    #banner-container img {
+      object-fit: cover;
+      height: 220px; /* Altura menor e centralizada no celular */
+    }
+  }
+
+  /* ==============================
+   🌐 Layout adaptado para celular
+    ============================== */
+  @media (max-width: 768px) {
+    .card-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 0.6rem;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 0 6px rgba(0,0,0,0.15);
+    }
+
+    .card img {
+      width: 35%;
+      height: auto;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .card-content {
+      width: 60%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-content h3 {
+      font-size: 1rem;
+      margin: 0 0 0.25rem 0;
+      color: var(--primary);
+    }
+
+    .card-content p {
+      font-size: 0.85rem;
+      color: #555;
+      margin-bottom: 0.25rem;
+    }
+
+    .card-content .price {
+      font-weight: bold;
+      color: var(--secondary);
+      margin-bottom: 0.25rem;
+    }
+
+    .card-content button {
+      align-self: flex-start;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+  }
 
   </style>
 </head>
@@ -449,6 +568,15 @@
   <header>
     <h1>🍔 Palatarius - Cardápio Digital</h1>
   </header>
+
+<!-- Banner agora visível logo na tela inicial -->
+<div id="banner-container">
+  <div class="banner-slide"><img src="assets/images/propaganda1.jpg" alt="Promoção Palatarius 1"></div>
+  <div class="banner-slide"><img src="assets/images/propaganda2.jpg" alt="Promoção Palatarius 2"></div>
+  <div class="banner-slide"><img src="assets/images/propaganda3.jpg" alt="Promoção Palatarius 3"></div>
+  <div class="banner-slide"><img src="assets/images/propaganda4.jpg" alt="Promoção Palatarius 4"></div>
+  <div class="banner-slide"><img src="assets/images/propaganda5.jpg" alt="Promoção Palatarius 5"></div>
+</div>
 
 <main>
   <!-- =======================
@@ -1344,6 +1472,61 @@ function renderEditorIngredientes() {
 }
 
 // ===============================
+// CRIAR NOVO GRUPO DE INGREDIENTES
+// ===============================
+document.getElementById("salvar-grupo").addEventListener("click", () => {
+  const nomeGrupo = document.getElementById("novo-grupo-nome").value.trim();
+  if (!nomeGrupo) return alert("Digite o nome do grupo de ingredientes!");
+  if (ingredientes.some(g => g.grupo.toLowerCase() === nomeGrupo.toLowerCase()))
+    return alert("⚠️ Já existe um grupo com esse nome!");
+
+  ingredientes.push({ grupo: nomeGrupo, opcoes: [] });
+  document.getElementById("novo-grupo-nome").value = "";
+  if (typeof salvarLocal === "function") salvarLocal();
+  if (typeof atualizarSelectGrupos === "function") atualizarSelectGrupos();
+  renderEditorIngredientes();
+  alert(`✅ Grupo "${nomeGrupo}" criado com sucesso!`);
+});
+
+// ===============================
+// ATUALIZA SELECT DE GRUPOS
+// ===============================
+function atualizarSelectGrupos() {
+  const select = document.getElementById("novo-grupo");
+  if (!select) return;
+  select.innerHTML = "";
+  ingredientes.forEach(g => {
+    const opt = document.createElement("option");
+    opt.value = g.grupo;
+    opt.textContent = g.grupo;
+    select.appendChild(opt);
+  });
+}
+
+// ===============================
+// ADICIONAR NOVO INGREDIENTE AO GRUPO
+// ===============================
+document.getElementById("salvar-ingrediente").addEventListener("click", () => {
+  const grupoNome = document.getElementById("novo-grupo").value;
+  const nomeIng = document.getElementById("novo-ingrediente").value.trim();
+  const valor = parseFloat(document.getElementById("novo-ingrediente-valor").value) || 0;
+  if (!grupoNome || !nomeIng) return alert("Selecione o grupo e digite o nome do ingrediente!");
+  const grupo = ingredientes.find(g => g.grupo === grupoNome);
+  if (!grupo) return alert("Grupo não encontrado!");
+  grupo.opcoes ||= [];
+  if (grupo.opcoes.some(o => o.nome.toLowerCase() === nomeIng.toLowerCase()))
+    return alert("⚠️ Este ingrediente já existe neste grupo!");
+
+  grupo.opcoes.push({ nome: nomeIng, valor, pausado: false });
+  document.getElementById("novo-ingrediente").value = "";
+  document.getElementById("novo-ingrediente-valor").value = "";
+  if (typeof salvarLocal === "function") salvarLocal();
+  renderEditorIngredientes();
+  alert(`✅ Ingrediente "${nomeIng}" adicionado ao grupo "${grupoNome}"!`);
+});
+
+
+// ===============================
 // FUNÇÃO: ATUALIZAR VALOR DO INGREDIENTE
 // ===============================
 function atualizarValorIngrediente(grupoNome, idx, novoValor) {
@@ -1637,6 +1820,23 @@ modalVisite.addEventListener("click", e => {
 });
 </script>
 
+<script>
+// =======================
+// 🎞️ BANNER ROTATIVO AUTOMÁTICO
+// =======================
+let bannerIndex = 0;
+const banners = document.querySelectorAll("#banner-container .banner-slide");
+
+function mostrarBanner() {
+  banners.forEach((b, i) => b.classList.toggle("active", i === bannerIndex));
+  bannerIndex = (bannerIndex + 1) % banners.length;
+}
+
+// Mostra o primeiro imediatamente
+mostrarBanner();
+// Troca a cada 5 segundos
+setInterval(mostrarBanner, 5000);
+</script>
 
 </body>
 </html>
