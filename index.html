@@ -441,61 +441,54 @@
       display: none !important;
     }
   }
-  /* =======================
-    🎞️ ESTILO DO BANNER ROTATIVO
-  ======================= */
+/* ==============================
+   🎞️ BANNER ROTATIVO RESPONSIVO AJUSTADO
+============================== */
+#banner-container {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  height: 300px; /* altura padrão desktop */
+  margin: 0 auto 1rem auto;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.banner-slide {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.banner-slide.active {
+  opacity: 1;
+}
+
+#banner-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* <-- não corta no celular */
+  display: block;
+}
+
+/* 🔹 Versão mobile aprimorada */
+@media (max-width: 768px) {
   #banner-container {
-    position: relative;
+    height: auto; /* altura automática conforme a imagem */
+    max-width: 100%;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  #banner-container img {
+    object-fit: contain;  /* mantém toda a faixa visível */
     width: 100%;
-    max-width: 1200px;
-    margin: 0 auto 1rem auto;
-    overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    height: auto;
   }
-
-  .banner-slide {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-  }
-
-  .banner-slide.active {
-    opacity: 1;
-  }
-
-  #banner-container {
-    position: relative;
-    width: 100%;
-    max-width: 1200px;
-    height: 300px; /* altura padrão desktop */
-    margin: 0 auto 1rem auto;
-    overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  }
-
-  @media (max-width: 768px) {
-    #banner-container {
-      height: 200px; /* altura menor no celular */
-      max-width: 95%;
-      border-radius: 8px;
-    }
-  }
-
-  /* Versão mobile */
-  @media (max-width: 768px) {
-    #banner-container {
-      max-width: 95%;
-      border-radius: 8px;
-    }
-    #banner-container img {
-      object-fit: cover;
-      height: 220px; /* Altura menor e centralizada no celular */
-    }
-  }
+}
 
   /* ==============================
    🌐 Layout adaptado para celular
