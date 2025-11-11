@@ -442,7 +442,7 @@
     }
   }
 /* ==============================
-   🎞️ BANNER ROTATIVO RESPONSIVO AJUSTADO
+   🎞️ BANNER ROTATIVO RESPONSIVO AJUSTADO (v2)
 ============================== */
 #banner-container {
   position: relative;
@@ -453,10 +453,13 @@
   overflow: hidden;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  background: #000; /* ✅ evita transparência enquanto carrega */
 }
 
 .banner-slide {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   opacity: 0;
@@ -465,28 +468,29 @@
 
 .banner-slide.active {
   opacity: 1;
+  z-index: 2;
 }
 
 #banner-container img {
   width: 100%;
   height: 100%;
-  object-fit: contain; /* <-- não corta no celular */
+  object-fit: cover; /* ✅ cobre toda a área visível, não corta no mobile */
   display: block;
 }
 
 /* 🔹 Versão mobile aprimorada */
 @media (max-width: 768px) {
   #banner-container {
-    height: auto; /* altura automática conforme a imagem */
+    height: 180px;  /* ✅ garante altura fixa no celular */
     max-width: 100%;
     border-radius: 0;
     box-shadow: none;
   }
 
   #banner-container img {
-    object-fit: contain;  /* mantém toda a faixa visível */
+    object-fit: cover;  /* ✅ preenche, sem distorcer */
     width: 100%;
-    height: auto;
+    height: 100%;
   }
 }
 
@@ -1814,22 +1818,33 @@ modalVisite.addEventListener("click", e => {
 </script>
 
 <script>
-// =======================
-// 🎞️ BANNER ROTATIVO AUTOMÁTICO
-// =======================
-let bannerIndex = 0;
-const banners = document.querySelectorAll("#banner-container .banner-slide");
+document.addEventListener("DOMContentLoaded", () => {
+  const slides = document.querySelectorAll(".banner-slide");
+  if (slides.length === 0) return;
 
-function mostrarBanner() {
-  banners.forEach((b, i) => b.classList.toggle("active", i === bannerIndex));
-  bannerIndex = (bannerIndex + 1) % banners.length;
-}
+  let currentBanner = 0;
+  slides[currentBanner].classList.add("active");
 
-// Mostra o primeiro imediatamente
-mostrarBanner();
-// Troca a cada 5 segundos
-setInterval(mostrarBanner, 5000);
+  // Função para trocar banner
+  function trocarBanner() {
+    slides[currentBanner].classList.remove("active");
+    currentBanner = (currentBanner + 1) % slides.length;
+    slides[currentBanner].classList.add("active");
+  }
+
+  // Troca automática a cada 5 segundos
+  setInterval(trocarBanner, 5000);
+
+  // ✅ Garante visibilidade no mobile: define altura após carregamento da imagem
+  slides.forEach(slide => {
+    const img = slide.querySelector("img");
+    img.addEventListener("load", () => {
+      slide.style.display = "block";
+    });
+  });
+});
 </script>
+
 
 </body>
 </html>
