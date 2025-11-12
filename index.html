@@ -558,6 +558,67 @@
     }
   }
 
+/* ==============================
+   🕓 BLOQUEIO DE HORÁRIO DE FUNCIONAMENTO — ESTILO AZUL PALATARIUS
+    ============================== */
+    #loja-fechada-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, #002b6b 20%, #000814 90%); /* fundo azul escuro vibrante */
+      color: white;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 99999;
+      padding: 2rem;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+    }
+
+    #loja-fechada-overlay.active {
+      display: flex;
+    }
+
+    .overlay-content h2 {
+      font-size: 2rem;
+      margin-bottom: 0.8rem;
+      color: #ffd54f; /* dourado Palatarius */
+      text-shadow: 0 0 12px rgba(255, 213, 79, 0.9);
+    }
+
+    .overlay-content p {
+      font-size: 1.1rem;
+      margin-bottom: 0.4rem;
+      color: #e8e8e8;
+    }
+
+    .overlay-content .endereco {
+      margin-top: 0.8rem;
+      font-size: 1rem;
+      color: #ffd54f;
+      font-weight: 600;
+    }
+
+    #contador {
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: #ffd54f;
+      margin-top: 1rem;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 0.8rem 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    @media (max-width: 768px) {
+      .overlay-content h2 { font-size: 1.6rem; }
+      #contador { font-size: 1.6rem; }
+      .overlay-content .endereco { font-size: 0.9rem; }
+    }
+
+
   </style>
 </head>
 
@@ -1842,6 +1903,69 @@ document.addEventListener("DOMContentLoaded", () => {
       slide.style.display = "block";
     });
   });
+});
+</script>
+
+<!-- 🕓 TELA DE LOJA FECHADA -->
+<div id="loja-fechada-overlay">
+  <div class="overlay-content">
+    <h2>🎮 O Fliperama está em modo descanso!</h2>
+    <p>Nosso atendimento funciona das <strong>17h às 23h30</strong> todos os dias.</p>
+    <p>Mas não fique triste! Venha nos visitar pessoalmente 😄</p>
+    <p class="endereco">📍 BR-465, nº 199 – Campo Lindo, Seropédica/RJ  
+      <br>KM 40 — Próximo à <strong>Life Fit Academia</strong></p>
+    <p id="contador-titulo">⏳ Reabriremos em:</p>
+    <div id="contador"></div>
+  </div>
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const overlay = document.getElementById("loja-fechada-overlay");
+  const contador = document.getElementById("contador");
+
+  function atualizarStatusLoja() {
+    const agora = new Date();
+    const hora = agora.getHours();
+    const minuto = agora.getMinutes();
+
+    const horaAbertura = 17;
+    const minutoAbertura = 0;
+    const horaFechamento = 23;
+    const minutoFechamento = 30;
+
+    let proximaAbertura;
+
+    // Verifica se está dentro do horário de funcionamento
+    const estaAberta =
+      (hora > horaAbertura || (hora === horaAbertura && minuto >= minutoAbertura)) &&
+      (hora < horaFechamento || (hora === horaFechamento && minuto <= minutoFechamento));
+
+    if (estaAberta) {
+      overlay.classList.remove("active");
+      return;
+    }
+
+    // Caso esteja fechada, calcula a próxima abertura
+    proximaAbertura = new Date();
+    proximaAbertura.setHours(horaAbertura, minutoAbertura, 0, 0);
+    if (agora > proximaAbertura) {
+      proximaAbertura.setDate(proximaAbertura.getDate() + 1); // próxima abertura é amanhã
+    }
+
+    // Calcula a diferença em milissegundos
+    const diff = proximaAbertura - agora;
+    const horas = Math.floor(diff / 1000 / 60 / 60);
+    const minutos = Math.floor((diff / 1000 / 60) % 60);
+    const segundos = Math.floor((diff / 1000) % 60);
+
+    contador.textContent = `${String(horas).padStart(2,'0')}:${String(minutos).padStart(2,'0')}:${String(segundos).padStart(2,'0')}`;
+    overlay.classList.add("active");
+  }
+
+  atualizarStatusLoja();
+  setInterval(atualizarStatusLoja, 1000);
 });
 </script>
 
