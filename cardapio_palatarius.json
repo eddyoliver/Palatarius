@@ -1,5 +1,5 @@
 {
-  "atualizado_em": "2025-11-11T14:52:16.816Z",
+  "atualizado_em": "2025-11-13T04:13:38.866Z",
   "versao": "10.1",
   "categorias": [
     {
@@ -1040,7 +1040,7 @@
         {
           "nome": "Blend Acém Bovino + Bacon",
           "valor": 0,
-          "pausado": true
+          "pausado": false
         },
         {
           "nome": "Blend Acém Bovino + Costela Bovina",
