@@ -618,8 +618,58 @@
       .overlay-content .endereco { font-size: 0.9rem; }
     }
 
+    /* 🔵 MAPA AJUSTADO PARA CELULAR */
+    #mapa-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 99999;
+      padding: 10px;
+    }
+
+    #mapa-content {
+      background: white;
+      width: 95%;
+      max-width: 550px;
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    #mapa-mapa {
+      width: 100%;
+      height: 380px;
+      border-radius: 10px;
+    }
+
+    /* CELULAR */
+    @media (max-width: 600px) {
+      #mapa-content {
+        width: 100%;
+        padding: 6px;
+        border-radius: 10px;
+      }
+
+      #mapa-mapa {
+        height: 280px;
+      }
+
+      #fechar-mapa {
+        font-size: 1rem;
+        padding: 0.8rem;
+        width: 100%;
+      }
+    }
 
   </style>
+
+<!-- Leaflet Maps -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 </head>
 
 <body>
@@ -638,42 +688,50 @@
 
 <main>
   <!-- =======================
-       BLOCO 2 — TELA DO CLIENTE (v7 - safe)
-  ======================== -->
-  <section id="cliente-screen" class="active">
-    <h2 style="text-align:center; color:var(--secondary); font-family:'Russo One'; margin-bottom:1rem;">
-      Bem-vindo à Palatarius!
-    </h2>
+     BLOCO 2 — TELA DO CLIENTE (v8 + Localização)
+======================== -->
+<section id="cliente-screen" class="active">
+  <h2 style="text-align:center; color:var(--secondary); font-family:'Russo One'; margin-bottom:1rem;">
+    Bem-vindo à Palatarius!
+  </h2>
 
-    <label for="cliente-nome">Nome:</label>
-    <input type="text" id="cliente-nome" placeholder="Digite seu nome" required>
+  <label for="cliente-nome">Nome:</label>
+  <input type="text" id="cliente-nome" placeholder="Digite seu nome" required>
 
-    <label for="cliente-telefone">Número de WhatsApp:</label>
-    <input type="tel" id="cliente-telefone" placeholder="(XX) XXXXX-XXXX" required>
+  <label for="cliente-telefone">Número de WhatsApp:</label>
+  <input type="tel" id="cliente-telefone" placeholder="(XX) XXXXX-XXXX" required>
 
-    <label for="cliente-tipo">Tipo de Pedido:</label>
-    <select id="cliente-tipo">
-      <option value="Retirada">Retirada</option>
-      <option value="Entrega">Entrega</option>
-    </select>
+  <label for="cliente-tipo">Tipo de Pedido:</label>
+  <select id="cliente-tipo">
+    <option value="Retirada">Retirada</option>
+    <option value="Entrega">Entrega</option>
+  </select>
 
-    <div id="endereco-container">
-      <label for="cliente-endereco">Endereço (caso entrega):</label>
-      <input type="text" id="cliente-endereco" placeholder="Rua, número, bairro">
+  <div id="endereco-container">
+    <label for="cliente-endereco">Endereço (caso entrega):</label>
+    <input type="text" id="cliente-endereco" placeholder="Rua, número, bairro">
+  </div>
+
+  <!-- 🔵 NOVO BOTÃO: ESCOLHER LOCALIZAÇÃO -->
+  <button id="abrir-mapa" class="primary" style="margin-bottom:0.7rem;">
+    📍 Escolher Localização no Mapa
+  </button>
+
+  <!-- 🗺️ MODAL DO MAPA -->
+  <div id="mapa-modal">
+    <div id="mapa-content">
+      <h3>Escolha sua localização</h3>
+
+  <div id="mapa-mapa" style="width: 100%; height: 350px; border-radius: 8px;"></div>
+
+      <p>Arraste o mapa e clique para marcar seu ponto exato de entrega.</p>
+
+      <button id="fechar-mapa" class="primary">Confirmar Localização</button>
     </div>
+  </div>
 
-    <label for="cliente-local">Local de Entrega:</label>
-    <select id="cliente-local">
-      <option value="">Selecione...</option>
-      <option value="KM39">KM 39 - R$4,00</option>
-      <option value="KM40">KM 40 - R$4,00</option>
-      <option value="KM41">KM 41 - R$4,00</option>
-      <option value="KM42">KM 42 - R$4,00</option>
-      <option value="Outro">Outro (a combinar no WhatsApp)</option>
-    </select>
-
-    <button id="continuar-btn" class="primary">Continuar para o Cardápio</button>
-  </section>
+  <button id="continuar-btn" class="primary">Continuar para o Cardápio</button>
+</section>
 
   <!-- =======================
        2️⃣ CARDÁPIO PRINCIPAL
@@ -870,8 +928,6 @@
 <script>
 /* =========================================================
    BLOCO 3 — FUNCIONALIDADES DO CLIENTE (v8.1)
-   Compatível com BLOCO 4 v9.6 (produtos limpos)
-   Agora exibe apenas ingredientes permitidos por produto
 ========================================================= */
 
 let cliente = {};
@@ -880,30 +936,51 @@ let ingredientes = [];
 let carrinho = [];
 let itemSelecionado = null;
 
-// ===============================
-// FLUXO DO CLIENTE
-// ===============================
+/* =========================================================
+   BOTÃO CONTINUAR — VERSÃO FINAL UNIFICADA
+========================================================= */
 document.getElementById("continuar-btn").addEventListener("click", () => {
+
   const nome = document.getElementById("cliente-nome").value.trim();
   const telefone = document.getElementById("cliente-telefone").value.trim();
   const tipo = document.getElementById("cliente-tipo").value;
   const endereco = document.getElementById("cliente-endereco").value.trim();
-  const local = document.getElementById("cliente-local").value;
-  if (!nome || !telefone) return alert("Por favor, preencha nome e número!");
+  const local = document.getElementById("cliente-local") ? document.getElementById("cliente-local").value : "";
 
-  let entrega = 0;
-  if (tipo === "Entrega" && ["KM39", "KM40", "KM41", "KM42"].includes(local)) entrega = 4;
-  cliente = { nome, telefone, tipo, endereco, local, entrega };
+  if (!nome || !telefone) {
+    alert("Por favor, preencha nome e telefone!");
+    return;
+  }
+
+  if (tipo === "Entrega") {
+    if (!endereco) {
+      alert("Por favor, preencha o endereço!");
+      return;
+    }
+    if (!localizacaoCliente) {
+      alert("Marque sua localização no mapa!");
+      document.getElementById("abrir-mapa").click();
+      return;
+    }
+  }
+
+  cliente.nome = nome;
+  cliente.telefone = telefone;
+  cliente.tipo = tipo;
+  cliente.endereco = endereco;
+  cliente.local = local;
 
   document.getElementById("cliente-screen").style.display = "none";
   document.getElementById("cardapio-screen").style.display = "block";
+
   renderCardapio();
 });
 
-// ===============================
-// RENDERIZAÇÃO DO CARDÁPIO
-// ===============================
+/* ===============================
+   RENDERIZAÇÃO DO CARDÁPIO
+=============================== */
 function renderCardapio() {
+
   const tela = document.getElementById("cardapio-screen");
   tela.innerHTML = "";
 
@@ -1100,27 +1177,186 @@ function removerItem(i) {
 document.getElementById("close-cart").onclick = () =>
   document.getElementById("cart").classList.remove("active");
 
-// ===============================
-// WHATSAPP
-// ===============================
+</script>
+
+<script>
+/* =========================================================
+   BLOCO 3.5x — MAPA COMPLETO (Leaflet + Taxa + Tempo + Obrigatório)
+   Palatarius — versão FINAL unificada
+========================================================= */
+
+let mapa = null;
+let marcador = null;
+let localizacaoCliente = null;
+
+const modalMapa = document.getElementById("mapa-modal");
+const btnAbrirMapa = document.getElementById("abrir-mapa");
+const btnFecharMapa = document.getElementById("fechar-mapa");
+
+/* =========================================================
+   1) COORDENADAS DA PALATARIUS
+========================================================= */
+const PALATARIUS_LAT = -22.8059955;
+const PALATARIUS_LNG = -43.6378252;
+
+/* =========================================================
+   2) Função Haversine — distância entre dois pontos
+========================================================= */
+function calcularDistancia(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI/180;
+  const dLon = (lon2 - lon1) * Math.PI/180;
+
+  const a =
+    Math.sin(dLat/2)**2 +
+    Math.cos(lat1*Math.PI/180) *
+    Math.cos(lat2*Math.PI/180) *
+    Math.sin(dLon/2)**2;
+
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+/* =========================================================
+   3) Cálculo da taxa por distância
+========================================================= */
+function calcularTaxa(distanciaKm) {
+  if (distanciaKm > 15) return -1;
+
+  if (distanciaKm <= 3) return 4;
+
+  const extra = distanciaKm - 3;
+  const adicionais = Math.ceil(extra / 1.5);
+
+  return 4 + adicionais;
+}
+
+/* =========================================================
+   4) Cálculo do tempo estimado
+========================================================= */
+function calcularTempoEntrega(dist) {
+  let minInicio = 30;
+  let minFim = 45;
+
+  if (dist > 4) {
+    const extras = Math.ceil((dist - 4) / 2);
+    minInicio += extras * 10;
+    minFim += extras * 10;
+  }
+  return { minInicio, minFim };
+}
+
+/* =========================================================
+   5) ABRIR MAPA — cria mapa + centraliza no endereço
+========================================================= */
+btnAbrirMapa.addEventListener("click", async () => {
+  modalMapa.style.display = "flex";
+
+  if (!mapa) {
+    mapa = L.map('mapa-mapa').setView([PALATARIUS_LAT, PALATARIUS_LNG], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(mapa);
+
+    mapa.on("click", e => {
+      const { lat, lng } = e.latlng;
+      if (marcador) mapa.removeLayer(marcador);
+      marcador = L.marker([lat, lng]).addTo(mapa);
+      localizacaoCliente = `${lat.toFixed(6)},${lng.toFixed(6)}`;
+    });
+  }
+
+  // Se o cliente escreveu endereço → geocoding
+  const endereco = document.getElementById("cliente-endereco").value.trim();
+  if (endereco) {
+    try {
+      const resp = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}`
+      );
+      const dados = await resp.json();
+      if (dados.length > 0) {
+        const lat = parseFloat(dados[0].lat);
+        const lon = parseFloat(dados[0].lon);
+
+        mapa.setView([lat, lon], 18);
+
+        if (marcador) mapa.removeLayer(marcador);
+        marcador = L.marker([lat, lon]).addTo(mapa);
+
+        localizacaoCliente = `${lat.toFixed(6)},${lon.toFixed(6)}`;
+      }
+    } catch (e) {
+      console.log("Falha no geocoding.");
+    }
+  }
+
+  setTimeout(() => mapa.invalidateSize(), 300);
+});
+
+/* =========================================================
+   6) CONFIRMAR LOCALIZAÇÃO — calcula taxa + tempo
+========================================================= */
+btnFecharMapa.addEventListener("click", () => {
+  if (!localizacaoCliente) {
+    alert("Clique no mapa para marcar sua localização!");
+    return;
+  }
+
+  const [lat, lng] = localizacaoCliente.split(",").map(Number);
+
+  const distancia = calcularDistancia(PALATARIUS_LAT, PALATARIUS_LNG, lat, lng);
+  const taxa = calcularTaxa(distancia);
+
+  if (taxa === -1) {
+    alert(
+      `❌ Distância de ${distancia.toFixed(2)} km.\n` +
+      `Infelizmente não conseguimos entregar acima de 15 km!`
+    );
+    cliente.entrega = 0;
+    modalMapa.style.display = "none";
+    return;
+  }
+
+  const tempo = calcularTempoEntrega(distancia);
+
+  // Salva no objeto cliente
+  cliente.coordenadas = localizacaoCliente;
+  cliente.distancia = distancia;
+  cliente.entrega = taxa;
+  cliente.tempoEstimado = `${tempo.minInicio} a ${tempo.minFim} min`;
+
+  alert(
+    `📍 Localização salva!\n` +
+    `📏 Distância: ${distancia.toFixed(2)} km\n` +
+    `🚚 Taxa de entrega: R$ ${taxa}\n` +
+    `⏱️ Tempo estimado: ${tempo.minInicio}–${tempo.minFim} min`
+  );
+
+  modalMapa.style.display = "none";
+});
+
+/* =========================================================
+   7) WHATSAPP — agora envia tudo (taxa + tempo + mapa)
+========================================================= */
 document.getElementById("send-whatsapp").addEventListener("click", () => {
   if (!carrinho.length) return alert("Carrinho vazio!");
 
   let msg = `🍔 *Pedido Palatarius*%0A`;
-  msg += `👤 *Cliente:* ${cliente.nome}%0A📞 *Telefone:* ${cliente.telefone}%0A📦 *Tipo:* ${cliente.tipo}%0A`;
+  msg += `👤 *Cliente:* ${cliente.nome}%0A📞 *Telefone:* ${cliente.telefone}%0A`;
 
   if (cliente.tipo === "Entrega") {
-    msg += `📍 *Local:* ${cliente.local || "—"}%0A🏠 *Endereço:* ${cliente.endereco || "—"}%0A`;
-    msg += ["KM39","KM40","KM41","KM42"].includes(cliente.local)
-      ? `🚚 *Taxa de Entrega:* R$ 4,00%0A`
-      : `🚚 *Taxa de Entrega:* a combinar%0A`;
+    msg += `🏠 *Endereço:* ${cliente.endereco}%0A`;
+    msg += `📏 *Distância:* ${cliente.distancia.toFixed(2)} km%0A`;
+    msg += `🚚 *Taxa:* R$ ${cliente.entrega}%0A`;
+    msg += `⏱️ *Tempo estimado:* ${cliente.tempoEstimado}%0A`;
+    msg += `📌 *Localização:* https://www.google.com/maps?q=${cliente.coordenadas}%0A`;
   }
+
   msg += `%0A=============================%0A`;
 
   let subtotal = 0;
   carrinho.forEach(it => {
-    subtotal += it.precoFinal || 0;
-    msg += `🥪 *${it.nome}* - R$ ${it.precoFinal.toFixed(2)}%0A`;
+    subtotal += it.precoFinal;
+    msg += `🍔 *${it.nome}* - R$ ${it.precoFinal.toFixed(2)}%0A`;
     if (it.ingredientesEscolhidos) {
       for (const [g, l] of Object.entries(it.ingredientesEscolhidos)) {
         msg += `• ${g}: ${l.join(", ")}%0A`;
@@ -1130,11 +1366,12 @@ document.getElementById("send-whatsapp").addEventListener("click", () => {
     msg += `-----------------------------%0A`;
   });
 
-  const taxa = cliente.entrega || 0;
-  const total = subtotal + taxa;
+  const total = subtotal + (cliente.entrega || 0);
+
   msg += `💰 *Subtotal:* R$ ${subtotal.toFixed(2)}%0A`;
-  if (taxa > 0) msg += `🚚 *Taxa:* R$ ${taxa.toFixed(2)}%0A`;
-  msg += `💵 *Total Geral:* R$ ${total.toFixed(2)}%0A%0A✅ *Pedido gerado via Cardápio Digital Palatarius*`;
+  msg += `🚚 *Taxa:* R$ ${cliente.entrega}%0A`;
+  msg += `💵 *Total Geral:* R$ ${total.toFixed(2)}%0A%0A`;
+  msg += `⚡ *Pedido gerado via Cardápio Digital Palatarius*`;
 
   window.open(`https://wa.me/5521997599132?text=${msg}`, "_blank");
 });
