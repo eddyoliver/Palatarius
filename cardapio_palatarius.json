@@ -1,5 +1,5 @@
 {
-  "atualizado_em": "2025-11-13T04:13:38.866Z",
+  "atualizado_em": "2025-11-14T01:42:54.715Z",
   "versao": "10.1",
   "categorias": [
     {
@@ -976,6 +976,14 @@
               "Coca-Cola 2L"
             ]
           }
+        },
+        {
+          "nome": "Coca-Cola 600ml",
+          "preco": 9.5,
+          "imagem": "Coca_600.jpg",
+          "descricao": "Coca-cola 600ml",
+          "limites": {},
+          "ingredientesPermitidos": {}
         }
       ]
     },
