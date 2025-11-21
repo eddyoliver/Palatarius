@@ -245,6 +245,42 @@
       width: 100%;
     }
 
+    /* Checkout / Resumo */
+    .checkout-modal, #resumo-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 12000;
+      padding: 1rem;
+    }
+
+    .checkout-box, .resumo-box {
+      background: #fff;
+      width: 100%;
+      max-width: 640px;
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.25);
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .resumo-lista {
+      background: #f6f6f6;
+      border-radius: 8px;
+      padding: 0.8rem;
+      margin-top: 0.5rem;
+    }
+
+    .resumo-lista p {
+      margin: 0.2rem 0;
+      color: #333;
+    }
+
     /* Editor */
     #editor-screen {
       display: none;
@@ -669,10 +705,27 @@
 <!-- Leaflet Maps -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
 </head>
 
 <body>
+<script>
+// variáveis globais do cardápio (carregadas via JSON externo)
+let categorias = [];
+let ingredientes = [];
+
+async function carregarCardapio() {
+  try {
+    const resp = await fetch("cardapio_palatarius.json?cache=" + Date.now());
+    const data = await resp.json();
+    categorias = data.categorias || [];
+    ingredientes = data.ingredientes || [];
+  } catch (e) {
+    console.error("Erro ao carregar cardápio externo:", e);
+  }
+}
+</script>
   <header>
     <h1>🍔 Palatarius - Cardápio Digital</h1>
   </header>
@@ -687,12 +740,16 @@
 </div>
 
 <main>
+  <div style="display:flex;align-items:center;justify-content:flex-end;gap:.5rem;margin:0.5rem 0;">
+    <button id="open-cart" class="primary">Carrinho (<span id="cart-count">0</span>)</button>
+  </div>
   <!-- =======================
      BLOCO 2 — TELA DO CLIENTE (v8 + Localização)
 ======================== -->
-<section id="cliente-screen" class="active">
+<section id="cliente-screen" class="checkout-modal" style="display:none;">
+  <div class="checkout-box">
   <h2 style="text-align:center; color:var(--secondary); font-family:'Russo One'; margin-bottom:1rem;">
-    Bem-vindo à Palatarius!
+    Finalizar Pedido
   </h2>
 
   <label for="cliente-nome">Nome:</label>
@@ -710,6 +767,20 @@
   <div id="endereco-container">
     <label for="cliente-endereco">Endereço (caso entrega):</label>
     <input type="text" id="cliente-endereco" placeholder="Rua, número, bairro">
+  </div>
+
+  <div class="pagamento-box">
+    <label for="forma-pagamento">Forma de pagamento:</label>
+    <select id="forma-pagamento">
+      <option value="PIX">PIX</option>
+      <option value="Cartão Crédito">Cartão Crédito</option>
+      <option value="Cartão Débito">Cartão Débito</option>
+      <option value="Dinheiro">Dinheiro</option>
+    </select>
+    <div id="dinheiro-extra" style="display:none;">
+      <label for="valor-dinheiro">Valor que irá pagar:</label>
+      <input type="number" id="valor-dinheiro" min="0" step="0.01" placeholder="Ex: 50,00">
+    </div>
   </div>
 
   <!-- 🔵 NOVO BOTÃO: ESCOLHER LOCALIZAÇÃO -->
@@ -730,13 +801,17 @@
     </div>
   </div>
 
-  <button id="continuar-btn" class="primary">Continuar para o Cardápio</button>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+    <button id="confirmar-dados" class="primary">Calcular entrega e continuar</button>
+    <button id="fechar-checkout">Cancelar</button>
+  </div>
+  </div>
 </section>
 
   <!-- =======================
        2️⃣ CARDÁPIO PRINCIPAL
   ======================== -->
-  <section id="cardapio-screen" style="display:none;">
+  <section id="cardapio-screen">
     <h2 class="section-title">🍔 Hambúrgueres</h2>
     <div class="card-grid" id="hamburgueres-grid"></div>
 
@@ -758,6 +833,20 @@
     <h2 class="section-title">🧃 Bebidas</h2>
     <div class="card-grid" id="bebidas-grid"></div>
   </section>
+
+  <!-- =======================
+       RESUMO FINAL (somente leitura)
+  ======================== -->
+  <div id="resumo-modal">
+    <div class="resumo-box">
+      <h3 style="margin-bottom:0.5rem;">🛒 Resumo do Pedido</h3>
+      <div id="resumo-conteudo" class="resumo-lista"></div>
+      <div style="margin-top:0.8rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <button id="enviar-whatsapp" class="btn-whatsapp" style="flex:1;">Enviar para WhatsApp</button>
+        <button id="fechar-resumo" style="flex:1;">Voltar</button>
+      </div>
+    </div>
+  </div>
 
   <!-- =======================
        3️⃣ MODAL DE INGREDIENTES
@@ -784,7 +873,7 @@
     <h2>🛒 Seu Pedido</h2>
     <div id="cart-items"></div>
     <div class="cart-total" id="cart-total">Total: R$ 0,00</div>
-    <button class="btn-whatsapp" id="send-whatsapp">Enviar para WhatsApp</button>
+    <button class="btn-whatsapp" id="finalizar-carrinho">Finalizar Pedido</button>
     <button id="close-cart" class="primary" style="margin-top:0.5rem;">Fechar</button>
   </aside>
 
@@ -931,50 +1020,100 @@
 ========================================================= */
 
 let cliente = {};
-let categorias = [];
-let ingredientes = [];
 let carrinho = [];
 let itemSelecionado = null;
 
 /* =========================================================
-   BOTÃO CONTINUAR — VERSÃO FINAL UNIFICADA
+   FLUXO NOVO: abrindo checkout e validando dados
 ========================================================= */
-document.getElementById("continuar-btn").addEventListener("click", () => {
+const CART_KEY = "palatarius_cart_v1";
 
+function salvarCarrinhoLocal() {
+  try { localStorage.setItem(CART_KEY, JSON.stringify(carrinho)); } catch(e) {}
+}
+
+function carregarCarrinhoLocal() {
+  try {
+    const stored = localStorage.getItem(CART_KEY);
+    if (stored) carrinho = JSON.parse(stored) || [];
+  } catch(e) { carrinho = []; }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await carregarCardapio();
+  renderCardapio();
+  renderEditorProdutos();
+  renderEditorIngredientes();
+  carregarCarrinhoLocal();
+  atualizarCarrinho(true);
+});
+
+function abrirCheckout() {
+  if (!carrinho.length) return alert("Carrinho vazio!");
+  document.getElementById("cliente-screen").style.display = "flex";
+}
+
+document.getElementById("open-cart").addEventListener("click", () => {
+  atualizarCarrinho();
+  document.getElementById("cart").classList.add("active");
+});
+
+document.getElementById("finalizar-carrinho").addEventListener("click", abrirCheckout);
+document.getElementById("fechar-checkout").addEventListener("click", () => {
+  document.getElementById("cliente-screen").style.display = "none";
+});
+
+document.getElementById("forma-pagamento").addEventListener("change", e => {
+  document.getElementById("dinheiro-extra").style.display = e.target.value === "Dinheiro" ? "block" : "none";
+});
+
+document.getElementById("confirmar-dados").addEventListener("click", () => {
   const nome = document.getElementById("cliente-nome").value.trim();
   const telefone = document.getElementById("cliente-telefone").value.trim();
   const tipo = document.getElementById("cliente-tipo").value;
   const endereco = document.getElementById("cliente-endereco").value.trim();
-  const local = document.getElementById("cliente-local") ? document.getElementById("cliente-local").value : "";
+  const formaPagamento = document.getElementById("forma-pagamento").value;
+  const valorDinheiro = parseFloat(document.getElementById("valor-dinheiro").value);
 
-  if (!nome || !telefone) {
-    alert("Por favor, preencha nome e telefone!");
-    return;
-  }
-
+  if (!nome || !telefone) return alert("Por favor, preencha nome e telefone.");
   if (tipo === "Entrega") {
-    if (!endereco) {
-      alert("Por favor, preencha o endereço!");
-      return;
-    }
+    if (!endereco) return alert("Por favor, preencha o endereco.");
     if (!localizacaoCliente) {
-      alert("Marque sua localização no mapa!");
+      alert("Marque sua localizacao no mapa.");
       document.getElementById("abrir-mapa").click();
       return;
     }
+  } else {
+    cliente.entrega = 0;
+    cliente.distancia = 0;
+    cliente.tempoEstimado = "30 a 50 min";
+    cliente.coordenadas = "";
+  }
+
+  const subtotal = calcularSubtotal();
+  const taxaEntrega = tipo === "Entrega" ? (cliente.entrega || 0) : 0;
+  const total = subtotal + taxaEntrega;
+
+  let troco = 0;
+  if (formaPagamento === "Dinheiro") {
+    if (isNaN(valorDinheiro)) return alert("Informe o valor que ira pagar em dinheiro.");
+    if (valorDinheiro < total) return alert("O valor informado e menor que o total.");
+    troco = +(valorDinheiro - total).toFixed(2);
   }
 
   cliente.nome = nome;
   cliente.telefone = telefone;
   cliente.tipo = tipo;
   cliente.endereco = endereco;
-  cliente.local = local;
+  cliente.pagamento = {
+    forma: formaPagamento,
+    valorInformado: isNaN(valorDinheiro) ? null : valorDinheiro,
+    troco
+  };
 
-  document.getElementById("cliente-screen").style.display = "none";
-  document.getElementById("cardapio-screen").style.display = "block";
-
-  renderCardapio();
+  abrirResumo(total, subtotal, taxaEntrega);
 });
+
 
 /* ===============================
    RENDERIZAÇÃO DO CARDÁPIO
@@ -1144,7 +1283,7 @@ function adicionarAoCarrinho(item, ingredientesEscolhidos, obs, extras = 0) {
   atualizarCarrinho();
 }
 
-function atualizarCarrinho() {
+function atualizarCarrinho(keepClosed = false) {
   const cont = document.getElementById("cart-items");
   cont.innerHTML = "";
   let total = 0;
@@ -1166,7 +1305,10 @@ function atualizarCarrinho() {
   });
 
   document.getElementById("cart-total").innerText = `Total: R$ ${total.toFixed(2)}`;
-  document.getElementById("cart").classList.add("active");
+  const countEl = document.getElementById("cart-count");
+  if (countEl) countEl.innerText = carrinho.length;
+  salvarCarrinhoLocal();
+  if (!keepClosed) document.getElementById("cart").classList.add("active");
 }
 
 function removerItem(i) {
@@ -1196,8 +1338,8 @@ const btnFecharMapa = document.getElementById("fechar-mapa");
 /* =========================================================
    1) COORDENADAS DA PALATARIUS
 ========================================================= */
-const PALATARIUS_LAT = -22.8059955;
-const PALATARIUS_LNG = -43.6378252;
+const PALATARIUS_LAT = -22.805837237901123;
+const PALATARIUS_LNG = -43.637674999789205;
 
 /* =========================================================
    2) Função Haversine — distância entre dois pontos
@@ -1217,30 +1359,26 @@ function calcularDistancia(lat1, lon1, lat2, lon2) {
 }
 
 /* =========================================================
-   3) Cálculo da taxa por distância
+   3) Cálculo da taxa por distância (nova regra)
 ========================================================= */
 function calcularTaxa(distanciaKm) {
   if (distanciaKm > 15) return -1;
-
   if (distanciaKm <= 3) return 4;
-
-  const extra = distanciaKm - 3;
-  const adicionais = Math.ceil(extra / 1.5);
-
-  return 4 + adicionais;
+  const extraKm = Math.ceil(distanciaKm - 3);
+  return +(4 + extraKm * 2.5).toFixed(2);
 }
 
 /* =========================================================
-   4) Cálculo do tempo estimado
+   4) Cálculo do tempo estimado (nova regra)
 ========================================================= */
 function calcularTempoEntrega(dist) {
   let minInicio = 30;
-  let minFim = 45;
+  let minFim = 50;
 
   if (dist > 4) {
     const extras = Math.ceil((dist - 4) / 2);
-    minInicio += extras * 10;
-    minFim += extras * 10;
+    minInicio += extras * 15;
+    minFim += extras * 15;
   }
   return { minInicio, minFim };
 }
@@ -1251,19 +1389,19 @@ function calcularTempoEntrega(dist) {
 btnAbrirMapa.addEventListener("click", async () => {
   modalMapa.style.display = "flex";
 
-  if (!mapa) {
-    mapa = L.map('mapa-mapa').setView([PALATARIUS_LAT, PALATARIUS_LNG], 15);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19
-    }).addTo(mapa);
+if (!mapa) {
+  mapa = L.map('mapa-mapa').setView([PALATARIUS_LAT, PALATARIUS_LNG], 15);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+  }).addTo(mapa);
 
-    mapa.on("click", e => {
-      const { lat, lng } = e.latlng;
-      if (marcador) mapa.removeLayer(marcador);
-      marcador = L.marker([lat, lng]).addTo(mapa);
-      localizacaoCliente = `${lat.toFixed(6)},${lng.toFixed(6)}`;
-    });
-  }
+  mapa.on("click", e => {
+    const { lat, lng } = e.latlng;
+    if (marcador) mapa.removeLayer(marcador);
+    marcador = L.marker([lat, lng]).addTo(mapa);
+    localizacaoCliente = `${lat.toFixed(6)},${lng.toFixed(6)}`;
+  });
+}
 
   // Se o cliente escreveu endereço → geocoding
   const endereco = document.getElementById("cliente-endereco").value.trim();
@@ -1281,8 +1419,8 @@ btnAbrirMapa.addEventListener("click", async () => {
 
         if (marcador) mapa.removeLayer(marcador);
         marcador = L.marker([lat, lon]).addTo(mapa);
-
-        localizacaoCliente = `${lat.toFixed(6)},${lon.toFixed(6)}`;
+        // centraliza, mas o cliente ainda precisa clicar para confirmar
+        localizacaoCliente = null;
       }
     } catch (e) {
       console.log("Falha no geocoding.");
@@ -1297,84 +1435,174 @@ btnAbrirMapa.addEventListener("click", async () => {
 ========================================================= */
 btnFecharMapa.addEventListener("click", () => {
   if (!localizacaoCliente) {
-    alert("Clique no mapa para marcar sua localização!");
+    alert("Clique no mapa para marcar sua localizacao!");
     return;
   }
 
   const [lat, lng] = localizacaoCliente.split(",").map(Number);
-
   const distancia = calcularDistancia(PALATARIUS_LAT, PALATARIUS_LNG, lat, lng);
   const taxa = calcularTaxa(distancia);
 
   if (taxa === -1) {
-    alert(
-      `❌ Distância de ${distancia.toFixed(2)} km.\n` +
-      `Infelizmente não conseguimos entregar acima de 15 km!`
-    );
+    alert(`Desculpe, nao conseguimos entregar acima de 15 km. Distancia: ${distancia.toFixed(2)} km.`);
     cliente.entrega = 0;
     modalMapa.style.display = "none";
     return;
   }
 
   const tempo = calcularTempoEntrega(distancia);
-
-  // Salva no objeto cliente
   cliente.coordenadas = localizacaoCliente;
   cliente.distancia = distancia;
   cliente.entrega = taxa;
   cliente.tempoEstimado = `${tempo.minInicio} a ${tempo.minFim} min`;
 
   alert(
-    `📍 Localização salva!\n` +
-    `📏 Distância: ${distancia.toFixed(2)} km\n` +
-    `🚚 Taxa de entrega: R$ ${taxa}\n` +
-    `⏱️ Tempo estimado: ${tempo.minInicio}–${tempo.minFim} min`
+    `Localizacao salva!
+` +
+    `Distancia: ${distancia.toFixed(2)} km
+` +
+    `Taxa de entrega: R$ ${taxa.toFixed(2)}
+` +
+    `Tempo estimado: ${tempo.minInicio}-${tempo.minFim} min`
   );
 
   modalMapa.style.display = "none";
 });
 
 /* =========================================================
-   7) WHATSAPP — agora envia tudo (taxa + tempo + mapa)
+   7) RESUMO E ENVIO (WhatsApp + EmailJS)
 ========================================================= */
-document.getElementById("send-whatsapp").addEventListener("click", () => {
-  if (!carrinho.length) return alert("Carrinho vazio!");
+const EMAILJS_PUBLIC_KEY = "COLOQUE_SUA_PUBLIC_KEY";
+const EMAILJS_SERVICE_ID = "COLOQUE_SEU_SERVICE_ID";
+const EMAILJS_TEMPLATE_ID = "COLOQUE_SEU_TEMPLATE_ID";
 
-  let msg = `🍔 *Pedido Palatarius*%0A`;
-  msg += `👤 *Cliente:* ${cliente.nome}%0A📞 *Telefone:* ${cliente.telefone}%0A`;
+if (window.emailjs && EMAILJS_PUBLIC_KEY !== "COLOQUE_SUA_PUBLIC_KEY") {
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+}
 
+function calcularSubtotal() {
+  return carrinho.reduce((s, it) => s + (Number(it.precoFinal) || 0), 0);
+}
+
+function abrirResumo(total, subtotal, taxaEntrega) {
+  const codigo = Math.floor(Math.random() * 5000) + 1;
+  cliente.codigoPedido = codigo;
+
+  const conteudo = document.getElementById("resumo-conteudo");
+  let html = `<p><strong>Codigo:</strong> #${codigo}</p>`;
+  html += `<p><strong>Cliente:</strong> ${cliente.nome} (${cliente.telefone})</p>`;
+  html += `<p><strong>Tipo:</strong> ${cliente.tipo}</p>`;
   if (cliente.tipo === "Entrega") {
-    msg += `🏠 *Endereço:* ${cliente.endereco}%0A`;
-    msg += `📏 *Distância:* ${cliente.distancia.toFixed(2)} km%0A`;
-    msg += `🚚 *Taxa:* R$ ${cliente.entrega}%0A`;
-    msg += `⏱️ *Tempo estimado:* ${cliente.tempoEstimado}%0A`;
-    msg += `📌 *Localização:* https://www.google.com/maps?q=${cliente.coordenadas}%0A`;
+    html += `<p><strong>Endereco:</strong> ${cliente.endereco}</p>`;
+    html += `<p><strong>Distancia:</strong> ${cliente.distancia?.toFixed(2)} km</p>`;
+    html += `<p><strong>Tempo estimado:</strong> ${cliente.tempoEstimado}</p>`;
+    html += `<p><strong>Localizacao:</strong> ${cliente.coordenadas}</p>`;
   }
 
-  msg += `%0A=============================%0A`;
-
-  let subtotal = 0;
+  html += `<div style="margin-top:0.6rem;"><strong>Itens:</strong></div>`;
   carrinho.forEach(it => {
-    subtotal += it.precoFinal;
-    msg += `🍔 *${it.nome}* - R$ ${it.precoFinal.toFixed(2)}%0A`;
+    html += `<p>- ${it.nome} - R$ ${it.precoFinal.toFixed(2)}</p>`;
     if (it.ingredientesEscolhidos) {
       for (const [g, l] of Object.entries(it.ingredientesEscolhidos)) {
-        msg += `• ${g}: ${l.join(", ")}%0A`;
+        html += `<p style="margin-left:10px;color:#555;">${g}: ${l.join(', ')}</p>`;
       }
     }
-    if (it.obs) msg += `📝 Obs: ${it.obs}%0A`;
-    msg += `-----------------------------%0A`;
+    if (it.obs) html += `<p style="margin-left:10px;color:#777;">Obs: ${it.obs}</p>`;
   });
 
-  const total = subtotal + (cliente.entrega || 0);
+  const pagamento = cliente.pagamento || {};
+  html += `<p style="margin-top:0.6rem;"><strong>Pagamento:</strong> ${pagamento.forma || ""}</p>`;
+  if (pagamento.forma === "Dinheiro") {
+    html += `<p>Valor: R$ ${Number(pagamento.valorInformado || 0).toFixed(2)}</p>`;
+    html += `<p>Troco: R$ ${Number(pagamento.troco || 0).toFixed(2)}</p>`;
+  }
 
-  msg += `💰 *Subtotal:* R$ ${subtotal.toFixed(2)}%0A`;
-  msg += `🚚 *Taxa:* R$ ${cliente.entrega}%0A`;
-  msg += `💵 *Total Geral:* R$ ${total.toFixed(2)}%0A%0A`;
-  msg += `⚡ *Pedido gerado via Cardápio Digital Palatarius*`;
+  html += `<p><strong>Subtotal:</strong> R$ ${subtotal.toFixed(2)}</p>`;
+  html += `<p><strong>Taxa entrega:</strong> R$ ${taxaEntrega.toFixed(2)}</p>`;
+  html += `<p><strong>Total:</strong> R$ ${total.toFixed(2)}</p>`;
 
-  window.open(`https://wa.me/5521997599132?text=${msg}`, "_blank");
+  conteudo.innerHTML = html;
+  document.getElementById("cliente-screen").style.display = "none";
+  document.getElementById("resumo-modal").style.display = "flex";
+}
+
+document.getElementById("fechar-resumo").addEventListener("click", () => {
+  document.getElementById("resumo-modal").style.display = "none";
 });
+
+function montarMensagem(total, subtotal, taxaEntrega) {
+  const codigo = cliente.codigoPedido || Math.floor(Math.random() * 5000) + 1;
+  const linhas = [];
+  linhas.push(`PEDIDO Palatarius #${codigo}`);
+  linhas.push(`Cliente: ${cliente.nome}`);
+  linhas.push(`Telefone: ${cliente.telefone}`);
+  linhas.push(`Tipo: ${cliente.tipo}`);
+  if (cliente.tipo === "Entrega") {
+    linhas.push(`Endereco: ${cliente.endereco}`);
+    linhas.push(`Distancia: ${cliente.distancia?.toFixed(2)} km`);
+    linhas.push(`Taxa: R$ ${taxaEntrega.toFixed(2)}`);
+    linhas.push(`Tempo estimado: ${cliente.tempoEstimado}`);
+    linhas.push(`Localizacao: https://www.google.com/maps?q=${cliente.coordenadas}`);
+  }
+  linhas.push(`-----------------------`);
+  carrinho.forEach(it => {
+    linhas.push(`- ${it.nome} - R$ ${it.precoFinal.toFixed(2)}`);
+    if (it.ingredientesEscolhidos) {
+      for (const [g, l] of Object.entries(it.ingredientesEscolhidos)) {
+        linhas.push(`${g}: ${l.join(', ')}`);
+      }
+    }
+    if (it.obs) linhas.push(`Obs: ${it.obs}`);
+    linhas.push(`-----------------------`);
+  });
+  linhas.push(`Subtotal: R$ ${subtotal.toFixed(2)}`);
+  linhas.push(`Taxa: R$ ${taxaEntrega.toFixed(2)}`);
+  linhas.push(`Total: R$ ${total.toFixed(2)}`);
+  if (cliente.pagamento?.forma) {
+    linhas.push(`Pagamento: ${cliente.pagamento.forma}`);
+    if (cliente.pagamento.forma === "Dinheiro") {
+      linhas.push(`Valor pago: R$ ${Number(cliente.pagamento.valorInformado || 0).toFixed(2)}`);
+      linhas.push(`Troco: R$ ${Number(cliente.pagamento.troco || 0).toFixed(2)}`);
+    }
+  }
+  linhas.push(`Horario: ${new Date().toLocaleString('pt-BR')}`);
+  linhas.push(`Codigo: #${codigo}`);
+  return linhas;
+}
+
+async function enviarEmailCopia(textoBruto) {
+  if (!window.emailjs || EMAILJS_PUBLIC_KEY === "COLOQUE_SUA_PUBLIC_KEY") {
+    console.warn("Configure EmailJS com suas chaves para habilitar o envio automatico.");
+    return;
+  }
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      message: textoBruto,
+      para: "palatarius@gmail.com",
+      codigo: cliente.codigoPedido || "",
+      cliente: cliente.nome,
+      telefone: cliente.telefone
+    });
+  } catch (err) {
+    console.warn("Falha ao enviar e-mail:", err);
+  }
+}
+
+document.getElementById("enviar-whatsapp").addEventListener("click", async () => {
+  const subtotal = calcularSubtotal();
+  const taxaEntrega = cliente.tipo === "Entrega" ? (cliente.entrega || 0) : 0;
+  const total = subtotal + taxaEntrega;
+  const linhas = montarMensagem(total, subtotal, taxaEntrega);
+  const textoBruto = linhas.join("\n");
+  const msgCodificada = encodeURIComponent(linhas.join("\n"));
+  window.open(`https://wa.me/5521997599132?text=${msgCodificada}`, "_blank");
+  await enviarEmailCopia(textoBruto);
+  carrinho = [];
+  salvarCarrinhoLocal();
+  atualizarCarrinho(true);
+  document.getElementById("resumo-modal").style.display = "none";
+});
+
 </script>
 
 <script>
@@ -1864,140 +2092,12 @@ function excluirIngrediente(grupoNome, idx) {
 
 <script>
 /* =========================================================
-   BLOCO 5 — DADOS INICIAIS DO CARDÁPIO PALATARIUS
-========================================================= */
-
-window.addEventListener("DOMContentLoaded", initializeDefaultData);
-
-function initializeDefaultData() {
-  // ===============================
-  // 🍔 GRUPOS DE PRODUTOS
-  // ===============================
-  categorias = [
-    {
-      nome: "Hambúrgueres",
-      itens: [
-        { nome: "Hadouken", preco: 10.50, imagem: "hadouken.jpg", descricao: "O golpe clássico da Palatarius! Pão americano macio com gergelim, carne artesanal 60g (blend bovino + bacon ou calabresa), ovo, alface e tomate frescos, ketchup e maionese especial. Um hambúrguer imbatível — rápido, direto e cheio de poder!", limites: { "Carnes":1, "Molhos":1, "Crocantes Extras":1 }},
-        { nome: "Fatality", preco: 11.00, imagem: "fatality.jpg", descricao: "Explosão de sabor que nocauteia a fome! X-Bacon artesanal com carne 60g, queijo derretido, ovo, salada fresca e bacon crocante. O golpe final do sabor — um verdadeiro campeão das arenas!", limites: { "Carnes":1, "Molhos":1, "Crocantes Extras":1 }},
-        { nome: "Chamas do Dragão", preco: 11.00, imagem: "chamas_dragao.jpg", descricao: "Intenso como o cosmo! Blend calabresa artesanal 60g, queijo derretido, ovo, salada fresca, e fatias de calabresa na chapa. Finalizado com ketchup e maionese Palatarius. Perfeito para quem carrega o fogo sagrado da fome!", limites: { "Carnes":1, "Molhos":2, "Crocantes Extras":1 }},
-        { nome: "Kamehameha", preco: 18.00, imagem: "kamehameha.jpg", descricao: "Poder em dobro! Dois blends artesanais 60g, dois ovos, queijo, bacon, calabresa, presunto, milho, ervilha e batata palha. Energia pura que explode em sabor — um lanche lendário!", limites: { "Carnes":2, "Molhos":2, "Crocantes Extras":2 }},
-        { nome: "Modo Bijuu", preco: 25.00, imagem: "modo_bijuu.jpg", descricao: "Força máxima! Três blends de 60g, três ovos, queijo, bacon, presunto, milho, ervilha e batata palha. Um chakra de sabor para quem quer liberar o monstro da fome interior!", limites: { "Carnes":3, "Molhos":2, "Crocantes Extras":2 }},
-        { nome: "Banquete do Luffy", preco: 12.00, imagem: "banquete_luffy.jpg", descricao: "O X-Tudo dos piratas! Blend artesanal 60g, ovo, salada, bacon, presunto, queijo, milho, ervilha e batata palha. Um banquete digno do Capitão do Chapéu de Palha!", limites: { "Carnes":1, "Molhos":2, "Crocantes Extras":1 }},
-        { nome: "De Volta pro Sabor", preco: 9.50, imagem: "de_volta_sabor.jpg", descricao: "O clássico que nunca sai de moda! Pão americano, carne artesanal suculenta, cheddar cremoso e molho de alho torrado. Simples e cheio de personalidade — puro sabor em cada mordida!", limites: { "Carnes":1, "Molhos":1, "Crocantes Extras":1 }},
-        { nome: "Exterminador de Fome", preco: 14.00, imagem: "exterminador_fome.jpg", descricao: "O poder do cheddar em dose dupla! Duas carnes artesanais 60g, duas camadas de cheddar derretido, molho especial Palatarius, e pão americano com gergelim. Uma máquina de sabor — 'I'll be back... pra mais um!'", limites: { "Carnes":2, "Molhos":2, "Crocantes Extras":1 }},
-        { nome: "Jurassic Chick", preco: 12.00, imagem: "jurassic_chick.jpg", descricao: "Crocância e cremosidade em perfeita harmonia! Filé de frango empanado, cheddar, alface americana, molho de alho torrado e pão com gergelim. Um clássico jurássico!", limites: { "Carnes":1, "Molhos":1, "Crocantes Extras":1 }},
-        { nome: "Matrix Verde", preco: 9.50, imagem: "matrix_verde.jpg", descricao: "Frescor e sabor artesanal! Pão americano, carne artesanal, molho Palatarius, alface americana crocante e tomate fresco. Escolha o sabor da realidade!", limites: { "Carnes":1, "Molhos":1, "Crocantes Extras":0 }},
-        { nome: "Caçadores da Gema Perdida", preco: 11.00, imagem: "egg_palatarius.jpg", descricao: "Um clássico artesanal com sabor de casa! Pão americano, carne artesanal, queijo mussarela e ovo frito no ponto perfeito.", limites: { "Carnes":1, "Molhos":1, "Crocantes Extras":0 }}
-      ]
-    },
-    {
-      nome: "Batatas",
-      itens: [
-        { nome: "Final Boss", preco: 55.00, imagem: "final_boss.jpg", descricao: "Desafio épico! Batatas crocantes 35cm cobertas com bacon, calabresa, ovos de codorna, azeitonas, queijo ralado e cheddar cremoso.", limites: { "Proteínas":2, "Acompanhamentos":6 }},
-        { nome: "Smash Bros", preco: 6.00, imagem: "smash_bros.jpg", descricao: "Versão compacta e saborosa. Batata crocante com bacon, calabresa e cheddar.", limites: { "Proteínas":2, "Acompanhamentos":4 }},
-        { nome: "Fatality Batata", preco: 45.00, imagem: "fatality_batata.jpg", descricao: "Batatas crocantes com calabresa, cheddar, bacon e ovos de codorna, frango a passarinho, anéis de cebola e nuggets, com 2 molhos especiais.", limites: { "Proteínas":3, "Molhos":2, "Acompanhamentos":6 }},
-        { nome: "Brutality", preco: 55.00, imagem: "brutality.jpg", descricao: "Batatas crocantes com calabresa, cheddar, bacon, ovos de codorna e acompanhamentos premium com molhos Palatarius.", limites: { "Proteínas":3, "Acompanhamentos":6 }}
-      ]
-    },
-    {
-      nome: "Batatas Recheadas",
-      itens: [
-        { nome: "Power Mash", preco: 12.00, imagem: "power_mash.jpg", descricao: "Purê cremoso de batatas com queijo derretido. Escolha 1 proteína e até 18 acompanhamentos.", limites: { "Proteínas":1, "Acompanhamentos":5 }},
-        { nome: "DeLorean Pot", preco: 18.00, imagem: "delorean_pot.jpg", descricao: "Versão família com purê, 2 proteínas e acompanhamentos. Cremosa e nostálgica!", limites: { "Proteínas":2, "Acompanhamentos":6 }},
-        { nome: "Missão Cheddar", preco: 15.00, imagem: "missao_cheddar.jpg", descricao: "Recheada com bacon, cheddar e catupiry derretido. Uma missão impossível de resistir!", limites: { "Molhos":1, "Acompanhamentos":3 }},
-        { nome: "Supremo T-800", preco: 20.00, imagem: "supremo_t800.jpg", descricao: "Dupla de proteínas, muito cheddar, bacon e crocância. Potência total!", limites: { "Proteínas":2, "Molhos":2 }}
-      ]
-    },
-    {
-      nome: "Pastéis",
-      itens: [
-        { nome: "Pastel Shuriken", preco: 10.00, imagem: "pastel_shuriken.jpg", descricao: "Pastel 15cm — crocante e rápido no gatilho! Monte o seu com 1 proteína e acompanhamentos.", limites: { "Proteínas":1, "Acompanhamentos":4 }},
-        { nome: "Pastel Grand Line", preco: 15.00, imagem: "pastel_grand_line.jpg", descricao: "Pastel 25cm — tamanho de aventura! Monte o seu com 2 proteínas e acompanhamentos à sua escolha.", limites: { "Proteínas":2, "Acompanhamentos":6 }}
-      ]
-    },
-    {
-      nome: "Cachorros-Quentes",
-      itens: [
-        { nome: "Hot Dog Noob Raiz", preco: 11.50, imagem: "hotdog_noob_raiz.jpg", descricao: "O clássico da base! Pão, salsicha ou linguiça, legumes e molhos Palatarius. Finalizado com batata palha e ovo de codorna.", limites: { "Molhos":2, "Acompanhamentos":4 }},
-        { nome: "Prensado Obby", preco: 13.00, imagem: "prensado_obby.jpg", descricao: "Hot dog prensado com purê, batata palha, queijo ralado e ovo. Um clássico lendário!", limites: { "Molhos":2, "Acompanhamentos":5 }},
-        { nome: "Prensado Modo Criativo", preco: 18.00, imagem: "modo_criativo.jpg", descricao: "Crie seu lanche do seu jeito! Escolha proteína extra e até 18 ingredientes. Seu sabor, suas regras!", limites: { "Proteínas":2, "Molhos":3, "Acompanhamentos":6 }}
-      ]
-    },
-    {
-      nome: "Sorvetes & Açaís",
-      itens: [
-        { nome: "Açaí Palatarius", preco: 15.00, imagem: "acai_palatarius.jpg", descricao: "Açaí cremoso com 4 toppings e 2 caldas. Doce e refrescante!", limites: { "Toppings":4, "Caldas":2 }},
-        { nome: "Taça Suprema", preco: 18.00, imagem: "taca_suprema.jpg", descricao: "Sorvete + açaí com caldas Fini e toppings variados.", limites: { "Toppings":5, "Caldas":3 }}
-      ]
-    },
-    {
-      nome: "Bebidas",
-      itens: [
-        { nome: "Guaracamp Copo", preco: 2.00, imagem: "guaracamp.jpg", descricao: "Copo gelado de Guaracamp, refrescante e delicioso!" },
-        { nome: "Refrigerante Mini 200ml", preco: 3.00, imagem: "refri_mini.jpg", descricao: "Mini refri gelado, 200ml de sabor!" },
-        { nome: "Água com Gás", preco: 3.50, imagem: "agua_gas.jpg", descricao: "Água gaseificada cristalina, perfeita para acompanhar." },
-        { nome: "Água sem Gás", preco: 3.50, imagem: "agua_semgas.jpg", descricao: "Água mineral pura e gelada." },
-        { nome: "Refrigerante Lata 350ml", preco: 5.50, imagem: "refri_lata.jpg", descricao: "Refrigerante 350ml, geladinho!" },
-        { nome: "Convecção 2L", preco: 7.50, imagem: "convencao_2l.jpg", descricao: "Refresco família 2L, ideal para compartilhar." },
-        { nome: "Refrigerante Sabores 2L", preco: 12.00, imagem: "refri_2l.jpg", descricao: "Guaraná, Laranja e outros sabores 2L." },
-        { nome: "Coca-Cola 2L", preco: 14.00, imagem: "coca_2l.jpg", descricao: "A clássica Coca-Cola 2 litros, sempre perfeita!" }
-      ]
-    }
-  ];
-
-  // ===============================
-  // 🧂 INGREDIENTES PADRÃO
-  // ===============================
-  ingredientes = [
-    { grupo: "Carnes", opcoes: [
-      { nome: "Blend Acém Bovino + Bacon", pausado: false },
-      { nome: "Blend Acém Bovino + Costela Bovina", pausado: false }
-    ]},
-    { grupo: "Molhos", opcoes: [
-      { nome: "Billy Jack" }, { nome: "Ketchup de Goiabada" }, { nome: "Ketchup de Goiabada Picante" },
-      { nome: "Alho e Ervas Finas" }, { nome: "Tártaro" }, { nome: "Tasty" },
-      { nome: "Molho de Bacon" }, { nome: "Molho Verde" }
-    ]},
-    { grupo: "Crocantes Extras", opcoes: [
-      { nome: "Alho Torrado" }, { nome: "Cebola Crispy" }
-    ]},
-    { grupo: "Proteínas", opcoes: [
-      { nome: "Carne" }, { nome: "Frango" }, { nome: "Costela" }, { nome: "Pernil" }, { nome: "Calabresa" }
-    ]},
-    { grupo: "Acompanhamentos", opcoes: [
-      { nome: "Bacon" }, { nome: "Presunto" }, { nome: "Ovo" }, { nome: "Milho Verde" },
-      { nome: "Ervilha" }, { nome: "Passas" }, { nome: "Azeitona" }, { nome: "Tomate Cru" },
-      { nome: "Cebola" }, { nome: "Champignon" }, { nome: "Palmito" }, { nome: "Cebola Crispy" },
-      { nome: "Alho Torrado" }, { nome: "Queijo Minas" }, { nome: "Queijo Mussarela" },
-      { nome: "Queijo Prato" }, { nome: "Catupiry" }, { nome: "Cheddar" }, { nome: "Orégano" }, { nome: "Queijo Parmesão" }
-    ]},
-    { grupo: "Toppings", opcoes: [
-      { nome: "Canudo de Biscoito" }, { nome: "Sucrilhos" }, { nome: "Granola" },
-      { nome: "Amendoim" }, { nome: "Paçoca" }, { nome: "Granulado" },
-      { nome: "Flocos de Arroz" }, { nome: "Aveia" }, { nome: "Chocoball" },
-      { nome: "Jujuba" }, { nome: "Delicado" }, { nome: "Leite em Pó" }
-    ]},
-    { grupo: "Caldas", opcoes: [
-      { nome: "Chocolate" }, { nome: "Morango" }, { nome: "Brigadeiro" },
-      { nome: "Leite Condensado" }, { nome: "Amendoim" }, { nome: "Floresta Negra" },
-      { nome: "Banana Caramelada" }, { nome: "Limão" }, { nome: "Chocomenta" }, { nome: "Menta" }
-    ]},
-    { grupo: "Caldas Fini (+R$1)", opcoes: [
-      { nome: "Fini Dentaduras" }, { nome: "Fini Bananas" }, { nome: "Fini Beijos" }
-    ]}
-  ];
-
-  renderCardapio();
-}
-</script>
-<script>
-/* =========================================================
    BLOCO 6 — EXPORTAÇÃO FUNCIONAL GARANTIDA (v10.1)
    Gera .JSON e .TXT mesmo offline / local / GitHub
 ========================================================= */
 
 // Caminho online (usado só quando publicado no GitHub Pages)
-const JSON_URL = "https://eddyoliver.github.io/Palatarius/cardapio_palatarius.json";
+const JSON_URL = "cardapio_palatarius.json";
 
 // ----------------------------------------------------------
 // RESTAURAÇÃO SEGURA  (ignora falhas de rede sem travar nada)
