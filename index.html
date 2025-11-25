@@ -1453,8 +1453,17 @@ if (!mapa) {
   const endereco = document.getElementById("cliente-endereco").value.trim();
   if (endereco) {
     try {
+      // Restringe a busca para perto da loja para evitar resultados longe
+      const delta = 0.3; // ~30km de margem
+      const viewbox = [
+        PALATARIUS_LNG - delta, // left (min lon)
+        PALATARIUS_LAT + delta, // top (max lat)
+        PALATARIUS_LNG + delta, // right (max lon)
+        PALATARIUS_LAT - delta  // bottom (min lat)
+      ].join(",");
+
       const resp = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}`
+        `https://nominatim.openstreetmap.org/search?format=json&limit=1&viewbox=${viewbox}&bounded=1&q=${encodeURIComponent(endereco)}`
       );
       const dados = await resp.json();
       if (dados.length > 0) {
@@ -1465,8 +1474,8 @@ if (!mapa) {
 
         if (marcador) mapa.removeLayer(marcador);
         marcador = L.marker([lat, lon]).addTo(mapa);
-        // centraliza, mas o cliente ainda precisa clicar para confirmar
-        localizacaoCliente = null;
+        // já define coordenadas a partir do endereço digitado (primeira marcação)
+        localizacaoCliente = `${lat.toFixed(6)},${lon.toFixed(6)}`;
       }
     } catch (e) {
       console.log("Falha no geocoding.");
