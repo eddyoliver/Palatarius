@@ -721,8 +721,21 @@ async function carregarCardapio() {
     const data = await resp.json();
     categorias = data.categorias || [];
     ingredientes = data.ingredientes || [];
+    try { localStorage.setItem("palatarius_data", JSON.stringify(data)); } catch(e) {}
   } catch (e) {
     console.error("Erro ao carregar cardápio externo:", e);
+    // fallback offline: usa cache salvo no navegador, se existir
+    try {
+      const cache = localStorage.getItem("palatarius_data");
+      if (cache) {
+        const data = JSON.parse(cache);
+        categorias = data.categorias || [];
+        ingredientes = data.ingredientes || [];
+        console.warn("Carregado do cache local (offline).");
+      }
+    } catch(err) {
+        console.warn("Falha ao ler cache local:", err);
+    }
   }
 }
 </script>
@@ -1078,11 +1091,20 @@ document.getElementById("confirmar-dados").addEventListener("click", () => {
   if (!nome || !telefone) return alert("Por favor, preencha nome e telefone.");
   if (tipo === "Entrega") {
     if (!endereco) return alert("Por favor, preencha o endereco.");
-    if (!localizacaoCliente) {
-      alert("Marque sua localizacao no mapa.");
-      document.getElementById("abrir-mapa").click();
+    const dadosEntrega = obterDadosEntrega();
+    if (dadosEntrega.erro) {
+      alert(dadosEntrega.erro);
+      cliente.entrega = 0;
+      cliente.distancia = 0;
+      cliente.tempoEstimado = "";
+      cliente.coordenadas = "";
+      if (!localizacaoCliente) document.getElementById("abrir-mapa").click();
       return;
     }
+    cliente.coordenadas = localizacaoCliente;
+    cliente.distancia = dadosEntrega.distancia;
+    cliente.entrega = dadosEntrega.taxa;
+    cliente.tempoEstimado = `${dadosEntrega.tempo.minInicio} a ${dadosEntrega.tempo.minFim} min`;
   } else {
     cliente.entrega = 0;
     cliente.distancia = 0;
@@ -1362,10 +1384,10 @@ function calcularDistancia(lat1, lon1, lat2, lon2) {
    3) Cálculo da taxa por distância (nova regra)
 ========================================================= */
 function calcularTaxa(distanciaKm) {
-  if (distanciaKm > 15) return -1;
+  if (distanciaKm > 10) return -1; // fora do raio de entrega
   if (distanciaKm <= 3) return 4;
   const extraKm = Math.ceil(distanciaKm - 3);
-  return +(4 + extraKm * 2.5).toFixed(2);
+  return +(4 + extraKm * 3).toFixed(2);
 }
 
 /* =========================================================
@@ -1381,6 +1403,30 @@ function calcularTempoEntrega(dist) {
     minFim += extras * 15;
   }
   return { minInicio, minFim };
+}
+
+// Centraliza a logica de conversao das coordenadas em distancia/taxa/tempo
+function obterDadosEntrega() {
+  if (!localizacaoCliente) {
+    return { erro: "Clique no mapa para marcar sua localizacao!" };
+  }
+
+  const [lat, lng] = localizacaoCliente.split(",").map(Number);
+  if (Number.isNaN(lat) || Number.isNaN(lng)) {
+    return { erro: "Coordenadas invalidas. Clique novamente no mapa." };
+  }
+
+  const distancia = calcularDistancia(PALATARIUS_LAT, PALATARIUS_LNG, lat, lng);
+  const taxa = calcularTaxa(distancia);
+  if (taxa === -1) {
+    return {
+      erro: `Desculpe, nao conseguimos entregar acima de 10 km. Distancia: ${distancia.toFixed(2)} km.`,
+      distancia
+    };
+  }
+
+  const tempo = calcularTempoEntrega(distancia);
+  return { distancia, taxa, tempo };
 }
 
 /* =========================================================
@@ -1434,36 +1480,27 @@ if (!mapa) {
    6) CONFIRMAR LOCALIZAÇÃO — calcula taxa + tempo
 ========================================================= */
 btnFecharMapa.addEventListener("click", () => {
-  if (!localizacaoCliente) {
-    alert("Clique no mapa para marcar sua localizacao!");
-    return;
-  }
-
-  const [lat, lng] = localizacaoCliente.split(",").map(Number);
-  const distancia = calcularDistancia(PALATARIUS_LAT, PALATARIUS_LNG, lat, lng);
-  const taxa = calcularTaxa(distancia);
-
-  if (taxa === -1) {
-    alert(`Desculpe, nao conseguimos entregar acima de 15 km. Distancia: ${distancia.toFixed(2)} km.`);
+  const dadosEntrega = obterDadosEntrega();
+  if (dadosEntrega.erro) {
+    alert(dadosEntrega.erro);
     cliente.entrega = 0;
     modalMapa.style.display = "none";
     return;
   }
 
-  const tempo = calcularTempoEntrega(distancia);
   cliente.coordenadas = localizacaoCliente;
-  cliente.distancia = distancia;
-  cliente.entrega = taxa;
-  cliente.tempoEstimado = `${tempo.minInicio} a ${tempo.minFim} min`;
+  cliente.distancia = dadosEntrega.distancia;
+  cliente.entrega = dadosEntrega.taxa;
+  cliente.tempoEstimado = `${dadosEntrega.tempo.minInicio} a ${dadosEntrega.tempo.minFim} min`;
 
   alert(
     `Localizacao salva!
 ` +
-    `Distancia: ${distancia.toFixed(2)} km
+    `Distancia: ${dadosEntrega.distancia.toFixed(2)} km
 ` +
-    `Taxa de entrega: R$ ${taxa.toFixed(2)}
+    `Taxa de entrega: R$ ${dadosEntrega.taxa.toFixed(2)}
 ` +
-    `Tempo estimado: ${tempo.minInicio}-${tempo.minFim} min`
+    `Tempo estimado: ${dadosEntrega.tempo.minInicio}-${dadosEntrega.tempo.minFim} min`
   );
 
   modalMapa.style.display = "none";
@@ -1472,9 +1509,10 @@ btnFecharMapa.addEventListener("click", () => {
 /* =========================================================
    7) RESUMO E ENVIO (WhatsApp + EmailJS)
 ========================================================= */
-const EMAILJS_PUBLIC_KEY = "COLOQUE_SUA_PUBLIC_KEY";
-const EMAILJS_SERVICE_ID = "COLOQUE_SEU_SERVICE_ID";
-const EMAILJS_TEMPLATE_ID = "COLOQUE_SEU_TEMPLATE_ID";
+// Chaves EmailJS
+const EMAILJS_PUBLIC_KEY = "P_Xdz3gl4S1FuQRw3";
+const EMAILJS_SERVICE_ID = "service_u3jlu8c";
+const EMAILJS_TEMPLATE_ID = "template_ufap5bd";
 
 if (window.emailjs && EMAILJS_PUBLIC_KEY !== "COLOQUE_SUA_PUBLIC_KEY") {
   emailjs.init(EMAILJS_PUBLIC_KEY);
