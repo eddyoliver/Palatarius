@@ -2290,37 +2290,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-<!-- 🕓 TELA DE LOJA FECHADA -->
-<div id="loja-fechada-overlay">
-  <style>
-    /* Estilinho básico (opcional) */
-    #loja-fechada-overlay {
-      position: fixed; inset: 0; display: none;
-      align-items: center; justify-content: center;
-      background: rgba(0,0,0,0.75); z-index: 99999;
-    }
-    #loja-fechada-overlay.active { display: flex; }
-    #loja-fechada-overlay .overlay-content{
-      background: linear-gradient(135deg,#0d47a1,#1b2a52);
-      color:#fff; padding: 2rem; border-radius: 14px;
-      width:min(720px,92%); text-align:center;
-      box-shadow: 0 12px 35px rgba(0,0,0,.35);
-    }
-    #loja-fechada-overlay .endereco{opacity:.9; margin:.5rem 0 1rem}
-    #contador {font: 700 2rem/1.1 "Russo One", system-ui; margin-top:.25rem}
-  </style>
-
-  <div class="overlay-content">
-    <h2>🎮 O Fliperama está em modo descanso!</h2>
-    <p>Nosso atendimento funciona das <strong>18h às 23h30</strong> todos os dias.</p>
-    <p>Mas não fique triste! Venha nos visitar pessoalmente 😄</p>
-    <p class="endereco">📍 BR-465, nº 199 – Campo Lindo, Seropédica/RJ<br>
-      KM 40 — Próximo à <strong>Life Fit Academia</strong></p>
-    <p id="contador-titulo">⏳ Reabriremos em:</p>
-    <div id="contador"></div>
-  </div>
-</div>
-
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const overlay  = document.getElementById("loja-fechada-overlay");
@@ -2334,11 +2303,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const HORA_ABRE = 18, MIN_ABRE = 0;
   const HORA_FECHA = 23, MIN_FECHA = 30;
 
-  // 🚪 Fechar toda segunda? (0=Dom, 1=Seg, 2=Ter, ... 6=Sáb)
-  // ATIVAR:   mantenha "true"
-  // DESATIVAR: comente a linha abaixo OU troque para false
-  // const FECHA_TODA_SEGUNDA = true;
-  // const FECHA_TODA_SEGUNDA = false; // exemplo de desativado
+  // 🚪 Fechar todo SÁBADO (0=Dom, 1=Seg, ... 6=Sáb)
+  const FECHA_TODO_SABADO = true;
 
   function dentroDoHorario(hora, minuto) {
     const abre   = (hora > HORA_ABRE) || (hora === HORA_ABRE && minuto >= MIN_ABRE);
@@ -2350,14 +2316,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const d = new Date(base);
     d.setHours(HORA_ABRE, MIN_ABRE, 0, 0);
 
-    // se já passou do horário de abrir hoje, joga pra amanhã
+    // se já passou do horário de hoje → próximo dia
     if (base > d) d.setDate(d.getDate() + 1);
 
-    // se segunda-feira é dia fechado, pula para terça
-    if (FECHA_TODA_SEGUNDA) {
-      // 1 = segunda
-      if (d.getDay() === 1) d.setDate(d.getDate() + 1);
+    // se cair no sábado, pula para domingo
+    if (FECHA_TODO_SABADO && d.getDay() === 6) {
+      d.setDate(d.getDate() + 1);
     }
+
     return d;
   }
 
@@ -2365,24 +2331,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const agora   = new Date();
     const hora    = agora.getHours();
     const minuto  = agora.getMinutes();
-    const dia     = agora.getDay(); // 0 dom, 1 seg, ..., 6 sáb
+    const dia     = agora.getDay(); // 0 dom ... 6 sáb
 
-    // Regra: fecha toda segunda
-    if (FECHA_TODA_SEGUNDA && dia === 1) {
+    // 🚫 FECHADO AOS SÁBADOS
+    if (FECHA_TODO_SABADO && dia === 6) {
       overlay.classList.add("active");
-      titulo.textContent = "🛑 Fechado hoje (Segunda-feira)";
+      titulo.textContent = "🛑 Fechado hoje (Sábado)";
       contador.textContent = "Voltamos amanhã às 18:00";
       return;
     }
 
-    // Fora do horário? Mostra overlay com contagem até próxima abertura
+    // Dentro do horário normal?
     const aberta = dentroDoHorario(hora, minuto);
     if (aberta) {
       overlay.classList.remove("active");
       return;
     }
 
-    // Próxima abertura (considera a regra da segunda)
+    // Próxima abertura
     const prox = proximaDataAbertura(agora);
     const diff = prox - agora;
 
@@ -2397,15 +2363,14 @@ document.addEventListener("DOMContentLoaded", () => {
     overlay.classList.add("active");
   }
 
-  // Inicializa e atualiza a cada 1s
   atualizarStatusLoja();
   setInterval(atualizarStatusLoja, 1000);
 });
 </script>
 
-
 </body>
 </html>
+
 
 
 
