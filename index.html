@@ -2290,6 +2290,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+```html
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const overlay  = document.getElementById("loja-fechada-overlay");
@@ -2303,7 +2304,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const HORA_ABRE = 18, MIN_ABRE = 0;
   const HORA_FECHA = 23, MIN_FECHA = 30;
 
-  // 🚪 Fechar todo SÁBADO (0=Dom, 1=Seg, ... 6=Sáb)
+  // 🚪 SÁBADO: fecha APENAS DELIVERY (loja aberta)
   const FECHA_TODO_SABADO = true;
 
   function dentroDoHorario(hora, minuto) {
@@ -2319,11 +2320,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // se já passou do horário de hoje → próximo dia
     if (base > d) d.setDate(d.getDate() + 1);
 
-    // se cair no sábado, pula para domingo
-    if (FECHA_TODO_SABADO && d.getDay() === 6) {
-      d.setDate(d.getDate() + 1);
-    }
-
+    // ⚠️ como sábado NÃO fecha a loja, não pula sábado aqui
     return d;
   }
 
@@ -2333,12 +2330,40 @@ document.addEventListener("DOMContentLoaded", () => {
     const minuto  = agora.getMinutes();
     const dia     = agora.getDay(); // 0 dom ... 6 sáb
 
-    // 🚫 FECHADO AOS SÁBADOS
+    // 🚫 SÁBADO: DESATIVA APENAS "ENTREGA" (não mostra overlay)
     if (FECHA_TODO_SABADO && dia === 6) {
-      overlay.classList.add("active");
-      titulo.textContent = "🛑 Fechado hoje (Sábado)";
-      contador.textContent = "Voltamos amanhã às 18:00";
-      return;
+      overlay.classList.remove("active");
+
+      const selectTipo = document.getElementById("cliente-tipo");
+      const endContainer = document.getElementById("endereco-container");
+      const btnMapa = document.getElementById("abrir-mapa");
+
+      if (selectTipo) {
+        // força Retirada
+        selectTipo.value = "Retirada";
+
+        // desativa opção Entrega
+        const optEntrega = selectTipo.querySelector('option[value="Entrega"]');
+        if (optEntrega) optEntrega.disabled = true;
+      }
+
+      if (endContainer) endContainer.style.display = "none";
+      if (btnMapa) btnMapa.style.display = "none";
+
+      // não retorna: ainda precisa checar horário pra overlay normal fora do expediente
+      // (mas sábado não fecha a loja)
+    } else {
+      // reativa entrega nos outros dias
+      const selectTipo = document.getElementById("cliente-tipo");
+      const endContainer = document.getElementById("endereco-container");
+      const btnMapa = document.getElementById("abrir-mapa");
+
+      if (selectTipo) {
+        const optEntrega = selectTipo.querySelector('option[value="Entrega"]');
+        if (optEntrega) optEntrega.disabled = false;
+      }
+      if (endContainer) endContainer.style.display = "";
+      if (btnMapa) btnMapa.style.display = "";
     }
 
     // Dentro do horário normal?
@@ -2370,6 +2395,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
