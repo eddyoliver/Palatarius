@@ -2297,30 +2297,24 @@ document.addEventListener("DOMContentLoaded", () => {
   const contador = document.getElementById("contador");
   const titulo   = document.getElementById("contador-titulo");
 
-  // ==============================
-  // CONFIGURAÇÕES
-  // ==============================
-  // ⏰ Horário de funcionamento
-  const HORA_ABRE = 18, MIN_ABRE = 0;
+  // ⏰ Horário de funcionamento (todos os dias)
+  const HORA_ABRE  = 18, MIN_ABRE  = 0;
   const HORA_FECHA = 23, MIN_FECHA = 30;
 
-  // 🚪 SÁBADO: fecha APENAS DELIVERY (loja aberta)
-  const FECHA_TODO_SABADO = true;
+  // ⚙️ CONFIGURAÇÕES ESPECIAIS
+  const FECHA_TODO_SABADO = true;           // sábado sem delivery
+  const DELIVERY_CLOSED_OVERRIDE = true;  // 🔴 MUDE PARA true SE QUISER FECHAR DELIVERY
 
   function dentroDoHorario(hora, minuto) {
-    const abre   = (hora > HORA_ABRE) || (hora === HORA_ABRE && minuto >= MIN_ABRE);
-    const fecha  = (hora < HORA_FECHA) || (hora === HORA_FECHA && minuto <= MIN_FECHA);
+    const abre  = (hora > HORA_ABRE) || (hora === HORA_ABRE && minuto >= MIN_ABRE);
+    const fecha = (hora < HORA_FECHA) || (hora === HORA_FECHA && minuto <= MIN_FECHA);
     return abre && fecha;
   }
 
   function proximaDataAbertura(base = new Date()) {
     const d = new Date(base);
     d.setHours(HORA_ABRE, MIN_ABRE, 0, 0);
-
-    // se já passou do horário de hoje → próximo dia
     if (base > d) d.setDate(d.getDate() + 1);
-
-    // ⚠️ como sábado NÃO fecha a loja, não pula sábado aqui
     return d;
   }
 
@@ -2328,62 +2322,68 @@ document.addEventListener("DOMContentLoaded", () => {
     const agora   = new Date();
     const hora    = agora.getHours();
     const minuto  = agora.getMinutes();
-    const dia     = agora.getDay(); // 0 dom ... 6 sáb
+    const dia     = agora.getDay(); // 0 = domingo | 6 = sábado
 
-    // 🚫 SÁBADO: DESATIVA APENAS "ENTREGA" (não mostra overlay)
-    if (FECHA_TODO_SABADO && dia === 6) {
-      overlay.classList.remove("active");
+    const selectTipo   = document.getElementById("cliente-tipo");
+    const endContainer = document.getElementById("endereco-container");
+    const btnMapa      = document.getElementById("abrir-mapa");
 
-      const selectTipo = document.getElementById("cliente-tipo");
-      const endContainer = document.getElementById("endereco-container");
-      const btnMapa = document.getElementById("abrir-mapa");
+    const deliveryFechado = DELIVERY_CLOSED_OVERRIDE || (FECHA_TODO_SABADO && dia === 6);
 
+    // 🚚 DELIVERY FECHADO (mas loja aberta)
+    if (deliveryFechado) {
       if (selectTipo) {
-        // força Retirada
         selectTipo.value = "Retirada";
-
-        // desativa opção Entrega
         const optEntrega = selectTipo.querySelector('option[value="Entrega"]');
         if (optEntrega) optEntrega.disabled = true;
       }
-
       if (endContainer) endContainer.style.display = "none";
       if (btnMapa) btnMapa.style.display = "none";
 
-      // não retorna: ainda precisa checar horário pra overlay normal fora do expediente
-      // (mas sábado não fecha a loja)
+      let aviso = document.getElementById("delivery-closed-note");
+      if (!aviso && selectTipo) {
+        aviso = document.createElement("p");
+        aviso.id = "delivery-closed-note";
+        aviso.style.color = "#ff5252";
+        aviso.style.fontWeight = "bold";
+        aviso.style.marginTop = "6px";
+        aviso.textContent = "⚠️ Entregas temporariamente indisponíveis.";
+        selectTipo.parentNode.insertBefore(aviso, endContainer);
+      }
     } else {
-      // reativa entrega nos outros dias
-      const selectTipo = document.getElementById("cliente-tipo");
-      const endContainer = document.getElementById("endereco-container");
-      const btnMapa = document.getElementById("abrir-mapa");
-
+      // 🔄 DELIVERY ATIVO
       if (selectTipo) {
         const optEntrega = selectTipo.querySelector('option[value="Entrega"]');
         if (optEntrega) optEntrega.disabled = false;
       }
       if (endContainer) endContainer.style.display = "";
       if (btnMapa) btnMapa.style.display = "";
+
+      const aviso = document.getElementById("delivery-closed-note");
+      if (aviso) aviso.remove();
     }
 
-    // Dentro do horário normal?
-    const aberta = dentroDoHorario(hora, minuto);
-    if (aberta) {
+    // ⏱️ HORÁRIO DE FUNCIONAMENTO
+    if (dentroDoHorario(hora, minuto)) {
       overlay.classList.remove("active");
       return;
     }
 
-    // Próxima abertura
+    // 🕓 LOJA FECHADA → MOSTRA OVERLAY COM CONTAGEM
     const prox = proximaDataAbertura(agora);
     const diff = prox - agora;
 
-    const horas   = Math.floor(diff / 1000 / 60 / 60);
-    const minutos = Math.floor((diff / 1000 / 60) % 60);
-    const segundos= Math.floor((diff / 1000) % 60);
+    const horas    = Math.floor(diff / 1000 / 60 / 60);
+    const minutos  = Math.floor((diff / 1000 / 60) % 60);
+    const segundos = Math.floor((diff / 1000) % 60);
 
-    titulo.textContent = "⏳ Reabriremos em:";
-    contador.textContent =
-      `${String(horas).padStart(2,'0')}:${String(minutos).padStart(2,'0')}:${String(segundos).padStart(2,'0')}`;
+    if (titulo) titulo.textContent = "⏳ Reabriremos em:";
+    if (contador) {
+      contador.textContent =
+        `${String(horas).padStart(2, "0")}:` +
+        `${String(minutos).padStart(2, "0")}:` +
+        `${String(segundos).padStart(2, "0")}`;
+    }
 
     overlay.classList.add("active");
   }
@@ -2395,6 +2395,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
