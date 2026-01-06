@@ -710,6 +710,19 @@
 </head>
 
 <body>
+
+  <!-- 🕓 TELA DE LOJA FECHADA (BLOQUEIA PEDIDOS FORA DO HORÁRIO) -->
+  <div id="loja-fechada-overlay">
+    <div class="overlay-content">
+      <h2>🎮 O Fliperama está em modo descanso!</h2>
+      <p>Nosso delivery funciona das <strong>18h às 23h30</strong> todos os dias.</p>
+      <p>Fora desse horário, os pedidos ficam indisponíveis.</p>
+      <p class="endereco">📍 BR-465, nº 199 – Campo Lindo, Seropédica/RJ<br>KM 40 — Próximo à <strong>Life Fit Academia</strong></p>
+      <p id="contador-titulo">⏳ Reabriremos em:</p>
+      <div id="contador">00:00:00</div>
+    </div>
+  </div>
+
 <script>
 // variáveis globais do cardápio (carregadas via JSON externo)
 let categorias = [];
@@ -2290,7 +2303,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-```html
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const overlay  = document.getElementById("loja-fechada-overlay");
@@ -2395,8 +2407,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
-
-
 
 
 
