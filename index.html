@@ -2302,8 +2302,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const HORA_FECHA = 23, MIN_FECHA = 30;
 
   // ⚙️ CONFIGURAÇÕES ESPECIAIS
-  const FECHA_TODO_SABADO = true;           // sábado sem delivery
-  const DELIVERY_CLOSED_OVERRIDE = true;  // 🔴 MUDE PARA true SE QUISER FECHAR DELIVERY
+  const FECHA_TODO_SABADO = false;           // sábado sem delivery
+  const DELIVERY_CLOSED_OVERRIDE = false;  // 🔴 MUDE PARA true SE QUISER FECHAR DELIVERY
 
   function dentroDoHorario(hora, minuto) {
     const abre  = (hora > HORA_ABRE) || (hora === HORA_ABRE && minuto >= MIN_ABRE);
@@ -2395,6 +2395,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
