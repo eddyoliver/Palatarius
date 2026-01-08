@@ -2314,8 +2314,28 @@ document.addEventListener("DOMContentLoaded", () => {
   const HORA_FECHA = 23, MIN_FECHA = 30;
 
   // ⚙️ CONFIGURAÇÕES ESPECIAIS
-  const FECHA_TODO_SABADO = false;           // sábado sem delivery
-  const DELIVERY_CLOSED_OVERRIDE = false;  // 🔴 MUDE PARA true SE QUISER FECHAR DELIVERY
+  const FECHA_TODO_SABADO = false;          // sábado sem delivery
+  const DELIVERY_CLOSED_OVERRIDE = false;   // 🔴 true = fecha só o delivery
+
+  // ==============================
+  // 🔒 FECHAMENTO POR DATAS
+  // Formato: "YYYY-MM-DD"
+  // ==============================
+  const DATAS_FECHADAS = new Set([
+    "2026-01-08", // ← HOJE fechado (08/01/2026)
+    // "2026-01-09", // exemplo
+  ]);
+
+  function dataHojeISO(d = new Date()) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  }
+
+  function lojaFechadaHoje(agora = new Date()) {
+    return DATAS_FECHADAS.has(dataHojeISO(agora));
+  }
 
   function dentroDoHorario(hora, minuto) {
     const abre  = (hora > HORA_ABRE) || (hora === HORA_ABRE && minuto >= MIN_ABRE);
@@ -2340,9 +2360,44 @@ document.addEventListener("DOMContentLoaded", () => {
     const endContainer = document.getElementById("endereco-container");
     const btnMapa      = document.getElementById("abrir-mapa");
 
+    // ==============================
+    // 🔒 LOJA FECHADA HOJE (DATA ESPECÍFICA)
+    // ==============================
+    if (lojaFechadaHoje(agora)) {
+      // bloqueia o site/pedidos com overlay
+      if (titulo) titulo.textContent = "🚫 Hoje a loja estará fechada";
+      if (contador) contador.textContent = "Retornamos amanhã às 18h";
+      overlay.classList.add("active");
+
+      // opcional: força retirada e esconde endereço
+      if (selectTipo) {
+        selectTipo.value = "Retirada";
+        const optEntrega = selectTipo.querySelector('option[value="Entrega"]');
+        if (optEntrega) optEntrega.disabled = true;
+      }
+      if (endContainer) endContainer.style.display = "none";
+      if (btnMapa) btnMapa.style.display = "none";
+
+      // mostra aviso de delivery fechado
+      let aviso = document.getElementById("delivery-closed-note");
+      if (!aviso && selectTipo) {
+        aviso = document.createElement("p");
+        aviso.id = "delivery-closed-note";
+        aviso.style.color = "#ff5252";
+        aviso.style.fontWeight = "bold";
+        aviso.style.marginTop = "6px";
+        aviso.textContent = "⚠️ Hoje não estamos atendendo.";
+        selectTipo.parentNode.insertBefore(aviso, endContainer);
+      }
+
+      return; // <<< importante: para tudo aqui
+    }
+
+    // ==============================
+    // 🚚 CONTROLE DE DELIVERY (sem fechar a loja)
+    // ==============================
     const deliveryFechado = DELIVERY_CLOSED_OVERRIDE || (FECHA_TODO_SABADO && dia === 6);
 
-    // 🚚 DELIVERY FECHADO (mas loja aberta)
     if (deliveryFechado) {
       if (selectTipo) {
         selectTipo.value = "Retirada";
@@ -2363,7 +2418,6 @@ document.addEventListener("DOMContentLoaded", () => {
         selectTipo.parentNode.insertBefore(aviso, endContainer);
       }
     } else {
-      // 🔄 DELIVERY ATIVO
       if (selectTipo) {
         const optEntrega = selectTipo.querySelector('option[value="Entrega"]');
         if (optEntrega) optEntrega.disabled = false;
@@ -2375,25 +2429,27 @@ document.addEventListener("DOMContentLoaded", () => {
       if (aviso) aviso.remove();
     }
 
+    // ==============================
     // ⏱️ HORÁRIO DE FUNCIONAMENTO
+    // ==============================
     if (dentroDoHorario(hora, minuto)) {
       overlay.classList.remove("active");
       return;
     }
 
-    // 🕓 LOJA FECHADA → MOSTRA OVERLAY COM CONTAGEM
+    // 🕓 LOJA FECHADA → OVERLAY COM CONTAGEM
     const prox = proximaDataAbertura(agora);
     const diff = prox - agora;
 
     const horas    = Math.floor(diff / 1000 / 60 / 60);
-    const minutos  = Math.floor((diff / 1000 / 60) % 60);
+    const minutos2 = Math.floor((diff / 1000 / 60) % 60);
     const segundos = Math.floor((diff / 1000) % 60);
 
     if (titulo) titulo.textContent = "⏳ Reabriremos em:";
     if (contador) {
       contador.textContent =
         `${String(horas).padStart(2, "0")}:` +
-        `${String(minutos).padStart(2, "0")}:` +
+        `${String(minutos2).padStart(2, "0")}:` +
         `${String(segundos).padStart(2, "0")}`;
     }
 
@@ -2405,14 +2461,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+
 </body>
 </html>
-
-
-
-
-
-
-
-
 
