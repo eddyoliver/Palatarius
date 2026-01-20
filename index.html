@@ -630,11 +630,6 @@
       color: #e8e8e8;
     }
 
-    .overlay-content .aviso-fechamento {
-      color: #ffd54f;
-      font-weight: 700;
-    }
-
     .overlay-content .endereco {
       margin-top: 0.8rem;
       font-size: 1rem;
@@ -719,12 +714,11 @@
   <!-- 🕓 TELA DE LOJA FECHADA (BLOQUEIA PEDIDOS FORA DO HORÁRIO) -->
   <div id="loja-fechada-overlay">
     <div class="overlay-content">
-      <h2>Loja fechada</h2>
-      <p id="aviso-fechamento" class="aviso-fechamento" hidden></p>
-      <p>Nosso delivery funciona das <strong>18h as 23h30</strong> todos os dias.</p>
-      <p>Fora desse horario, os pedidos ficam indisponiveis.</p>
-      <p class="endereco">BR-465, n 199 - Campo Lindo, Seropedica/RJ<br>KM 40 - Proximo a <strong>Life Fit Academia</strong></p>
-      <p id="contador-titulo">Reabriremos em:</p>
+      <h2>🎮 O Fliperama está em modo descanso!</h2>
+      <p>Nosso delivery funciona das <strong>18h às 23h30</strong> todos os dias.</p>
+      <p>Fora desse horário, os pedidos ficam indisponíveis.</p>
+      <p class="endereco">📍 BR-465, nº 199 – Campo Lindo, Seropédica/RJ<br>KM 40 — Próximo à <strong>Life Fit Academia</strong></p>
+      <p id="contador-titulo">⏳ Reabriremos em:</p>
       <div id="contador">00:00:00</div>
     </div>
   </div>
@@ -916,8 +910,6 @@ async function carregarCardapio() {
     <div class="editor-tabs">
       <div class="editor-tab active" id="tab-cardapio">🍔 Cardápio</div>
       <div class="editor-tab" id="tab-ingredientes">🧂 Ingredientes</div>
-      <!-- 📅 Nova aba de funcionamento -->
-      <div class="editor-tab" id="tab-funcionamento">🕓 Funcionamento</div>
     </div>
 
     <!-- 🔸 Aba Cardápio -->
@@ -1001,36 +993,6 @@ async function carregarCardapio() {
       <div id="lista-ingredientes" style="margin-top:2rem;">
         <h3>Grupos e Ingredientes Cadastrados:</h3>
         <div id="ingredientes-editor"></div>
-      </div>
-    </div>
-
-    <!-- 🔸 Aba Funcionamento (nova) -->
-    <div id="editor-funcionamento" class="editor-section" style="display:none;">
-      <h2>Funcionamento da Loja</h2>
-      <div class="editor-form">
-        <label style="display:block;margin-bottom:0.5rem;">
-          <input type="checkbox" id="admin-manual-close"> Fechar loja manualmente
-        </label>
-        <label style="display:block;margin-bottom:0.5rem;">
-          Horário de abertura:<br>
-          <input type="time" id="admin-open-time">
-        </label>
-        <label style="display:block;margin-bottom:0.5rem;">
-          Horário de fechamento:<br>
-          <input type="time" id="admin-close-time">
-        </label>
-        <label style="display:block;margin-bottom:0.5rem;">
-          Fechar por data específica:<br>
-          <input type="date" id="admin-close-date">
-          <button id="add-close-date" type="button" class="primary" style="margin-left:0.5rem;">Adicionar Data</button>
-        </label>
-        <div id="close-dates-list" style="margin-bottom:0.5rem;"></div>
-        <label style="display:block;margin-bottom:0.5rem;">
-          Motivo do fechamento:<br>
-          <textarea id="admin-close-message" rows="3" placeholder="Insira uma mensagem..."></textarea>
-        </label>
-        <div id="admin-preview-text" style="color:#666;font-size:0.85rem;margin-bottom:0.5rem;"></div>
-        <button id="save-funcionamento" class="primary">Salvar Configurações</button>
       </div>
     </div>
   </section>
@@ -1720,21 +1682,12 @@ footer.addEventListener("click", () => {
   if (clickCount === 3) {
     const senha = prompt("🔐 Digite a senha de acesso:");
     if (senha === "EdLeoMarc&2025") {
-      // Remove o overlay de loja fechada para que o editor fique visível
-      const overlayEl = document.getElementById("loja-fechada-overlay");
-      if (overlayEl) {
-        overlayEl.classList.remove("active");
-        // Garante que o overlay não seja reativado pelo relógio de status
-        overlayEl.style.display = "none";
-      }
       document.getElementById("editor-screen").classList.add("active");
       alert("✅ Acesso concedido ao editor Palatarius!");
       refreshCategoriaSelect();
       if (typeof atualizarSelectGrupos === "function") atualizarSelectGrupos();
       renderEditorProdutos();
       renderEditorIngredientes();
-      // Carrega dados de funcionamento quando o editor é aberto
-      if (typeof loadFuncionamento === "function") loadFuncionamento();
     } else {
       alert("❌ Senha incorreta!");
     }
@@ -1748,9 +1701,6 @@ footer.addEventListener("click", () => {
 // ===============================
 document.getElementById("tab-cardapio").addEventListener("click", () => ativarAba("cardapio"));
 document.getElementById("tab-ingredientes").addEventListener("click", () => ativarAba("ingredientes"));
-
-// Aba de funcionamento
-document.getElementById("tab-funcionamento").addEventListener("click", () => ativarAba("funcionamento"));
 
 function ativarAba(aba) {
   document.querySelectorAll(".editor-tab").forEach(t => t.classList.remove("active"));
@@ -1766,11 +1716,6 @@ function ativarAba(aba) {
   if (aba === "ingredientes") {
     if (typeof atualizarSelectGrupos === "function") atualizarSelectGrupos();
     renderEditorIngredientes();
-  }
-
-  // Carrega dados de funcionamento quando a aba correspondente é ativada
-  if (aba === "funcionamento") {
-    if (typeof loadFuncionamento === "function") loadFuncionamento();
   }
 }
 
@@ -2363,7 +2308,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const overlay  = document.getElementById("loja-fechada-overlay");
   const contador = document.getElementById("contador");
   const titulo   = document.getElementById("contador-titulo");
-  const avisoFechamento = document.getElementById("aviso-fechamento");
 
   // ⏰ Horário de funcionamento (todos os dias)
   const HORA_ABRE  = 18, MIN_ABRE  = 0;
@@ -2378,57 +2322,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Formato: "YYYY-MM-DD"
   // ==============================
   const DATAS_FECHADAS = new Set([
-    "2026-01-19", // HOJE fechado (19/01/2026)
-    // "2026-01-20", // exemplo
+    "2026-01-08", // ← HOJE fechado (08/01/2026)
+    // "2026-01-09", // exemplo
   ]);
-
-  /*
-    =====================================================================
-    🎛️  MODO EDITOR / FECHAMENTO MANUAL
-    ---------------------------------------------------------------------
-    Para permitir que o administrador feche a loja manualmente, escolha um
-    horário de abertura/fechamento e defina um aviso personalizado, lemos
-    valores do localStorage. Se não houver valores salvos, usamos padrões
-    seguros (loja fechada hoje por falta de água).
-    - manualClose: booleano indicando se a loja deve permanecer fechada.
-    - customCloseMessage: mensagem exibida quando a loja está fechada.
-    - openTime / closeTime: horários de abertura/fechamento no formato HH:MM.
-  */
-  let manualClose = null;
-  try {
-    manualClose = JSON.parse(localStorage.getItem("manualClose"));
-  } catch (e) {
-    manualClose = null;
-  }
-  // Por padrão, mantém a loja fechada devido à falta de água até que o
-  // administrador reabra manualmente no Modo Editor.
-  if (manualClose === null || manualClose === undefined) {
-    manualClose = true;
-  }
-  const customCloseMessageDefault = "Nossa região está sem água e, por esse motivo, não abriremos hoje.";
-  const customCloseMessage = localStorage.getItem("customCloseMessage") || customCloseMessageDefault;
-  const openTimeStored = localStorage.getItem("openTime");
-  const closeTimeStored = localStorage.getItem("closeTime");
-
-  // Ajusta horário de funcionamento com base nos valores salvos no editor
-  let horaAbreOverride = HORA_ABRE;
-  let minAbreOverride  = MIN_ABRE;
-  let horaFechaOverride = HORA_FECHA;
-  let minFechaOverride  = MIN_FECHA;
-  if (openTimeStored) {
-    const partesAbre = openTimeStored.split(":");
-    if (partesAbre.length === 2) {
-      horaAbreOverride = parseInt(partesAbre[0], 10);
-      minAbreOverride  = parseInt(partesAbre[1], 10);
-    }
-  }
-  if (closeTimeStored) {
-    const partesFecha = closeTimeStored.split(":");
-    if (partesFecha.length === 2) {
-      horaFechaOverride = parseInt(partesFecha[0], 10);
-      minFechaOverride  = parseInt(partesFecha[1], 10);
-    }
-  }
 
   function dataHojeISO(d = new Date()) {
     const y = d.getFullYear();
@@ -2442,9 +2338,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function dentroDoHorario(hora, minuto) {
-    // Usa os horários de abertura/fechamento definidos no editor (horaAbreOverride etc.)
-    const abre  = (hora > horaAbreOverride) || (hora === horaAbreOverride && minuto >= minAbreOverride);
-    const fecha = (hora < horaFechaOverride) || (hora === horaFechaOverride && minuto <= minFechaOverride);
+    const abre  = (hora > HORA_ABRE) || (hora === HORA_ABRE && minuto >= MIN_ABRE);
+    const fecha = (hora < HORA_FECHA) || (hora === HORA_FECHA && minuto <= MIN_FECHA);
     return abre && fecha;
   }
 
@@ -2465,65 +2360,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const endContainer = document.getElementById("endereco-container");
     const btnMapa      = document.getElementById("abrir-mapa");
 
-    if (avisoFechamento) {
-      avisoFechamento.hidden = true;
-      avisoFechamento.textContent = "";
-    }
-
-    // ===================================================================
-    // 🔒 FECHAMENTO MANUAL (configurado no Modo Editor)
-    // Se 'manualClose' estiver definido como true, fecha a loja
-    // independentemente de horário ou datas específicas.
-    if (manualClose) {
-      overlay.classList.add("active");
-      // Ajusta o título: mantém "Loja fechada" no cabeçalho (h2) e limpa o contador título
-      const h2Elem = overlay ? overlay.querySelector("h2") : null;
-      if (h2Elem) {
-        h2Elem.textContent = "Loja fechada";
-      }
-      // Limpa o título da contagem para não exibir "Reabriremos em"
-      if (titulo) {
-        titulo.textContent = "";
-      }
-      // Não mostra contagem regressiva quando fechado manualmente
-      if (contador) {
-        contador.textContent = "";
-      }
-      // Mostra aviso específico se disponível
-      if (avisoFechamento) {
-        avisoFechamento.hidden = false;
-        avisoFechamento.textContent = customCloseMessage;
-      }
-      // Força opção Retirada e esconde endereço/mapa
-      if (selectTipo) {
-        selectTipo.value = "Retirada";
-        const optEntrega = selectTipo.querySelector('option[value="Entrega"]');
-        if (optEntrega) optEntrega.disabled = true;
-      }
-      if (endContainer) endContainer.style.display = "none";
-      if (btnMapa) btnMapa.style.display = "none";
-      // Remove qualquer aviso de entrega fechada existente enquanto a loja
-      // estiver fechada manualmente (overlay já comunica ao cliente)
-      const notaEntrega = document.getElementById("delivery-closed-note");
-      if (notaEntrega) {
-        notaEntrega.remove();
-      }
-      return;
-    }
-
     // ==============================
     // 🔒 LOJA FECHADA HOJE (DATA ESPECÍFICA)
     // ==============================
     if (lojaFechadaHoje(agora)) {
       // bloqueia o site/pedidos com overlay
-      if (titulo) titulo.textContent = "Hoje a loja estara fechada";
-      if (contador) contador.textContent = "Retornamos amanha as 18h";
+      if (titulo) titulo.textContent = "🚫 Hoje a loja estará fechada";
+      if (contador) contador.textContent = "Retornamos amanhã às 18h";
       overlay.classList.add("active");
-
-      if (avisoFechamento) {
-        avisoFechamento.hidden = false;
-        avisoFechamento.textContent = "Nossa regiao esta com falta de agua e, por esse motivo, nao abriremos hoje.";
-      }
 
       // opcional: força retirada e esconde endereço
       if (selectTipo) {
@@ -2542,7 +2386,7 @@ document.addEventListener("DOMContentLoaded", () => {
         aviso.style.color = "#ff5252";
         aviso.style.fontWeight = "bold";
         aviso.style.marginTop = "6px";
-        aviso.textContent = "Hoje nao estamos atendendo.";
+        aviso.textContent = "⚠️ Hoje não estamos atendendo.";
         selectTipo.parentNode.insertBefore(aviso, endContainer);
       }
 
@@ -2570,7 +2414,7 @@ document.addEventListener("DOMContentLoaded", () => {
         aviso.style.color = "#ff5252";
         aviso.style.fontWeight = "bold";
         aviso.style.marginTop = "6px";
-        aviso.textContent = "Entregas temporariamente indisponiveis.";
+        aviso.textContent = "⚠️ Entregas temporariamente indisponíveis.";
         selectTipo.parentNode.insertBefore(aviso, endContainer);
       }
     } else {
@@ -2601,7 +2445,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const minutos2 = Math.floor((diff / 1000 / 60) % 60);
     const segundos = Math.floor((diff / 1000) % 60);
 
-    if (titulo) titulo.textContent = "Reabriremos em:";
+    if (titulo) titulo.textContent = "⏳ Reabriremos em:";
     if (contador) {
       contador.textContent =
         `${String(horas).padStart(2, "0")}:` +
@@ -2616,295 +2460,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(atualizarStatusLoja, 1000);
 });
 </script>
-
-  <!-- ==============================
-       🎛️  MODO EDITOR PARA GERENCIAR LOJA
-       - Clique no botão ⚙️ no canto inferior direito para abrir.
-       - Permite definir horário de abertura/fechamento, aviso customizado
-         e fechar a loja manualmente sem editar o código.
-    ============================== -->
-  <div id="editor-toggle" title="Abrir modo editor">
-    ⚙️
-  </div>
-  <div id="editor-panel">
-    <h3>Modo Editor</h3>
-    <label>
-      <input type="checkbox" id="manual-close-checkbox">
-      Fechar manualmente
-    </label>
-    <label>
-      Mensagem de fechamento:<br>
-      <textarea id="close-message" rows="3" placeholder="Insira um aviso..."></textarea>
-    </label>
-    <label>
-      Horário de abertura:<br>
-      <input type="time" id="open-time">
-    </label>
-    <label>
-      Horário de fechamento:<br>
-      <input type="time" id="close-time">
-    </label>
-    <button id="save-editor" class="primary">Salvar</button>
-  </div>
-
-  <style>
-    /* Estilo do botão e painel do Modo Editor */
-    #editor-toggle {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--secondary);
-      color: white;
-      padding: 0.6rem 0.8rem;
-      border-radius: 50%;
-      font-size: 1.4rem;
-      cursor: pointer;
-      z-index: 100000;
-      box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
-      text-align: center;
-      /* Oculta o botão antigo do modo editor pois a aba de funcionamento substitui esse painel */
-      display: none;
-    }
-    #editor-panel {
-      display: none;
-      position: fixed;
-      bottom: 80px;
-      right: 20px;
-      background: #fff;
-      color: var(--text);
-      padding: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      z-index: 100000;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      width: 280px;
-    }
-    #editor-panel h3 {
-      margin-top: 0;
-      margin-bottom: 0.5rem;
-      color: var(--secondary);
-      font-size: 1.2rem;
-    }
-    #editor-panel label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-size: 0.9rem;
-    }
-    #editor-panel textarea,
-    #editor-panel input[type="time"] {
-      width: 100%;
-      margin-top: 0.3rem;
-      padding: 0.4rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 0.9rem;
-    }
-    #editor-panel button {
-      width: 100%;
-      margin-top: 0.6rem;
-    }
-  </style>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const toggle = document.getElementById("editor-toggle");
-      const panel  = document.getElementById("editor-panel");
-      const manualCheckbox = document.getElementById("manual-close-checkbox");
-      const messageInput   = document.getElementById("close-message");
-      const openInput      = document.getElementById("open-time");
-      const closeInput     = document.getElementById("close-time");
-      const saveBtn        = document.getElementById("save-editor");
-
-      // Carrega valores salvos
-      try {
-        const storedManual = JSON.parse(localStorage.getItem("manualClose"));
-        if (storedManual !== null && storedManual !== undefined) {
-          manualCheckbox.checked = storedManual;
-        } else {
-          manualCheckbox.checked = false;
-        }
-      } catch (e) {
-        manualCheckbox.checked = false;
-      }
-      const storedMessage = localStorage.getItem("customCloseMessage");
-      if (storedMessage) messageInput.value = storedMessage;
-
-      const storedOpen = localStorage.getItem("openTime");
-      const storedClose = localStorage.getItem("closeTime");
-      const defaultOpen = "18:00";
-      const defaultClose = "23:30";
-      openInput.value = storedOpen || defaultOpen;
-      closeInput.value = storedClose || defaultClose;
-
-      if (toggle) {
-        toggle.addEventListener("click", () => {
-          panel.style.display = panel.style.display === "block" ? "none" : "block";
-        });
-      }
-      if (saveBtn) {
-        saveBtn.addEventListener("click", () => {
-          localStorage.setItem("manualClose", manualCheckbox.checked);
-          localStorage.setItem("customCloseMessage", messageInput.value);
-          localStorage.setItem("openTime", openInput.value);
-          localStorage.setItem("closeTime", closeInput.value);
-          alert("Configurações salvas! Recarregue a página para aplicar.");
-        });
-      }
-    });
-  </script>
-
-  <!-- =====================================================
-       Funcionalidades da aba de Funcionamento (nova)
-       - Gerencia horários, fechamento manual e datas específicas
-       - Persistência em localStorage
-       - Permite abrir o painel de administração mesmo com a loja fechada
-    ===================================================== -->
-  <script>
-    // Carrega informações salvas e popula os campos da aba de funcionamento
-    function loadFuncionamento() {
-      const chk = document.getElementById('admin-manual-close');
-      const msgInput = document.getElementById('admin-close-message');
-      const openInput = document.getElementById('admin-open-time');
-      const closeInput = document.getElementById('admin-close-time');
-      const list = document.getElementById('close-dates-list');
-      if (!chk || !msgInput || !openInput || !closeInput || !list) return;
-      let manual = false;
-      try {
-        manual = JSON.parse(localStorage.getItem('manualClose') || 'false');
-      } catch (e) {
-        manual = false;
-      }
-      chk.checked = !!manual;
-      msgInput.value = localStorage.getItem('customCloseMessage') || '';
-      const openT = localStorage.getItem('openTime') || '18:00';
-      const closeT = localStorage.getItem('closeTime') || '23:30';
-      openInput.value = openT;
-      closeInput.value = closeT;
-      let dates = [];
-      try {
-        dates = JSON.parse(localStorage.getItem('closedDates') || '[]');
-        if (!Array.isArray(dates)) dates = [];
-      } catch (e) {
-        dates = [];
-      }
-      list.innerHTML = '';
-      dates.forEach(date => {
-        const row = document.createElement('div');
-        row.style.display = 'flex';
-        row.style.justifyContent = 'space-between';
-        row.style.alignItems = 'center';
-        row.style.background = '#f6f6f6';
-        row.style.margin = '3px 0';
-        row.style.padding = '4px 6px';
-        row.style.borderRadius = '4px';
-        row.innerHTML = `<span>${date}</span> <button style="background:none;border:none;color:red;font-weight:bold;cursor:pointer;" onclick="removeCloseDate('${date}')">x</button>`;
-        list.appendChild(row);
-      });
-      updatePreviewFechamento();
-    }
-
-    // Atualiza a prévia da mensagem de fechamento enquanto o usuário digita
-    function updatePreviewFechamento() {
-      const msg = document.getElementById('admin-close-message');
-      const preview = document.getElementById('admin-preview-text');
-      if (!msg || !preview) return;
-      const text = msg.value.trim();
-      preview.textContent = text || '';
-    }
-
-    // Salva as configurações definidas na aba de funcionamento
-    function saveFuncionamento() {
-      const manual = document.getElementById('admin-manual-close').checked;
-      const msg = document.getElementById('admin-close-message').value.trim();
-      const openTime = document.getElementById('admin-open-time').value || '18:00';
-      const closeTime = document.getElementById('admin-close-time').value || '23:30';
-      localStorage.setItem('manualClose', manual);
-      localStorage.setItem('customCloseMessage', msg);
-      localStorage.setItem('openTime', openTime);
-      localStorage.setItem('closeTime', closeTime);
-      alert('Configurações salvas! Recarregue a página para aplicar.');
-    }
-
-    // Remove uma data específica de fechamento e atualiza a lista
-    function removeCloseDate(date) {
-      let dates = [];
-      try {
-        dates = JSON.parse(localStorage.getItem('closedDates') || '[]');
-        if (!Array.isArray(dates)) dates = [];
-      } catch (e) {
-        dates = [];
-      }
-      dates = dates.filter(d => d !== date);
-      localStorage.setItem('closedDates', JSON.stringify(dates));
-      loadFuncionamento();
-    }
-
-    // Expor funções no escopo global para uso em elementos inline
-    window.loadFuncionamento = loadFuncionamento;
-    window.removeCloseDate  = removeCloseDate;
-
-    // Adiciona eventos aos componentes da aba de funcionamento
-    document.addEventListener('DOMContentLoaded', () => {
-      const msgInput = document.getElementById('admin-close-message');
-      if (msgInput) msgInput.addEventListener('input', updatePreviewFechamento);
-      const addDateBtn = document.getElementById('add-close-date');
-      if (addDateBtn) {
-        addDateBtn.addEventListener('click', () => {
-          const dateInput = document.getElementById('admin-close-date');
-          const dateVal = dateInput.value;
-          if (!dateVal) {
-            alert('Escolha uma data válida.');
-            return;
-          }
-          let arr = [];
-          try {
-            arr = JSON.parse(localStorage.getItem('closedDates') || '[]');
-            if (!Array.isArray(arr)) arr = [];
-          } catch (e) {
-            arr = [];
-          }
-          if (!arr.includes(dateVal)) arr.push(dateVal);
-          localStorage.setItem('closedDates', JSON.stringify(arr));
-          dateInput.value = '';
-          loadFuncionamento();
-        });
-      }
-      const saveBtnFunc = document.getElementById('save-funcionamento');
-      if (saveBtnFunc) saveBtnFunc.addEventListener('click', saveFuncionamento);
-    });
-
-    // Permite abrir o editor administrativo com três cliques no overlay de loja fechada
-    document.addEventListener('DOMContentLoaded', () => {
-      let overlayClicks = 0;
-      const overlay = document.getElementById('loja-fechada-overlay');
-      if (overlay) {
-        overlay.addEventListener('click', () => {
-          overlayClicks++;
-          if (overlayClicks === 3) {
-            const senha = prompt('🔐 Digite a senha de acesso:');
-            if (senha === 'EdLeoMarc&2025') {
-              // Remove o overlay de loja fechada e esconde para não reaparecer durante a sessão
-              overlay.classList.remove('active');
-              overlay.style.display = 'none';
-              document.getElementById('editor-screen').classList.add('active');
-              alert('✅ Acesso concedido ao editor Palatarius!');
-              // Atualiza seletores e dados do editor
-              refreshCategoriaSelect();
-              if (typeof atualizarSelectGrupos === 'function') atualizarSelectGrupos();
-              renderEditorProdutos();
-              renderEditorIngredientes();
-              // Carrega dados de funcionamento quando o editor é aberto
-              if (typeof loadFuncionamento === 'function') loadFuncionamento();
-            } else {
-              alert('❌ Senha incorreta!');
-            }
-            overlayClicks = 0;
-          }
-          setTimeout(() => { overlayClicks = 0; }, 1500);
-        });
-      }
-    });
-  </script>
 
 
 </body>
