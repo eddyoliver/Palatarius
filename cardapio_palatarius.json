@@ -1,5 +1,5 @@
 {
-  "atualizado_em": "2026-01-18T20:17:07.336Z",
+  "atualizado_em": "2025-11-21T14:01:13.944Z",
   "versao": "10.1",
   "categorias": [
     {
@@ -9,7 +9,7 @@
           "nome": "Hadouken",
           "preco": 10.5,
           "imagem": "Hadouken.jpg",
-          "descricao": "O golpe clássico da Palatarius! Pão americano macio com gergelim, carne artesanal 60g (blend bovino + bacon ou calabresa), ovo, alface e tomate frescos, ketchup e maionese especial. Um hambúrguer imbatível — rápido, direto e cheio de poder!",
+          "descricao": "Um Hamburguer clássico imbatível: pão macio, carne artesanal 60g do nosso blend (bovino + bacon ou bovino + calabresa), ovo, alface e tomate frescos, ketchup e maionese. Extras: molho Billy Jack, molho Verde, molho Tártaro, alho torrado ou cebola crispy.",
           "limites": {
             "Carnes": 1,
             "Molhos": 1,
@@ -22,7 +22,15 @@
             "Sabores Açai": 0,
             "Sabores Sorvete": 0,
             "HotDog Proteina": 0,
-            "Refrigerantes Sabores": 0
+            "Refrigerantes Sabores": 0,
+            "Opção 1": 0,
+            "Opção 2": 0,
+            "Opção 3": 0,
+            "Opção 4": 0,
+            "Opção 5": 0,
+            "Opção 6": 0,
+            "Opção 7": 0,
+            "Opção 8": 0
           },
           "ingredientesPermitidos": {
             "Carnes": "*",
@@ -32,9 +40,9 @@
         },
         {
           "nome": "Fatality",
-          "preco": 11,
+          "preco": 14.5,
           "imagem": "Fatality.jpg",
-          "descricao": "Explosão de sabor que nocauteia a fome! X-Bacon artesanal com carne 60g, queijo derretido, ovo, salada fresca e bacon crocante. O golpe final do sabor — um verdadeiro campeão das arenas!",
+          "descricao": "Explosão de sabor! Nosso X-Bacon Blend artesanal de com bacon 60g, queijo derretido, ovo, salada fresca e fatias de bacon crocante. Um golpe certeiro contra a fome!",
           "limites": {
             "Carnes": 1,
             "Molhos": 1,
@@ -47,7 +55,15 @@
             "Sabores Açai": 0,
             "Sabores Sorvete": 0,
             "HotDog Proteina": 0,
-            "Refrigerantes Sabores": 0
+            "Refrigerantes Sabores": 0,
+            "Opção 1": 0,
+            "Opção 2": 0,
+            "Opção 3": 0,
+            "Opção 4": 0,
+            "Opção 5": 0,
+            "Opção 6": 0,
+            "Opção 7": 0,
+            "Opção 8": 0
           },
           "ingredientesPermitidos": {
             "Carnes": "*",
@@ -57,9 +73,9 @@
         },
         {
           "nome": "Chamas do Dragão",
-          "preco": 11,
+          "preco": 14.5,
           "imagem": "Chamas_Dragao.jpg",
-          "descricao": "Intenso como o cosmo! Blend calabresa artesanal 60g, queijo derretido, ovo, salada fresca, e fatias de calabresa na chapa. Finalizado com ketchup e maionese Palatarius. Perfeito para quem carrega o fogo sagrado da fome!",
+          "descricao": "Intenso como o cosmo: Nosso X-Calabresa com blend artesanal 60g, queijo, ovo, salada e fatias de calabresa na chapa. Finalizado com ketchup e maionese.",
           "limites": {
             "Carnes": 1,
             "Molhos": 1,
@@ -72,7 +88,15 @@
             "Sabores Açai": 0,
             "Sabores Sorvete": 0,
             "HotDog Proteina": 0,
-            "Refrigerantes Sabores": 0
+            "Refrigerantes Sabores": 0,
+            "Opção 1": 0,
+            "Opção 2": 0,
+            "Opção 3": 0,
+            "Opção 4": 0,
+            "Opção 5": 0,
+            "Opção 6": 0,
+            "Opção 7": 0,
+            "Opção 8": 0
           },
           "ingredientesPermitidos": {
             "Carnes": "*",
@@ -82,9 +106,9 @@
         },
         {
           "nome": "Kamehameha",
-          "preco": 18,
+          "preco": 21.5,
           "imagem": "kamehameha.jpg",
-          "descricao": "Poder em dobro! Dois blends artesanais 60g, dois ovos, queijo, bacon, calabresa, presunto, milho, ervilha e batata palha. Energia pura que explode em sabor — um lanche lendário!",
+          "descricao": "Poder em dobro! X-Duplo, Dois blends artesanais 60g, dois ovos, queijo, bacon, calabresa, presunto, milho, ervilha e batata palha. Energia de sobra! Vai detonar sua fome!",
           "limites": {
             "Carnes": 2,
             "Molhos": 1,
@@ -97,7 +121,15 @@
             "Sabores Açai": 0,
             "Sabores Sorvete": 0,
             "HotDog Proteina": 0,
-            "Refrigerantes Sabores": 0
+            "Refrigerantes Sabores": 0,
+            "Opção 1": 0,
+            "Opção 2": 0,
+            "Opção 3": 0,
+            "Opção 4": 0,
+            "Opção 5": 0,
+            "Opção 6": 0,
+            "Opção 7": 0,
+            "Opção 8": 0
           },
           "ingredientesPermitidos": {
             "Carnes": "*",
@@ -107,9 +139,9 @@
         },
         {
           "nome": "Modo Bijuu",
-          "preco": 25,
+          "preco": 28.5,
           "imagem": "modo_bijuu.jpg",
-          "descricao": "Força máxima! Três blends de 60g, três ovos, queijo, bacon, presunto, milho, ervilha e batata palha. Um chakra de sabor para quem quer liberar o monstro da fome interior!",
+          "descricao": "O Gigante X-Triplo Força máxima! Três blends artesanais 60g, três ovos, queijo, bacon, presunto, milho, ervilha e batata palha. Um verdadeiro chakra de sabor!",
           "limites": {
             "Carnes": 3,
             "Molhos": 1,
@@ -122,7 +154,15 @@
             "Sabores Açai": 0,
             "Sabores Sorvete": 0,
             "HotDog Proteina": 0,
-            "Refrigerantes Sabores": 0
+            "Refrigerantes Sabores": 0,
+            "Opção 1": 0,
+            "Opção 2": 0,
+            "Opção 3": 0,
+            "Opção 4": 0,
+            "Opção 5": 0,
+            "Opção 6": 0,
+            "Opção 7": 0,
+            "Opção 8": 0
           },
           "ingredientesPermitidos": {
             "Carnes": "*",
@@ -132,9 +172,9 @@
         },
         {
           "nome": "Banquete do Luffy",
-          "preco": 12,
+          "preco": 15.5,
           "imagem": "Banquete_Luffy.jpg",
-          "descricao": "O X-Tudo dos piratas! Blend artesanal 60g, ovo, salada, bacon, presunto, queijo, milho, ervilha e batata palha. Um banquete digno do Capitão do Chapéu de Palha!",
+          "descricao": "Um X-Tudo o que cabe num pão! Blend artesanal de 60g, ovo, salada, bacon, presunto, queijo, milho, ervilha e batata palha. Digno do apetite de um pirata!",
           "limites": {
             "Carnes": 1,
             "Molhos": 1,
@@ -147,7 +187,15 @@
             "Sabores Açai": 0,
             "Sabores Sorvete": 0,
             "HotDog Proteina": 0,
-            "Refrigerantes Sabores": 0
+            "Refrigerantes Sabores": 0,
+            "Opção 1": 0,
+            "Opção 2": 0,
+            "Opção 3": 0,
+            "Opção 4": 0,
+            "Opção 5": 0,
+            "Opção 6": 0,
+            "Opção 7": 0,
+            "Opção 8": 0
           },
           "ingredientesPermitidos": {
             "Carnes": "*",
@@ -157,7 +205,7 @@
         },
         {
           "nome": "De Volta pro Sabor",
-          "preco": 10,
+          "preco": 9.5,
           "imagem": "de_volta_sabor.jpg",
           "descricao": "O clássico que nunca sai de moda! Pão americano, carne artesanal suculenta, cheddar cremoso e molho de alho torrado. Simples e cheio de personalidade — puro sabor em cada mordida!",
           "limites": {
@@ -332,22 +380,30 @@
         },
         {
           "nome": "Brutality",
-          "preco": 55,
+          "preco": 60,
           "imagem": "brutality.jpg",
           "descricao": "Batatas crocantes com calabresa, cheddar, bacon, frango a passarinho, nuget de frango, aneis de cebola, ovos de codorna e acompanhamentos premium com molhos Palatarius.",
           "limites": {
-            "Proteínas": 0,
-            "Acompanhamentos": 0,
             "Carnes": 0,
             "Molhos": 3,
             "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
             "Toppings": 0,
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
             "Sabores Sorvete": 0,
             "HotDog Proteina": 0,
-            "Refrigerantes Sabores": 0
+            "Refrigerantes Sabores": 0,
+            "Opção 1": 0,
+            "Opção 2": 0,
+            "Opção 3": 0,
+            "Opção 4": 0,
+            "Opção 5": 0,
+            "Opção 6": 0,
+            "Opção 7": 0,
+            "Opção 8": 0
           },
           "ingredientesPermitidos": {
             "Molhos": "*"
@@ -433,22 +489,30 @@
       "itens": [
         {
           "nome": "Power Mash",
-          "preco": 10,
+          "preco": 13,
           "imagem": "power_mash.jpg",
-          "descricao": "Purê cremoso de batatas com queijo derretido. Escolha 1 proteína e até 18 acompanhamentos.",
+          "descricao": "Purê cremoso de batatas com queijo derretido. Escolha 1 proteína e até 12 acompanhamentos.",
           "limites": {
-            "Proteínas": 1,
-            "Acompanhamentos": 15,
             "Carnes": 0,
             "Molhos": 0,
             "Crocantes Extras": 0,
+            "Proteínas": 1,
+            "Acompanhamentos": 12,
             "Toppings": 0,
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
             "Sabores Sorvete": 0,
             "HotDog Proteina": 0,
-            "Refrigerantes Sabores": 0
+            "Refrigerantes Sabores": 0,
+            "Opção 1": 0,
+            "Opção 2": 0,
+            "Opção 3": 0,
+            "Opção 4": 0,
+            "Opção 5": 0,
+            "Opção 6": 0,
+            "Opção 7": 0,
+            "Opção 8": 0
           },
           "ingredientesPermitidos": {
             "Proteínas": "*",
@@ -478,6 +542,84 @@
             "Proteínas": "*",
             "Acompanhamentos": "*"
           }
+        },
+        {
+          "nome": "Smash",
+          "preco": 8,
+          "imagem": "power_mash.jpg",
+          "descricao": "Purê cremoso de batatas. Escolha 1 proteína e até 1 acompanhamento de cada um dos 8 grupos!",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 1,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0,
+            "Opção 1": 1,
+            "Opção 2": 1,
+            "Opção 3": 1,
+            "Opção 4": 1,
+            "Opção 5": 1,
+            "Opção 6": 1,
+            "Opção 7": 1,
+            "Opção 8": 1
+          },
+          "ingredientesPermitidos": {
+            "Proteínas": "*",
+            "Opção 1": "*",
+            "Opção 2": "*",
+            "Opção 3": "*",
+            "Opção 4": "*",
+            "Opção 5": "*",
+            "Opção 6": "*",
+            "Opção 7": "*",
+            "Opção 8": "*"
+          }
+        },
+        {
+          "nome": "Batata Sem Fim",
+          "preco": 24,
+          "imagem": "power_mash.jpg",
+          "descricao": "Versão gigante com purê, 3 proteínas e todos os  acompanhamentos. que quiser! Gigantemente Deliciosa! Permite escolha de todos os ingredientes.",
+          "limites": {
+            "Carnes": 0,
+            "Molhos": 0,
+            "Crocantes Extras": 0,
+            "Proteínas": 3,
+            "Acompanhamentos": 0,
+            "Toppings": 0,
+            "Caldas": 0,
+            "Caldas Fini (+R$1)": 0,
+            "Sabores Açai": 0,
+            "Sabores Sorvete": 0,
+            "HotDog Proteina": 0,
+            "Refrigerantes Sabores": 0,
+            "Opção 1": 3,
+            "Opção 2": 4,
+            "Opção 3": 3,
+            "Opção 4": 2,
+            "Opção 5": 2,
+            "Opção 6": 3,
+            "Opção 7": 2,
+            "Opção 8": 2
+          },
+          "ingredientesPermitidos": {
+            "Proteínas": "*",
+            "Opção 1": "*",
+            "Opção 2": "*",
+            "Opção 3": "*",
+            "Opção 4": "*",
+            "Opção 5": "*",
+            "Opção 6": "*",
+            "Opção 7": "*",
+            "Opção 8": "*"
+          }
         }
       ]
     },
@@ -486,15 +628,15 @@
       "itens": [
         {
           "nome": "Pastel Shuriken",
-          "preco": 10,
+          "preco": 13,
           "imagem": "pastel_shuriken.jpg",
           "descricao": "Pastel 15cm — crocante e rápido no gatilho! Monte o seu com 1 proteína e acompanhamentos.",
           "limites": {
-            "Proteínas": 1,
-            "Acompanhamentos": 15,
             "Carnes": 0,
             "Molhos": 0,
             "Crocantes Extras": 0,
+            "Proteínas": 1,
+            "Acompanhamentos": 15,
             "Toppings": 0,
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
@@ -510,15 +652,15 @@
         },
         {
           "nome": "Pastel Grand Line",
-          "preco": 15,
+          "preco": 18,
           "imagem": "pastel_grand_line.jpg",
           "descricao": "Pastel 25cm — tamanho de aventura! Monte o seu com 2 proteínas e acompanhamentos à sua escolha.",
           "limites": {
-            "Proteínas": 2,
-            "Acompanhamentos": 18,
             "Carnes": 0,
             "Molhos": 0,
             "Crocantes Extras": 0,
+            "Proteínas": 2,
+            "Acompanhamentos": 18,
             "Toppings": 0,
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
@@ -539,15 +681,15 @@
       "itens": [
         {
           "nome": "Prensado Obby",
-          "preco": 13,
+          "preco": 13.5,
           "imagem": "prensado_obby.jpg",
-          "descricao": "Hot dog prensado com purê, batata palha, queijo ralado e ovo. Um clássico lendário!",
+          "descricao": "Hot dog prensado com purê, e com classicos ingredientes; Pão, 1 salsicha ou 1 Linguiça, Pimentão, Tomate, Cebola, Beterraba, Cenoura, Ervilha, Milho verde, Passas, Azeitona, Ketchup, Mostarda e Maionese e para fechar Batata palha, Queijo Ralado e Ovo de Codorna.",
           "limites": {
-            "Molhos": 1,
-            "Acompanhamentos": 0,
             "Carnes": 0,
+            "Molhos": 1,
             "Crocantes Extras": 0,
             "Proteínas": 0,
+            "Acompanhamentos": 0,
             "Toppings": 0,
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
@@ -565,13 +707,13 @@
           "nome": "Prensado Modo Criativo",
           "preco": 18,
           "imagem": "modo_criativo.jpg",
-          "descricao": "Crie seu lanche do seu jeito! Escolha proteína extra e até 18 ingredientes. Seu sabor, suas regras!",
+          "descricao": "Crie seu lanche do seu jeito! Escolha proteína extra e até 18 ingredientes. Seu sabor, suas regras!\nOBS: Esse não leva ingredientes dos classicos tipo molho... ele vai apenas com o que você selecionar!",
           "limites": {
-            "Proteínas": 1,
-            "Molhos": 1,
-            "Acompanhamentos": 18,
             "Carnes": 0,
+            "Molhos": 1,
             "Crocantes Extras": 0,
+            "Proteínas": 1,
+            "Acompanhamentos": 18,
             "Toppings": 0,
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
@@ -589,15 +731,15 @@
         },
         {
           "nome": "Hot Dog Noob Raiz",
-          "preco": 11.5,
+          "preco": 12,
           "imagem": "hotdog_noob_raiz.jpg",
-          "descricao": "O clássico da base! Pão, salsicha ou linguiça, legumes e molhos Palatarius. Finalizado com batata palha e ovo de codorna.",
+          "descricao": "O clássico da base! Pão, 1 salsicha ou 1 Linguiça, Pimentão, Tomate, Cebola, Beterraba, Cenoura, Ervilha, Milho verde, Passas, Azeitona, Ketchup, Mostarda e Maionese e para fechar Batata palha, Queijo Ralado e Ovo de Codorna.",
           "limites": {
-            "Proteínas": 0,
-            "Molhos": 0,
-            "Acompanhamentos": 0,
             "Carnes": 0,
+            "Molhos": 0,
             "Crocantes Extras": 0,
+            "Proteínas": 0,
+            "Acompanhamentos": 0,
             "Toppings": 0,
             "Caldas": 0,
             "Caldas Fini (+R$1)": 0,
@@ -992,7 +1134,7 @@
       "itens": [
         {
           "nome": "“Tapioca Kanto” – Pequena",
-          "preco": 10,
+          "preco": 13,
           "imagem": "Tapioca_kanto.jpg",
           "descricao": "Primeira Região Pokémon (Kanto, 1996)\nA clássica de todas!\nFeita com massa fina e crocante de tapioca, recheada com 1 proteína à escolha (carne, frango, costela, pernil ou calabresa) e até 10 acompanhamentos da casa.\nSabor tradicional, direto e nostálgico — como a jornada começa!",
           "limites": {
@@ -1000,14 +1142,22 @@
             "Molhos": 0,
             "Crocantes Extras": 0,
             "Proteínas": 1,
+            "Acompanhamentos": 15,
             "Toppings": 0,
             "Caldas": 0,
-            "Acompanhamentos": 15,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
             "Sabores Sorvete": 0,
             "HotDog Proteina": 0,
-            "Refrigerantes Sabores": 0
+            "Refrigerantes Sabores": 0,
+            "Opção 1": 0,
+            "Opção 2": 0,
+            "Opção 3": 0,
+            "Opção 4": 0,
+            "Opção 5": 0,
+            "Opção 6": 0,
+            "Opção 7": 0,
+            "Opção 8": 0
           },
           "ingredientesPermitidos": {
             "Proteínas": "*",
@@ -1016,22 +1166,30 @@
         },
         {
           "nome": "“Tapioca Johto” – Média",
-          "preco": 15,
+          "preco": 18,
           "imagem": "tapioca_johto.jpg",
-          "descricao": "Segunda Região Pokémon (Johto, 1999)\nUma evolução da clássica!\nFeita com massa artesanal de tapioca, recheada com 2 proteínas e acompanhamentos selecionados (até 18 itens).\nCombina texturas e sabores equilibrados — perfeita para quem já evoluiu o paladar!",
+          "descricao": "Segunda Região Pokémon (Johto, 1999)\nUma evolução da clássica!\nFeita com massa de tapioca, recheada com 2 proteínas e acompanhamentos selecionados (até 18 itens).\nCombina texturas e sabores equilibrados — perfeita para quem já evoluiu o paladar!",
           "limites": {
             "Carnes": 0,
             "Molhos": 0,
             "Crocantes Extras": 0,
             "Proteínas": 2,
+            "Acompanhamentos": 18,
             "Toppings": 0,
             "Caldas": 0,
-            "Acompanhamentos": 18,
             "Caldas Fini (+R$1)": 0,
             "Sabores Açai": 0,
             "Sabores Sorvete": 0,
             "HotDog Proteina": 0,
-            "Refrigerantes Sabores": 0
+            "Refrigerantes Sabores": 0,
+            "Opção 1": 0,
+            "Opção 2": 0,
+            "Opção 3": 0,
+            "Opção 4": 0,
+            "Opção 5": 0,
+            "Opção 6": 0,
+            "Opção 7": 0,
+            "Opção 8": 0
           },
           "ingredientesPermitidos": {
             "Proteínas": "*",
@@ -1531,6 +1689,151 @@
         },
         {
           "nome": "Açai",
+          "valor": 0,
+          "pausado": false
+        }
+      ]
+    },
+    {
+      "grupo": "Opção 1",
+      "opcoes": [
+        {
+          "nome": "Bacon",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Ovo de Codorna",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Presunto",
+          "valor": 0,
+          "pausado": false
+        }
+      ]
+    },
+    {
+      "grupo": "Opção 2",
+      "opcoes": [
+        {
+          "nome": "Milho Verde",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Ervilha",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Passas",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Azeitona",
+          "valor": 0,
+          "pausado": false
+        }
+      ]
+    },
+    {
+      "grupo": "Opção 3",
+      "opcoes": [
+        {
+          "nome": "Tomate Crú",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Cebola",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Pimentão",
+          "valor": 0,
+          "pausado": false
+        }
+      ]
+    },
+    {
+      "grupo": "Opção 4",
+      "opcoes": [
+        {
+          "nome": "Champignon",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Palmito",
+          "valor": 0,
+          "pausado": false
+        }
+      ]
+    },
+    {
+      "grupo": "Opção 5",
+      "opcoes": [
+        {
+          "nome": "Cebola Crispy",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Alho Torrado",
+          "valor": 0,
+          "pausado": false
+        }
+      ]
+    },
+    {
+      "grupo": "Opção 6",
+      "opcoes": [
+        {
+          "nome": "Queijo Minas",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Queijo Muçarela",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Queijo Prato",
+          "valor": 0,
+          "pausado": false
+        }
+      ]
+    },
+    {
+      "grupo": "Opção 7",
+      "opcoes": [
+        {
+          "nome": "Catupiry",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Cheddar",
+          "valor": 0,
+          "pausado": false
+        }
+      ]
+    },
+    {
+      "grupo": "Opção 8",
+      "opcoes": [
+        {
+          "nome": "Orégano",
+          "valor": 0,
+          "pausado": false
+        },
+        {
+          "nome": "Parmesão Ralado",
           "valor": 0,
           "pausado": false
         }
