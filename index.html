@@ -714,9 +714,8 @@
   <!-- 🕓 TELA DE LOJA FECHADA (BLOQUEIA PEDIDOS FORA DO HORÁRIO) -->
   <div id="loja-fechada-overlay">
     <div class="overlay-content">
-      <h2>🎮 O Fliperama está em modo descanso!</h2>
-      <p>Nosso delivery funciona das <strong>18h às 23h30</strong> todos os dias.</p>
-      <p>Fora desse horário, os pedidos ficam indisponíveis.</p>
+      <h2>Estamos fechados</h2>
+      <p>Infelizmente estamos fechados em breve voltaremos apenas com delivery, Agradecemos a todos o carinho, e em breve voltaremos</p>
       <p class="endereco">📍 BR-465, nº 199 – Campo Lindo, Seropédica/RJ<br>KM 40 — Próximo à <strong>Life Fit Academia</strong></p>
       <p id="contador-titulo">⏳ Reabriremos em:</p>
       <div id="contador">00:00:00</div>
@@ -2316,6 +2315,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ⚙️ CONFIGURAÇÕES ESPECIAIS
   const FECHA_TODO_SABADO = false;          // sábado sem delivery
   const DELIVERY_CLOSED_OVERRIDE = false;   // 🔴 true = fecha só o delivery
+  const FECHADO_INDETERMINADO = true;       // ?? true = loja fechada por tempo indeterminado
 
   // ==============================
   // 🔒 FECHAMENTO POR DATAS
@@ -2361,6 +2361,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnMapa      = document.getElementById("abrir-mapa");
 
     // ==============================
+    // ?? FECHAMENTO INDETERMINADO
+    // ==============================
+    if (FECHADO_INDETERMINADO) {
+      if (titulo) titulo.style.display = "none";
+      if (contador) contador.style.display = "none";
+      overlay.classList.add("active");
+
+      // bloqueia entrega e endere?o
+      if (selectTipo) {
+        selectTipo.value = "Retirada";
+        const optEntrega = selectTipo.querySelector('option[value="Entrega"]');
+        if (optEntrega) optEntrega.disabled = true;
+      }
+      if (endContainer) endContainer.style.display = "none";
+      if (btnMapa) btnMapa.style.display = "none";
+
+      return;
+    }
+
+    // ==============================
     // 🔒 LOJA FECHADA HOJE (DATA ESPECÍFICA)
     // ==============================
     if (lojaFechadaHoje(agora)) {
@@ -2397,6 +2417,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 🚚 CONTROLE DE DELIVERY (sem fechar a loja)
     // ==============================
     const deliveryFechado = DELIVERY_CLOSED_OVERRIDE || (FECHA_TODO_SABADO && dia === 6);
+  const FECHADO_INDETERMINADO = true;       // ?? true = loja fechada por tempo indeterminado
 
     if (deliveryFechado) {
       if (selectTipo) {
@@ -2464,3 +2485,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
+
+
